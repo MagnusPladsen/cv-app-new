@@ -52,5 +52,15 @@
     "descriptionHint": "Én linje per punkt. Anbefalt, men valgfritt.",
     "modeBullets": "Punkter",
     "modeProse": "Løpende tekst"
+  },
+  "sections": {
+    "title": "Seksjoner",
+    "addCustom": "Legg til egen seksjon",
+    "remove": "Fjern",
+    "reorder": "Endre rekkefølge",
+    "show": "Vis",
+    "hide": "Skjul",
+    "moveUp": "Flytt opp",
+    "moveDown": "Flytt ned"
   }
 }

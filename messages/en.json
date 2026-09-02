@@ -52,5 +52,15 @@
     "descriptionHint": "One line per bullet. Recommended, but optional.",
     "modeBullets": "Bullets",
     "modeProse": "Prose"
+  },
+  "sections": {
+    "title": "Sections",
+    "addCustom": "Add custom section",
+    "remove": "Remove",
+    "reorder": "Reorder",
+    "show": "Show",
+    "hide": "Hide",
+    "moveUp": "Move up",
+    "moveDown": "Move down"
   }
 }

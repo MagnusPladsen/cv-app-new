@@ -2,10 +2,19 @@
 
 import { sectionTitle } from '@/components/cv/sections'
 import type { CvLabels } from '@/lib/cv-labels'
-import type { LanguageItem, Section, SkillItem, TimelineEntry } from '@/lib/schema/cv'
+import type {
+  CertEntry,
+  LanguageItem,
+  ReferenceEntry,
+  Section,
+  SkillItem,
+  TimelineEntry,
+} from '@/lib/schema/cv'
+import { CertificationsForm } from './forms/CertificationsForm'
 import { CustomTextForm } from './forms/CustomTextForm'
 import { StringListForm } from './forms/StringListForm'
 import { LeveledItemsForm } from './forms/LeveledItemsForm'
+import { ReferencesForm } from './forms/ReferencesForm'
 import { SummaryForm } from './forms/SummaryForm'
 import { TimelineForm } from './forms/TimelineForm'
 
@@ -24,6 +33,14 @@ export type SectionEditorHandlers = {
     patch: Partial<SkillItem> | Partial<LanguageItem>,
   ) => void
   onRemoveItem: (sectionId: string, itemId: string) => void
+  onAddCert: (sectionId: string) => void
+  onUpdateCert: (sectionId: string, entryId: string, patch: Partial<CertEntry>) => void
+  onAddReference: (sectionId: string) => void
+  onUpdateReference: (
+    sectionId: string,
+    entryId: string,
+    patch: Partial<ReferenceEntry>,
+  ) => void
 }
 
 /**
@@ -79,6 +96,30 @@ export function SectionEditor({
           onAddItem={handlers.onAddItem}
           onRemoveItem={handlers.onRemoveItem}
           onUpdateItem={handlers.onUpdateItem}
+          sectionId={section.id}
+          title={title}
+        />
+      )
+
+    case 'certifications':
+      return (
+        <CertificationsForm
+          entries={section.entries}
+          onAddEntry={handlers.onAddCert}
+          onRemoveEntry={handlers.onRemoveEntry}
+          onUpdateEntry={handlers.onUpdateCert}
+          sectionId={section.id}
+          title={title}
+        />
+      )
+
+    case 'references':
+      return (
+        <ReferencesForm
+          entries={section.entries}
+          onAddEntry={handlers.onAddReference}
+          onRemoveEntry={handlers.onRemoveEntry}
+          onUpdateEntry={handlers.onUpdateReference}
           sectionId={section.id}
           title={title}
         />

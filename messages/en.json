@@ -76,5 +76,19 @@
     "name": "Name",
     "level": "Level",
     "noLevel": "None"
+  },
+  "cert": {
+    "name": "Name",
+    "issuer": "Issuer",
+    "date": "Date",
+    "url": "Link"
+  },
+  "reference": {
+    "name": "Name",
+    "role": "Role",
+    "organisation": "Organisation",
+    "email": "Email",
+    "phone": "Phone",
+    "onRequestHint": "With no referees listed, the CV prints \"References available on request\"."
   }
 }

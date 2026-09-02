@@ -29,6 +29,10 @@ function handlers() {
     onAddItem: vi.fn(),
     onUpdateItem: vi.fn(),
     onRemoveItem: vi.fn(),
+    onAddCert: vi.fn(),
+    onUpdateCert: vi.fn(),
+    onAddReference: vi.fn(),
+    onUpdateReference: vi.fn(),
   }
 }
 
@@ -156,16 +160,16 @@ describe('custom sections', () => {
     expect(onValues).toHaveBeenLastCalledWith(['En artikkel', 'En til'])
   })
 
-  it('renders nothing for a section type with no form yet', () => {
+  it('renders an empty custom text form without crashing', () => {
     const { container } = render(
       <NextIntlClientProvider locale="no" messages={messages}>
         <SectionEditor
-          section={{ id: 's', type: 'certifications', enabled: true, entries: [] }}
+          section={{ id: 's', type: 'custom', enabled: true, title: 'Tom', shape: 'text', text: '' }}
           labels={getCvLabels('no')}
           handlers={handlers()}
         />
       </NextIntlClientProvider>,
     )
-    expect(container).toBeEmptyDOMElement()
+    expect(container.querySelector('textarea')).toHaveValue('')
   })
 })

@@ -76,5 +76,19 @@
     "name": "Navn",
     "level": "Nivå",
     "noLevel": "Ingen"
+  },
+  "cert": {
+    "name": "Navn",
+    "issuer": "Utsteder",
+    "date": "Dato",
+    "url": "Lenke"
+  },
+  "reference": {
+    "name": "Navn",
+    "role": "Rolle",
+    "organisation": "Arbeidsgiver",
+    "email": "E-post",
+    "phone": "Telefon",
+    "onRequestHint": "Uten referanser her skriver CV-en «Referanser oppgis ved forespørsel»."
   }
 }

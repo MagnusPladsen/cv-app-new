@@ -4,6 +4,7 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 
+import { ALL_TEMPLATE_STYLESHEETS } from '@/components/cv/templates'
 import { routing } from '@/i18n/routing'
 import { CV_STYLESHEETS } from '@/lib/print/stylesheets'
 import '../globals.css'
@@ -36,7 +37,7 @@ export default async function LocaleLayout({
       <head>
         {/* The CV stylesheets are plain CSS in public/ so the print iframe can
             load the exact same files. See lib/print/stylesheets.ts. */}
-        {CV_STYLESHEETS.map((href) => (
+        {[...CV_STYLESHEETS, ...ALL_TEMPLATE_STYLESHEETS].map((href) => (
           <link key={href} rel="stylesheet" href={href} />
         ))}
       </head>

@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { CvDocument } from '@/components/cv/CvDocument'
 import { buildPrintTitle } from '@/lib/print/build-print-html'
 import { printCvNode } from '@/lib/print/print-cv'
+import { templateStylesheet } from '@/lib/print/stylesheets'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { createEmptyDocument } from '@/lib/schema/defaults'
 
@@ -76,6 +77,7 @@ async function capturePrintHtml(doc: CvDocumentData): Promise<string> {
       title: buildPrintTitle(doc.personalia.firstName, doc.personalia.lastName),
       paper: doc.paper,
       lang: doc.language,
+      extraStylesheets: [templateStylesheet(doc.theme.templateId)],
     },
     {
       waitForLoad: async (iframe) => void (captured = iframe.srcdoc),
@@ -127,6 +129,13 @@ describe('CV export, end to end', () => {
     const html = await capturePrintHtml(populatedDocument())
     expect(html).toContain('href="/cv/fonts.css"')
     expect(html).toContain('href="/cv/base.css"')
+  })
+
+  it("links the active template's stylesheet after the base sheet", async () => {
+    const html = await capturePrintHtml(populatedDocument())
+    const templateHref = templateStylesheet('oslo')
+    expect(html).toContain(`href="${templateHref}"`)
+    expect(html.indexOf(templateHref)).toBeGreaterThan(html.indexOf('/cv/base.css'))
   })
 
   it('switches paper geometry for a Letter document', async () => {

@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { buildPrintTitle } from '@/lib/print/build-print-html'
 import { printCvNode } from '@/lib/print/print-cv'
+import { templateStylesheet } from '@/lib/print/stylesheets'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 
 export function ExportButton({
@@ -29,6 +30,9 @@ export function ExportButton({
         title: buildPrintTitle(document.personalia.firstName, document.personalia.lastName),
         paper: document.paper,
         lang: document.language,
+        // Without this the exported PDF loses every template-specific rule,
+        // while the on-screen preview still looks correct.
+        extraStylesheets: [templateStylesheet(document.theme.templateId)],
       })
     } finally {
       setBusy(false)

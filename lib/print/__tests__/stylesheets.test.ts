@@ -1,7 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
-import { CV_STYLESHEETS } from '@/lib/print/stylesheets'
+import { TEMPLATES } from '@/components/cv/templates'
+import { CV_STYLESHEETS, templateStylesheet } from '@/lib/print/stylesheets'
 
 const publicDir = join(process.cwd(), 'public')
 
@@ -81,6 +82,25 @@ describe('base.css', () => {
       '.cv-inline-list',
     ]) {
       expect(css, `${className} is not defined`).toContain(className)
+    }
+  })
+})
+
+describe('template stylesheets', () => {
+  it('resolves a predictable path per template', () => {
+    expect(templateStylesheet('oslo')).toBe('/cv/templates/oslo.css')
+  })
+
+  it('has a file on disk for every registered template', () => {
+    for (const template of TEMPLATES) {
+      const url = templateStylesheet(template.id)
+      expect(existsSync(join(publicDir, url)), `${url} is missing`).toBe(true)
+    }
+  })
+
+  it('never uses @import in a template sheet either', () => {
+    for (const template of TEMPLATES) {
+      expect(readPublic(templateStylesheet(template.id))).not.toContain('@import')
     }
   })
 })

@@ -62,5 +62,9 @@
     "hide": "Hide",
     "moveUp": "Move up",
     "moveDown": "Move down"
+  },
+  "forms": {
+    "onePerLine": "One per line.",
+    "summaryHint": "Two to four sentences on who you are and what you are good at."
   }
 }

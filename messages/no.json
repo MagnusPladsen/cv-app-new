@@ -62,5 +62,9 @@
     "hide": "Skjul",
     "moveUp": "Flytt opp",
     "moveDown": "Flytt ned"
+  },
+  "forms": {
+    "onePerLine": "Én per linje.",
+    "summaryHint": "To til fire setninger om hvem du er og hva du er god til."
   }
 }

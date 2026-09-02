@@ -1,0 +1,29 @@
+/* Fjord - tinted left sidebar. */
+
+.cv-doc--fjord .cv-header {
+  margin-bottom: calc(6mm * var(--cv-scale));
+}
+
+.cv-doc--fjord .cv-header__name {
+  font-size: calc(23pt * var(--cv-scale));
+}
+
+.cv-doc--fjord .cv-shell__aside {
+  /* A tint of the accent rather than a flat grey, so the sidebar belongs to
+     the chosen colour. */
+  background: color-mix(in srgb, var(--cv-accent) 8%, #ffffff);
+  border-radius: 2mm;
+  padding: calc(5mm * var(--cv-scale));
+}
+
+.cv-doc--fjord .cv-shell__aside .cv-section:last-child {
+  margin-bottom: 0;
+}
+
+.cv-doc--fjord .cv-shell__aside .cv-section__title {
+  border-bottom-color: color-mix(in srgb, var(--cv-accent) 30%, #ffffff);
+}
+
+.cv-doc--fjord .cv-section__title {
+  letter-spacing: 0.1em;
+}

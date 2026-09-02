@@ -1,0 +1,23 @@
+/* Nord - light right sidebar. */
+
+.cv-doc--nord .cv-header {
+  padding-bottom: calc(4mm * var(--cv-scale));
+  border-bottom: 0.3mm solid var(--cv-rule);
+}
+
+.cv-doc--nord .cv-shell__aside {
+  padding-left: calc(6mm * var(--cv-scale));
+  border-left: 0.3mm solid var(--cv-rule);
+}
+
+.cv-doc--nord .cv-section__title {
+  border-bottom: 0;
+  color: var(--cv-ink);
+  font-size: calc(9.5pt * var(--cv-scale));
+  letter-spacing: 0.14em;
+  margin-bottom: calc(2.5mm * var(--cv-scale));
+}
+
+.cv-doc--nord .cv-entry__role {
+  color: var(--cv-accent);
+}

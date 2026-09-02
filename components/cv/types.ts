@@ -20,6 +20,20 @@ export type SectionRendererProps = {
 
 export type SectionRenderer = (props: SectionRendererProps) => ReactNode
 
+/**
+ * Section types that survive a ~52mm sidebar. Everything else - experience,
+ * education, certifications, references - carries long names that wrap to one
+ * word per line in a narrow column, which reads as broken.
+ */
+export const SIDEBAR_SAFE_SECTIONS = [
+  'skills',
+  'languages',
+  'interests',
+  'drivingLicence',
+] as const satisfies readonly SectionType[]
+
+export type SidebarSafeSection = (typeof SIDEBAR_SAFE_SECTIONS)[number]
+
 export type Template = {
   id: string
   /** Display name in the template gallery. Not localized: these are proper names. */
@@ -32,7 +46,7 @@ export type Template = {
   /** Token overrides layered on top of the neutral defaults. */
   tokens?: Partial<ThemeTokenValues>
   /** For sidebar shells: which sections live in the sidebar. */
-  sidebarSections?: SectionType[]
+  sidebarSections?: SidebarSafeSection[]
   /** Escape hatch for a template that needs a bespoke renderer. */
   overrides?: Partial<Record<SectionType, SectionRenderer>>
 }

@@ -1,0 +1,22 @@
+/* Trondheim - accent header band. */
+
+.cv-doc--trondheim .cv-band .cv-header__name {
+  font-size: calc(24pt * var(--cv-scale));
+}
+
+.cv-doc--trondheim .cv-band .cv-header__photo {
+  width: calc(30mm * var(--cv-scale));
+  height: calc(30mm * var(--cv-scale));
+  border: 0.8mm solid var(--cv-accent-ink);
+}
+
+/* The band already carries the accent, so titles use ink for contrast. */
+.cv-doc--trondheim .cv-section__title {
+  color: var(--cv-ink);
+  border-bottom-width: 0.5mm;
+  border-bottom-color: var(--cv-accent);
+}
+
+.cv-doc--trondheim .cv-entry__role {
+  font-size: calc(11pt * var(--cv-scale));
+}

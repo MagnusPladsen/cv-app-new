@@ -1,0 +1,56 @@
+{
+  "app": {
+    "name": "CVApp",
+    "tagline": "Build a CV you're proud of"
+  },
+  "nav": {
+    "myCvs": "My CVs",
+    "templates": "Templates"
+  },
+  "dashboard": {
+    "title": "My CVs",
+    "empty": "You haven't created a CV yet.",
+    "create": "New CV",
+    "untitled": "Untitled CV",
+    "open": "Open",
+    "duplicate": "Duplicate",
+    "delete": "Delete",
+    "copySuffix": "copy"
+  },
+  "editor": {
+    "notFound": "We can't find that CV.",
+    "backToList": "Back to my CVs",
+    "preview": "Preview",
+    "export": "Download PDF",
+    "exportHintTitle": "How to save as PDF",
+    "exportHintMobile": "Choose Print, then Save as PDF in the dialog that opens.",
+    "undo": "Undo",
+    "redo": "Redo",
+    "pageCount": "{count, plural, one {# page} other {# pages}}"
+  },
+  "personalia": {
+    "title": "Personal details",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "professionalTitle": "Job title",
+    "email": "Email",
+    "phone": "Phone",
+    "city": "City",
+    "country": "Country"
+  },
+  "experience": {
+    "title": "Work Experience",
+    "add": "Add position",
+    "remove": "Remove",
+    "role": "Role",
+    "organisation": "Employer",
+    "location": "Location",
+    "from": "From",
+    "to": "To",
+    "current": "I work here now",
+    "description": "Description",
+    "descriptionHint": "One line per bullet. Recommended, but optional.",
+    "modeBullets": "Bullets",
+    "modeProse": "Prose"
+  }
+}

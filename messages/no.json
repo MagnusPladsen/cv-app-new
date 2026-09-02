@@ -1,0 +1,56 @@
+{
+  "app": {
+    "name": "CVApp",
+    "tagline": "Lag en CV du er stolt av"
+  },
+  "nav": {
+    "myCvs": "Mine CV-er",
+    "templates": "Maler"
+  },
+  "dashboard": {
+    "title": "Mine CV-er",
+    "empty": "Du har ingen CV-er ennå.",
+    "create": "Ny CV",
+    "untitled": "CV uten navn",
+    "open": "Åpne",
+    "duplicate": "Dupliser",
+    "delete": "Slett",
+    "copySuffix": "kopi"
+  },
+  "editor": {
+    "notFound": "Vi finner ikke denne CV-en.",
+    "backToList": "Tilbake til mine CV-er",
+    "preview": "Forhåndsvis",
+    "export": "Last ned PDF",
+    "exportHintTitle": "Slik lagrer du som PDF",
+    "exportHintMobile": "Velg «Skriv ut» og deretter «Lagre som PDF» i dialogen som åpnes.",
+    "undo": "Angre",
+    "redo": "Gjør om",
+    "pageCount": "{count, plural, one {# side} other {# sider}}"
+  },
+  "personalia": {
+    "title": "Personalia",
+    "firstName": "Fornavn",
+    "lastName": "Etternavn",
+    "professionalTitle": "Tittel",
+    "email": "E-post",
+    "phone": "Telefon",
+    "city": "Sted",
+    "country": "Land"
+  },
+  "experience": {
+    "title": "Arbeidserfaring",
+    "add": "Legg til stilling",
+    "remove": "Fjern",
+    "role": "Rolle",
+    "organisation": "Arbeidsgiver",
+    "location": "Sted",
+    "from": "Fra",
+    "to": "Til",
+    "current": "Jobber her nå",
+    "description": "Beskrivelse",
+    "descriptionHint": "Én linje per punkt. Anbefalt, men valgfritt.",
+    "modeBullets": "Punkter",
+    "modeProse": "Løpende tekst"
+  }
+}

@@ -7,6 +7,7 @@ import type { DocumentEditorHandlers } from '@/lib/hooks/use-document-editor'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { ExportButton } from './ExportButton'
 import { PersonaliaForm } from './PersonaliaForm'
+import { PhotoField } from './PhotoField'
 import { PreviewPane } from './PreviewPane'
 import { SectionEditor } from './SectionEditor'
 import { SectionList } from './SectionList'
@@ -45,6 +46,14 @@ export function EditorSplit({
           onSelect={onSelectSection}
           onToggle={handlers.onToggleSection}
           sections={document.sections}
+        />
+
+        <PhotoField
+          onChange={(dataUrl) => handlers.onPersonaliaChange({ photo: { dataUrl } })}
+          onRemove={() => handlers.onPersonaliaChange({ photo: undefined })}
+          onToggle={(showPhoto) => handlers.onPersonaliaChange({ showPhoto })}
+          photo={document.personalia.photo}
+          showPhoto={document.personalia.showPhoto}
         />
 
         <PersonaliaForm

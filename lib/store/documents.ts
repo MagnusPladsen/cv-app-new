@@ -47,6 +47,12 @@ export type DocumentsStoreOptions = {
   /** Defaults to window.localStorage. Injected in tests. */
   storage?: StringStorage
   deps?: FactoryDeps
+  /**
+   * Called when a write to storage fails, which in practice means
+   * QuotaExceededError. Without this the failure is silent and the user
+   * discovers it only when their CVs are gone after a reload.
+   */
+  onStorageError?: (error: unknown) => void
 }
 
 /** Used during server rendering, where there is no localStorage to read. */
@@ -99,8 +105,20 @@ export type DocumentsStoreApi = UseBoundStore<StoreApi<DocumentsStore>> & {
 
 export function createDocumentsStore(options: DocumentsStoreOptions = {}): DocumentsStoreApi {
   const { newId, now } = resolve(options.deps)
-  const stringStorage =
+  const backing =
     options.storage ?? (typeof window === 'undefined' ? noopStorage : window.localStorage)
+
+  const stringStorage: StringStorage = {
+    getItem: (key) => backing.getItem(key),
+    removeItem: (key) => backing.removeItem(key),
+    setItem: (key, value) => {
+      try {
+        backing.setItem(key, value)
+      } catch (error) {
+        options.onStorageError?.(error)
+      }
+    },
+  }
 
   return create<DocumentsStore>()(
     persist(

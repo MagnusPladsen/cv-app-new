@@ -90,5 +90,15 @@
     "email": "E-post",
     "phone": "Telefon",
     "onRequestHint": "Uten referanser her skriver CV-en «Referanser oppgis ved forespørsel»."
+  },
+  "photo": {
+    "label": "Bilde",
+    "upload": "Last opp bilde",
+    "replace": "Bytt bilde",
+    "remove": "Fjern bilde",
+    "show": "Vis bilde på CV-en",
+    "notAnImage": "Filen er ikke et bilde.",
+    "failed": "Klarte ikke å lese bildet.",
+    "norwegianNote": "Norske arbeidsgivere forventer sjelden bilde."
   }
 }

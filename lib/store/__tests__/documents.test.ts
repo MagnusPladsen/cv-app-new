@@ -151,3 +151,29 @@ describe('documents store', () => {
     expect(result.ok).toBe(false)
   })
 })
+
+describe('storage failures', () => {
+  it('reports a write failure instead of throwing', () => {
+    const errors: unknown[] = []
+    const failing = {
+      getItem: () => null,
+      removeItem: () => {},
+      setItem: () => {
+        throw new DOMException('quota', 'QuotaExceededError')
+      },
+    }
+
+    const s = createDocumentsStore({
+      storage: failing,
+      deps: deterministicDeps(),
+      onStorageError: (error) => errors.push(error),
+    })
+
+    const id = s.getState().createDocument({ name: 'Persisted' })
+
+    expect(errors).toHaveLength(1)
+    // The in-memory document survives, so the user does not lose their work
+    // before they have a chance to export a backup.
+    expect(s.getState().documents[id]?.name).toBe('Persisted')
+  })
+})

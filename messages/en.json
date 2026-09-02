@@ -90,5 +90,15 @@
     "email": "Email",
     "phone": "Phone",
     "onRequestHint": "With no referees listed, the CV prints \"References available on request\"."
+  },
+  "photo": {
+    "label": "Photo",
+    "upload": "Upload photo",
+    "replace": "Replace photo",
+    "remove": "Remove photo",
+    "show": "Show photo on the CV",
+    "notAnImage": "That file is not an image.",
+    "failed": "The image could not be read.",
+    "norwegianNote": "Norwegian employers rarely expect a photo."
   }
 }

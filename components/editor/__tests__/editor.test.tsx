@@ -87,6 +87,17 @@ describe('EditorSplit', () => {
     expect(container.querySelectorAll('.cv-doc')).toHaveLength(1)
   })
 
+  it('keeps the page guides outside the node the print path clones', () => {
+    const { container } = wrap(<EditorSplit {...splitProps(fixture())} />)
+    const printedNode = container.querySelector('.cv-doc')!
+    expect(printedNode.querySelector('[data-testid="page-guide"]')).toBeNull()
+  })
+
+  it('shows a page count', () => {
+    wrap(<EditorSplit {...splitProps(fixture())} />)
+    expect(screen.getByText('1 side')).toBeInTheDocument()
+  })
+
   it('renders the form for the active section', () => {
     const doc = fixture()
     const skills = doc.sections.find((section) => section.type === 'skills')!

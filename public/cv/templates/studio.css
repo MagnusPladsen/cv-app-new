@@ -1,0 +1,59 @@
+/* Studio - creative asymmetric layout. */
+
+.cv-doc--studio .cv-header {
+  align-items: flex-end;
+  margin-bottom: calc(5mm * var(--cv-scale));
+}
+
+.cv-doc--studio .cv-header__name {
+  font-size: calc(34pt * var(--cv-scale));
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.cv-doc--studio .cv-header__title {
+  font-size: calc(11.5pt * var(--cv-scale));
+  font-weight: 600;
+}
+
+.cv-doc--studio .cv-header__photo {
+  width: calc(28mm * var(--cv-scale));
+  height: calc(28mm * var(--cv-scale));
+  border-radius: 2mm;
+}
+
+/* Lead paragraph: the summary reads as a standfirst, not a titled section. */
+.cv-doc--studio .cv-lead {
+  margin-bottom: calc(7mm * var(--cv-scale));
+  padding-bottom: calc(5mm * var(--cv-scale));
+  border-bottom: 1.4mm solid var(--cv-accent);
+}
+
+.cv-doc--studio .cv-lead__text {
+  font-size: calc(11.5pt * var(--cv-scale));
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* Section titles sit in a filled accent chip. */
+.cv-doc--studio .cv-section__title {
+  display: inline-block;
+  border-bottom: 0;
+  padding: calc(1.2mm * var(--cv-scale)) calc(2.6mm * var(--cv-scale));
+  border-radius: 1.2mm;
+  background: var(--cv-accent);
+  color: var(--cv-accent-ink);
+  letter-spacing: 0.1em;
+  margin-bottom: calc(3mm * var(--cv-scale));
+}
+
+.cv-doc--studio .cv-shell__aside {
+  background: color-mix(in srgb, var(--cv-accent) 6%, #ffffff);
+  border-radius: 2mm;
+  padding: calc(5mm * var(--cv-scale));
+}
+
+.cv-doc--studio .cv-entry__role {
+  font-size: calc(11pt * var(--cv-scale));
+  letter-spacing: -0.01em;
+}

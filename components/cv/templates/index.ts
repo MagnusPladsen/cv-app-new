@@ -7,6 +7,7 @@ import { fjord } from './fjord'
 import { kompakt } from './kompakt'
 import { nord } from './nord'
 import { oslo } from './oslo'
+import { studio } from './studio'
 import { trondheim } from './trondheim'
 
 export const DEFAULT_TEMPLATE_ID = 'oslo'
@@ -21,6 +22,7 @@ export const TEMPLATES: Template[] = [
   trondheim,
   aurora,
   akademisk,
+  studio,
 ]
 
 /** Every template's stylesheet, for the app layout to load up front. */

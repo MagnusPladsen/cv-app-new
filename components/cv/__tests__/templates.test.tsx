@@ -103,3 +103,22 @@ describe('template font pairings', () => {
     }
   })
 })
+
+describe('Studio overrides', () => {
+  it('renders the summary as a lead paragraph with no section title', () => {
+    const { container } = render(<CvDocument document={demoIn('studio')} />)
+    const lead = container.querySelector('.cv-lead')
+
+    expect(lead).not.toBeNull()
+    expect(lead?.querySelector('.cv-section__title')).toBeNull()
+    expect(lead?.querySelector('.cv-lead__text')?.textContent).toContain('Frontendutvikler')
+  })
+
+  it('leaves every other section using the shared renderer', () => {
+    const { container } = render(<CvDocument document={demoIn('studio')} />)
+    const titles = [...container.querySelectorAll('.cv-section__title')].map((n) => n.textContent)
+
+    expect(titles).toContain('Arbeidserfaring')
+    expect(titles).not.toContain('Om meg')
+  })
+})

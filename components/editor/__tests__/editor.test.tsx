@@ -55,18 +55,26 @@ describe('PersonaliaForm', () => {
   })
 })
 
+const splitHandlers = {
+  onPersonaliaChange: vi.fn(),
+  experienceEntries: [],
+  onAddEntry: vi.fn(),
+  onUpdateEntry: vi.fn(),
+  onRemoveEntry: vi.fn(),
+}
+
 describe('EditorSplit', () => {
   it('shows the form and a live preview of the same document', () => {
     const doc = fixture()
     doc.personalia = { ...doc.personalia, firstName: 'Ola', lastName: 'Nordmann' }
-    const { container } = wrap(<EditorSplit document={doc} onPersonaliaChange={vi.fn()} />)
+    const { container } = wrap(<EditorSplit document={doc} {...splitHandlers} />)
 
     expect(screen.getByLabelText('Fornavn')).toHaveValue('Ola')
     expect(container.querySelector('.cv-doc')).toHaveTextContent('Ola Nordmann')
   })
 
   it('renders exactly one CV document node for the export path to clone', () => {
-    const { container } = wrap(<EditorSplit document={fixture()} onPersonaliaChange={vi.fn()} />)
+    const { container } = wrap(<EditorSplit document={fixture()} {...splitHandlers} />)
     expect(container.querySelectorAll('.cv-doc')).toHaveLength(1)
   })
 })

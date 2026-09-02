@@ -1,7 +1,8 @@
 'use client'
 
 import { useRef } from 'react'
-import type { CvDocument as CvDocumentData, Personalia } from '@/lib/schema/cv'
+import type { CvDocument as CvDocumentData, Personalia, TimelineEntry } from '@/lib/schema/cv'
+import { ExperienceForm } from './ExperienceForm'
 import { ExportButton } from './ExportButton'
 import { PersonaliaForm } from './PersonaliaForm'
 import { PreviewPane } from './PreviewPane'
@@ -9,9 +10,17 @@ import { PreviewPane } from './PreviewPane'
 export function EditorSplit({
   document,
   onPersonaliaChange,
+  experienceEntries,
+  onAddEntry,
+  onUpdateEntry,
+  onRemoveEntry,
 }: {
   document: CvDocumentData
   onPersonaliaChange: (patch: Partial<Personalia>) => void
+  experienceEntries: TimelineEntry[]
+  onAddEntry: () => void
+  onUpdateEntry: (entryId: string, patch: Partial<TimelineEntry>) => void
+  onRemoveEntry: (entryId: string) => void
 }) {
   const previewRef = useRef<HTMLDivElement | null>(null)
 
@@ -24,6 +33,12 @@ export function EditorSplit({
           <ExportButton document={document} getNode={getNode} />
         </div>
         <PersonaliaForm personalia={document.personalia} onChange={onPersonaliaChange} />
+        <ExperienceForm
+          entries={experienceEntries}
+          onAddEntry={onAddEntry}
+          onRemoveEntry={onRemoveEntry}
+          onUpdateEntry={onUpdateEntry}
+        />
       </div>
       <div className="lg:sticky lg:top-6 lg:self-start">
         <PreviewPane document={document} containerRef={previewRef} />

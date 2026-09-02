@@ -15,7 +15,16 @@
     "open": "Open",
     "duplicate": "Duplicate",
     "delete": "Delete",
-    "copySuffix": "copy"
+    "copySuffix": "copy",
+    "rename": "Rename",
+    "renamePrompt": "New name for this CV",
+    "export": "Download backup",
+    "import": "Import from file",
+    "confirmDelete": "Delete \"{name}\"? This CV exists only in this browser and cannot be recovered.",
+    "confirm": "Delete",
+    "cancel": "Cancel",
+    "importFailed": "That file could not be read as a CV.",
+    "edited": "Last edited"
   },
   "editor": {
     "notFound": "We can't find that CV.",

@@ -15,7 +15,16 @@
     "open": "Åpne",
     "duplicate": "Dupliser",
     "delete": "Slett",
-    "copySuffix": "kopi"
+    "copySuffix": "kopi",
+    "rename": "Gi nytt navn",
+    "renamePrompt": "Nytt navn på CV-en",
+    "export": "Last ned sikkerhetskopi",
+    "import": "Hent inn fra fil",
+    "confirmDelete": "Slette «{name}»? CV-en finnes bare i denne nettleseren og kan ikke hentes tilbake.",
+    "confirm": "Slett",
+    "cancel": "Avbryt",
+    "importFailed": "Filen kunne ikke leses som en CV.",
+    "edited": "Sist endret"
   },
   "editor": {
     "notFound": "Vi finner ikke denne CV-en.",

@@ -5,6 +5,7 @@ import { useRef } from 'react'
 import { getCvLabels } from '@/lib/cv-labels'
 import type { DocumentEditorHandlers } from '@/lib/hooks/use-document-editor'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
+import { DesignPanel } from './DesignPanel'
 import { ExportButton } from './ExportButton'
 import { PersonaliaForm } from './PersonaliaForm'
 import { PhotoField } from './PhotoField'
@@ -36,6 +37,13 @@ export function EditorSplit({
         <div className="flex justify-end">
           <ExportButton document={document} getNode={getNode} />
         </div>
+
+        <DesignPanel
+          onPaperChange={handlers.onPaperChange}
+          onThemeChange={handlers.onThemeChange}
+          paper={document.paper}
+          theme={document.theme}
+        />
 
         <SectionList
           activeSectionId={activeSectionId}

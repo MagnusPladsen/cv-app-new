@@ -100,5 +100,18 @@
     "notAnImage": "That file is not an image.",
     "failed": "The image could not be read.",
     "norwegianNote": "Norwegian employers rarely expect a photo."
+  },
+  "design": {
+    "title": "Design",
+    "template": "Template",
+    "accent": "Colour",
+    "custom": "Custom colour",
+    "font": "Font",
+    "density": "Density",
+    "densityCompact": "Compact",
+    "densityNormal": "Normal",
+    "densityRoomy": "Roomy",
+    "paper": "Paper",
+    "contrastWarning": "This colour has low contrast against white and may be hard to read in print."
   }
 }

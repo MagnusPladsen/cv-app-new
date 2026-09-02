@@ -100,5 +100,18 @@
     "notAnImage": "Filen er ikke et bilde.",
     "failed": "Klarte ikke å lese bildet.",
     "norwegianNote": "Norske arbeidsgivere forventer sjelden bilde."
+  },
+  "design": {
+    "title": "Design",
+    "template": "Mal",
+    "accent": "Farge",
+    "custom": "Egen farge",
+    "font": "Skrift",
+    "density": "Tetthet",
+    "densityCompact": "Tett",
+    "densityNormal": "Normal",
+    "densityRoomy": "Luftig",
+    "paper": "Papir",
+    "contrastWarning": "Denne fargen har lav kontrast mot hvitt og kan bli vanskelig å lese på papir."
   }
 }

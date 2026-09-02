@@ -1,6 +1,8 @@
-import { create, type StoreApi, type UseBoundStore } from 'zustand'
+import { temporal, type TemporalState } from 'zundo'
+import { create, useStore, type StoreApi, type UseBoundStore } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
+import { throttleLeading } from '@/lib/utils/throttle-leading'
 
 import type { CvDocument } from '@/lib/schema/cv'
 import {
@@ -11,6 +13,9 @@ import {
 import { type SchemaError, safeMigrateDocument } from '@/lib/schema/migrations'
 
 export const DOCUMENTS_STORAGE_KEY = 'cvapp:documents:v1'
+
+export const HISTORY_LIMIT = 100
+export const HISTORY_GROUPING_MS = 400
 
 export type DocumentsState = {
   documents: Record<string, CvDocument>
@@ -86,16 +91,21 @@ function reviveState(persisted: unknown): DocumentsState {
   return { documents, order }
 }
 
-export function createDocumentsStore(
-  options: DocumentsStoreOptions = {},
-): UseBoundStore<StoreApi<DocumentsStore>> {
+export type DocumentsHistory = Pick<DocumentsState, 'documents' | 'order'>
+
+export type DocumentsStoreApi = UseBoundStore<StoreApi<DocumentsStore>> & {
+  temporal: StoreApi<TemporalState<DocumentsHistory>>
+}
+
+export function createDocumentsStore(options: DocumentsStoreOptions = {}): DocumentsStoreApi {
   const { newId, now } = resolve(options.deps)
   const stringStorage =
     options.storage ?? (typeof window === 'undefined' ? noopStorage : window.localStorage)
 
   return create<DocumentsStore>()(
     persist(
-      immer((set, get) => ({
+      temporal(
+        immer((set, get) => ({
         documents: {},
         order: [],
 
@@ -166,7 +176,16 @@ export function createDocumentsStore(
             state.order = documents.map((doc) => doc.id)
           })
         },
-      })),
+        })),
+        {
+          limit: HISTORY_LIMIT,
+          partialize: (state): DocumentsHistory => ({
+            documents: state.documents,
+            order: state.order,
+          }),
+          handleSet: (handleSet) => throttleLeading(handleSet, HISTORY_GROUPING_MS),
+        },
+      ),
       {
         name: DOCUMENTS_STORAGE_KEY,
         version: 1,
@@ -175,10 +194,20 @@ export function createDocumentsStore(
         merge: (persisted, current) => ({ ...current, ...reviveState(persisted) }),
       },
     ),
-  )
+  ) as DocumentsStoreApi
 }
 
-export const useDocuments = createDocumentsStore()
+export const useDocuments: DocumentsStoreApi = createDocumentsStore()
+
+/**
+ * React hook over the undo/redo store.
+ * `useDocumentsTemporal((s) => s.undo)` returns a stable undo function.
+ */
+export function useDocumentsTemporal<T>(
+  selector: (state: TemporalState<DocumentsHistory>) => T,
+): T {
+  return useStore(useDocuments.temporal, selector)
+}
 
 export function selectOrderedDocuments(state: DocumentsState): CvDocument[] {
   return state.order

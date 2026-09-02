@@ -7,6 +7,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { EditorSplit } from '@/components/editor/EditorSplit'
 import { ExportButton } from '@/components/editor/ExportButton'
 import { PersonaliaForm } from '@/components/editor/PersonaliaForm'
+import type { DocumentEditorHandlers } from '@/lib/hooks/use-document-editor'
 import type { PrintCvNodeOptions } from '@/lib/print/print-cv'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { createEmptyDocument } from '@/lib/schema/defaults'
@@ -55,23 +56,60 @@ describe('PersonaliaForm', () => {
   })
 })
 
-const splitHandlers = {
-  onPersonaliaChange: vi.fn(),
+function editorHandlers() {
+  return new Proxy({} as Record<string, ReturnType<typeof vi.fn>>, {
+    get: (target, key: string) => (target[key] ??= vi.fn()),
+  })
+}
+
+function splitProps(doc: CvDocumentData) {
+  return {
+    document: doc,
+    activeSectionId: doc.sections[0]!.id,
+    onSelectSection: vi.fn(),
+    // A proxy of auto-created spies stands in for the full handler surface.
+    handlers: editorHandlers() as unknown as DocumentEditorHandlers,
+  }
 }
 
 describe('EditorSplit', () => {
   it('shows the form and a live preview of the same document', () => {
     const doc = fixture()
     doc.personalia = { ...doc.personalia, firstName: 'Ola', lastName: 'Nordmann' }
-    const { container } = wrap(<EditorSplit document={doc} {...splitHandlers} />)
+    const { container } = wrap(<EditorSplit {...splitProps(doc)} />)
 
     expect(screen.getByLabelText('Fornavn')).toHaveValue('Ola')
     expect(container.querySelector('.cv-doc')).toHaveTextContent('Ola Nordmann')
   })
 
   it('renders exactly one CV document node for the export path to clone', () => {
-    const { container } = wrap(<EditorSplit document={fixture()} {...splitHandlers} />)
+    const { container } = wrap(<EditorSplit {...splitProps(fixture())} />)
     expect(container.querySelectorAll('.cv-doc')).toHaveLength(1)
+  })
+
+  it('renders the form for the active section', () => {
+    const doc = fixture()
+    const skills = doc.sections.find((section) => section.type === 'skills')!
+    wrap(<EditorSplit {...splitProps(doc)} activeSectionId={skills.id} />)
+
+    // The skills form's add button, not the summary textarea.
+    expect(screen.getByRole('button', { name: 'Legg til' })).toBeInTheDocument()
+    expect(screen.queryByLabelText('Om meg')).toBeNull()
+  })
+
+  it('swaps the form when a different section becomes active', () => {
+    const doc = fixture()
+    const summary = doc.sections.find((section) => section.type === 'summary')!
+    wrap(<EditorSplit {...splitProps(doc)} activeSectionId={summary.id} />)
+
+    expect(screen.getByLabelText('Om meg')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Legg til' })).toBeNull()
+  })
+
+  it('lists every section so any of them can be reached', () => {
+    wrap(<EditorSplit {...splitProps(fixture())} />)
+    expect(screen.getByText('Seksjoner')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Legg til egen seksjon' })).toBeInTheDocument()
   })
 })
 

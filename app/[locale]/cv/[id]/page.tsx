@@ -2,24 +2,17 @@
 
 import { useTranslations } from 'next-intl'
 import { use } from 'react'
+
 import { EditorSplit } from '@/components/editor/EditorSplit'
 import { Link } from '@/i18n/navigation'
+import { useDocumentEditor } from '@/lib/hooks/use-document-editor'
 import { useHydrated } from '@/lib/hooks/use-hydrated'
-import type { Personalia } from '@/lib/schema/cv'
-import { useDocuments } from '@/lib/store/documents'
 
 export default function EditorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const t = useTranslations('editor')
   const hydrated = useHydrated()
-  const document = useDocuments((state) => state.documents[id])
-  const updateDocument = useDocuments((state) => state.updateDocument)
-
-  function handlePersonaliaChange(patch: Partial<Personalia>) {
-    updateDocument(id, (draft) => {
-      Object.assign(draft.personalia, patch)
-    })
-  }
+  const { document, activeSectionId, setActiveSectionId, handlers } = useDocumentEditor(id)
 
   if (!hydrated) return null
 
@@ -36,7 +29,12 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
-      <EditorSplit document={document} onPersonaliaChange={handlePersonaliaChange} />
+      <EditorSplit
+        activeSectionId={activeSectionId}
+        document={document}
+        handlers={handlers}
+        onSelectSection={setActiveSectionId}
+      />
     </main>
   )
 }

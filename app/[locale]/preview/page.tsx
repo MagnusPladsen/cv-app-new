@@ -33,6 +33,7 @@ export default function TemplatePreviewPage() {
                       ...demo.theme,
                       templateId: template.id,
                       accent: template.defaultAccent,
+                      fontPairId: template.defaultFontPairId ?? demo.theme.fontPairId,
                     },
                   }}
                 />

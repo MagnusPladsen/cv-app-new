@@ -1,5 +1,7 @@
 import type { Template } from '@/components/cv/types'
 import { templateStylesheet } from '@/lib/print/stylesheets'
+import { akademisk } from './akademisk'
+import { aurora } from './aurora'
 import { bergen } from './bergen'
 import { fjord } from './fjord'
 import { kompakt } from './kompakt'
@@ -10,7 +12,16 @@ import { trondheim } from './trondheim'
 export const DEFAULT_TEMPLATE_ID = 'oslo'
 
 /** Every template the app can render. */
-export const TEMPLATES: Template[] = [oslo, bergen, kompakt, fjord, nord, trondheim]
+export const TEMPLATES: Template[] = [
+  oslo,
+  bergen,
+  kompakt,
+  fjord,
+  nord,
+  trondheim,
+  aurora,
+  akademisk,
+]
 
 /** Every template's stylesheet, for the app layout to load up front. */
 export const ALL_TEMPLATE_STYLESHEETS: readonly string[] = TEMPLATES.map((template) =>

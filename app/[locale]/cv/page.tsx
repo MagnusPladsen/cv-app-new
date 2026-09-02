@@ -40,7 +40,11 @@ export default function DashboardPage() {
     // Start from the template's own accent rather than a hardcoded default, so
     // a new CV looks the way that template is meant to look.
     const template = getTemplate(DEFAULT_TEMPLATE_ID)
-    const id = createDocument({ templateId: template.id, accent: template.defaultAccent })
+    const id = createDocument({
+      templateId: template.id,
+      accent: template.defaultAccent,
+      fontPairId: template.defaultFontPairId,
+    })
     router.push(`/cv/${id}`)
   }
 

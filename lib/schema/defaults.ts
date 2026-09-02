@@ -80,6 +80,7 @@ export type CreateDocumentInput = {
   paper?: PaperId
   templateId?: string
   accent?: string
+  fontPairId?: string
 }
 
 export function createEmptyDocument(
@@ -99,7 +100,7 @@ export function createEmptyDocument(
     theme: {
       templateId: input.templateId ?? 'oslo',
       accent: input.accent ?? '#2563eb',
-      fontPairId: 'inter',
+      fontPairId: input.fontPairId ?? 'inter',
       density: 'normal',
     },
     personalia: {

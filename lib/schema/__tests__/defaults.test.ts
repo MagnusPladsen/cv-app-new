@@ -85,3 +85,14 @@ describe('createEmptySection', () => {
     expect(section).toMatchObject({ type: 'drivingLicence', classes: [] })
   })
 })
+
+describe('font pairing input', () => {
+  it('defaults to inter', () => {
+    expect(createEmptyDocument({}, deterministicDeps()).theme.fontPairId).toBe('inter')
+  })
+
+  it('honours an explicit pairing, so a template can bring its own', () => {
+    const doc = createEmptyDocument({ fontPairId: 'baskerville' }, deterministicDeps())
+    expect(doc.theme.fontPairId).toBe('baskerville')
+  })
+})

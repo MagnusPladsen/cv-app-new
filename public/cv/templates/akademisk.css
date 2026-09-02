@@ -1,0 +1,75 @@
+/* Akademisk - serif classic. */
+
+.cv-doc--akademisk {
+  font-size: calc(10pt * var(--cv-scale));
+  line-height: 1.5;
+}
+
+.cv-doc--akademisk .cv-header {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: calc(3mm * var(--cv-scale));
+  padding-bottom: calc(5mm * var(--cv-scale));
+  border-bottom: 0.3mm solid var(--cv-rule);
+}
+
+.cv-doc--akademisk .cv-header__body {
+  width: 100%;
+}
+
+/* Portrait above the name, the conventional academic placement, rather than
+   trailing the contact block. */
+.cv-doc--akademisk .cv-header__photo {
+  order: -1;
+  width: calc(24mm * var(--cv-scale));
+  height: calc(24mm * var(--cv-scale));
+}
+
+.cv-doc--akademisk .cv-header__name {
+  font-size: calc(22pt * var(--cv-scale));
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+.cv-doc--akademisk .cv-header__title {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--cv-muted);
+}
+
+.cv-doc--akademisk .cv-links {
+  justify-content: center;
+}
+
+.cv-doc--akademisk .cv-section__title {
+  border-bottom: 0;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-size: calc(12.5pt * var(--cv-scale));
+  font-weight: 700;
+  color: var(--cv-accent);
+  margin-bottom: calc(2.5mm * var(--cv-scale));
+}
+
+.cv-doc--akademisk .cv-entry__role {
+  font-size: calc(10.5pt * var(--cv-scale));
+}
+
+.cv-doc--akademisk .cv-entry__org {
+  font-style: italic;
+}
+
+.cv-doc--akademisk .cv-items {
+  grid-template-columns: 1fr;
+}
+
+.cv-doc--akademisk .cv-item {
+  justify-content: flex-start;
+  gap: calc(2mm * var(--cv-scale));
+}
+
+.cv-doc--akademisk .cv-item__level::before {
+  content: '—';
+  margin-right: calc(1.5mm * var(--cv-scale));
+}

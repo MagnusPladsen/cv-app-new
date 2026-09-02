@@ -1,0 +1,41 @@
+/* Aurora - gradient header band. */
+
+.cv-doc--aurora .cv-band {
+  /* Mixed from the accent so the gradient follows whatever colour is chosen. */
+  background: linear-gradient(
+    135deg,
+    var(--cv-accent) 0%,
+    color-mix(in srgb, var(--cv-accent) 55%, #000000) 100%
+  );
+  padding-top: calc(14mm * var(--cv-scale));
+  padding-bottom: calc(14mm * var(--cv-scale));
+}
+
+.cv-doc--aurora .cv-band .cv-header__name {
+  font-size: calc(30pt * var(--cv-scale));
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.cv-doc--aurora .cv-band .cv-header__title {
+  font-size: calc(12pt * var(--cv-scale));
+  font-weight: 500;
+  opacity: 0.92;
+}
+
+.cv-doc--aurora .cv-section__title {
+  border-bottom: 0;
+  color: var(--cv-ink);
+  font-size: calc(9.5pt * var(--cv-scale));
+  letter-spacing: 0.16em;
+  margin-bottom: calc(2.5mm * var(--cv-scale));
+}
+
+.cv-doc--aurora .cv-section {
+  padding-left: calc(4mm * var(--cv-scale));
+  border-left: 0.4mm solid var(--cv-rule);
+}
+
+.cv-doc--aurora .cv-bar {
+  height: calc(1.1mm * var(--cv-scale));
+}

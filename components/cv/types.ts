@@ -11,6 +11,11 @@ export type LevelDisplay = 'bar' | 'text'
 export type RenderContext = {
   labels: CvLabels
   levelDisplay: LevelDisplay
+  /**
+   * The pairing this template is designed around. Applied when a CV is created
+   * from the template; the user can still change it afterwards.
+   */
+  defaultFontPairId?: string
 }
 
 export type SectionRendererProps = {
@@ -43,6 +48,11 @@ export type Template = {
   /** Curated accents offered for this template, before the colour picker. */
   swatches: string[]
   levelDisplay: LevelDisplay
+  /**
+   * The pairing this template is designed around. Applied when a CV is created
+   * from the template; the user can still change it afterwards.
+   */
+  defaultFontPairId?: string
   /** Token overrides layered on top of the neutral defaults. */
   tokens?: Partial<ThemeTokenValues>
   /** For sidebar shells: which sections live in the sidebar. */

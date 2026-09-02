@@ -110,3 +110,21 @@ describe('class contract additions', () => {
     expect(readPublic('/cv/base.css')).toContain('.cv-entry__contact')
   })
 })
+
+describe('font registry and faces agree', () => {
+  it('declares a face for every family a pairing names', async () => {
+    const { FONT_PAIRS } = await import('@/lib/theme/fonts')
+    const css = readPublic('/cv/fonts.css')
+
+    for (const pair of FONT_PAIRS) {
+      for (const stack of [pair.head, pair.body]) {
+        const family = stack.match(/^'([^']+)'/)?.[1]
+        if (!family) continue
+        expect(
+          css,
+          `${family} is used by pairing "${pair.id}" but has no @font-face; it would fall back silently in the PDF`,
+        ).toContain(`font-family: '${family}'`)
+      }
+    }
+  })
+})

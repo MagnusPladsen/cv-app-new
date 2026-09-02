@@ -88,3 +88,18 @@ describe('the template set', () => {
     expect(TEMPLATES.some((t) => t.levelDisplay === 'text')).toBe(true)
   })
 })
+
+describe('template font pairings', () => {
+  it('names only registered pairings', async () => {
+    const { FONT_PAIRS } = await import('@/lib/theme/fonts')
+    const ids = FONT_PAIRS.map((pair) => pair.id)
+
+    for (const template of TEMPLATES) {
+      if (!template.defaultFontPairId) continue
+      expect(
+        ids,
+        `${template.id} names an unregistered pairing`,
+      ).toContain(template.defaultFontPairId)
+    }
+  })
+})

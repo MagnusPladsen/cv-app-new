@@ -1,0 +1,228 @@
+/* CV document styles. Loaded by the preview and by the print iframe.
+   All layout is in mm or pt so the screen and the printed page agree.
+   Custom properties are supplied inline by <CvDocument>. */
+
+.cv-doc {
+  box-sizing: border-box;
+  width: var(--cv-page-width);
+  min-height: var(--cv-page-height);
+  padding: var(--cv-margin);
+  margin: 0;
+  background: var(--cv-surface);
+  color: var(--cv-ink);
+  font-family: var(--cv-font-body);
+  font-size: calc(9.8pt * var(--cv-scale));
+  line-height: 1.45;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.cv-doc * {
+  box-sizing: border-box;
+}
+
+.cv-doc p,
+.cv-doc ul,
+.cv-doc h1,
+.cv-doc h2,
+.cv-doc h3 {
+  margin: 0;
+  padding: 0;
+}
+
+.cv-doc ul {
+  list-style: none;
+}
+
+/* Personalia */
+
+.cv-header {
+  display: flex;
+  gap: calc(6mm * var(--cv-scale));
+  align-items: center;
+  margin-bottom: calc(7mm * var(--cv-scale));
+}
+
+.cv-header__body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.cv-header__name {
+  font-family: var(--cv-font-head);
+  font-size: calc(21pt * var(--cv-scale));
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.cv-header__title {
+  margin-top: calc(1.5mm * var(--cv-scale));
+  font-size: calc(11pt * var(--cv-scale));
+  color: var(--cv-accent);
+  font-weight: 600;
+}
+
+.cv-header__contact {
+  margin-top: calc(2.5mm * var(--cv-scale));
+  color: var(--cv-muted);
+  font-size: calc(8.8pt * var(--cv-scale));
+}
+
+.cv-header__photo {
+  flex: 0 0 auto;
+  width: calc(26mm * var(--cv-scale));
+  height: calc(26mm * var(--cv-scale));
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.cv-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(1mm * var(--cv-scale)) calc(4mm * var(--cv-scale));
+  margin-top: calc(2mm * var(--cv-scale));
+  font-size: calc(8.8pt * var(--cv-scale));
+}
+
+.cv-links__item {
+  color: var(--cv-accent);
+  text-decoration: none;
+}
+
+/* Sections */
+
+.cv-section {
+  margin-bottom: calc(6mm * var(--cv-scale));
+}
+
+.cv-section__title {
+  font-family: var(--cv-font-head);
+  font-size: calc(10.5pt * var(--cv-scale));
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cv-accent);
+  padding-bottom: calc(1.2mm * var(--cv-scale));
+  border-bottom: 0.35mm solid var(--cv-rule);
+  margin-bottom: calc(3mm * var(--cv-scale));
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+.cv-section__body {
+  display: block;
+}
+
+/* Timeline entries */
+
+.cv-entry {
+  margin-bottom: calc(4mm * var(--cv-scale));
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.cv-entry:last-child {
+  margin-bottom: 0;
+}
+
+.cv-entry__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: calc(4mm * var(--cv-scale));
+}
+
+.cv-entry__role {
+  font-weight: 700;
+  font-size: calc(10.5pt * var(--cv-scale));
+}
+
+.cv-entry__org {
+  color: var(--cv-muted);
+  font-size: calc(9.4pt * var(--cv-scale));
+}
+
+.cv-entry__dates,
+.cv-entry__location {
+  flex: 0 0 auto;
+  color: var(--cv-muted);
+  font-size: calc(8.8pt * var(--cv-scale));
+  white-space: nowrap;
+}
+
+.cv-bullets {
+  margin-top: calc(1.5mm * var(--cv-scale));
+  padding-left: calc(4.5mm * var(--cv-scale));
+}
+
+.cv-bullets li {
+  position: relative;
+  margin-bottom: calc(0.8mm * var(--cv-scale));
+}
+
+.cv-bullets li::before {
+  content: '\2022';
+  position: absolute;
+  left: calc(-3.5mm * var(--cv-scale));
+  color: var(--cv-accent);
+}
+
+.cv-prose {
+  margin-top: calc(1.5mm * var(--cv-scale));
+  white-space: pre-line;
+}
+
+/* Skills, languages and other item lists */
+
+.cv-items {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: calc(1.6mm * var(--cv-scale)) calc(6mm * var(--cv-scale));
+}
+
+.cv-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(3mm * var(--cv-scale));
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.cv-item__name {
+  min-width: 0;
+}
+
+.cv-item__level {
+  flex: 0 0 auto;
+  color: var(--cv-muted);
+  font-size: calc(8.6pt * var(--cv-scale));
+  white-space: nowrap;
+}
+
+.cv-bar {
+  flex: 0 0 auto;
+  width: calc(22mm * var(--cv-scale));
+  height: calc(1.6mm * var(--cv-scale));
+  border-radius: 1mm;
+  background: var(--cv-rule);
+  overflow: hidden;
+}
+
+.cv-bar__fill {
+  display: block;
+  height: 100%;
+  border-radius: 1mm;
+  background: var(--cv-accent);
+}
+
+.cv-inline-list {
+  display: block;
+}
+
+@media print {
+  .cv-doc {
+    min-height: 0;
+  }
+}

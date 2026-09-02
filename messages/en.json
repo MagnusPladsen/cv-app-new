@@ -123,5 +123,11 @@
     "densityRoomy": "Roomy",
     "paper": "Paper",
     "contrastWarning": "This colour has low contrast against white and may be hard to read in print."
+  },
+  "gallery": {
+    "title": "Choose a template",
+    "subtitle": "You can switch template at any time without losing your content.",
+    "choose": "Use this one",
+    "back": "Back to my CVs"
   }
 }

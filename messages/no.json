@@ -123,5 +123,11 @@
     "densityRoomy": "Luftig",
     "paper": "Papir",
     "contrastWarning": "Denne fargen har lav kontrast mot hvitt og kan bli vanskelig å lese på papir."
+  },
+  "gallery": {
+    "title": "Velg en mal",
+    "subtitle": "Du kan bytte mal når som helst uten å miste innholdet.",
+    "choose": "Bruk denne",
+    "back": "Tilbake til mine CV-er"
   }
 }

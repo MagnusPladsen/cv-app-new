@@ -13,6 +13,9 @@
   font-family: var(--cv-font-body);
   font-size: calc(9.8pt * var(--cv-scale));
   line-height: 1.45;
+  /* Explicit, never inherited: a host element such as a <button> centres its
+     text by default, which silently wrecks the whole document. */
+  text-align: left;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }

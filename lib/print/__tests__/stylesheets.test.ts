@@ -128,3 +128,11 @@ describe('font registry and faces agree', () => {
     }
   })
 })
+
+describe('base stylesheet robustness', () => {
+  it('sets text alignment explicitly rather than inheriting it', () => {
+    // A gallery thumbnail is wrapped in a <button>, which centres its text by
+    // default; without this every line of the CV is centred.
+    expect(readPublic('/cv/base.css')).toContain('text-align: left')
+  })
+})

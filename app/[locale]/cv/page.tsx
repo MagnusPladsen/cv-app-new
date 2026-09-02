@@ -2,7 +2,6 @@
 
 import { useTranslations } from 'next-intl'
 
-import { DEFAULT_TEMPLATE_ID, getTemplate } from '@/components/cv/templates'
 import { BackupControls } from '@/components/dashboard/BackupControls'
 import { CvCard } from '@/components/dashboard/CvCard'
 import { useRouter } from '@/i18n/navigation'
@@ -36,16 +35,9 @@ export default function DashboardPage() {
   const deleteDocument = useDocuments((state) => state.deleteDocument)
   const importDocument = useDocuments((state) => state.importDocument)
 
+  // Template first: choosing a look is step one, then the editor.
   function handleCreate() {
-    // Start from the template's own accent rather than a hardcoded default, so
-    // a new CV looks the way that template is meant to look.
-    const template = getTemplate(DEFAULT_TEMPLATE_ID)
-    const id = createDocument({
-      templateId: template.id,
-      accent: template.defaultAccent,
-      fontPairId: template.defaultFontPairId,
-    })
-    router.push(`/cv/${id}`)
+    router.push('/templates')
   }
 
   function handleDuplicate(id: string) {

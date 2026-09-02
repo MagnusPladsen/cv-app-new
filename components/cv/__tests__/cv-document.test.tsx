@@ -181,3 +181,19 @@ describe('template accents', () => {
     }
   })
 })
+
+describe('template scoping', () => {
+  it('adds a template class so its stylesheet has something to scope to', () => {
+    const doc = fixture()
+    doc.theme = { ...doc.theme, templateId: 'oslo' }
+    const { container } = render(<CvDocument document={doc} />)
+    expect(container.querySelector('.cv-doc')).toHaveClass('cv-doc--oslo')
+  })
+
+  it('keeps a caller-supplied className alongside it', () => {
+    const { container } = render(<CvDocument className="extra" document={fixture()} />)
+    const root = container.querySelector('.cv-doc')!
+    expect(root).toHaveClass('cv-doc--oslo')
+    expect(root).toHaveClass('extra')
+  })
+})

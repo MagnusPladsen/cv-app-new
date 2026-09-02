@@ -1,0 +1,57 @@
+/* Kompakt - dense single column. */
+
+.cv-doc--kompakt {
+  font-size: calc(9.2pt * var(--cv-scale));
+  line-height: 1.35;
+}
+
+.cv-doc--kompakt .cv-header {
+  margin-bottom: calc(5mm * var(--cv-scale));
+}
+
+.cv-doc--kompakt .cv-header__name {
+  font-size: calc(18pt * var(--cv-scale));
+}
+
+.cv-doc--kompakt .cv-section {
+  margin-bottom: calc(4mm * var(--cv-scale));
+}
+
+.cv-doc--kompakt .cv-section__title {
+  font-size: calc(9pt * var(--cv-scale));
+  padding-bottom: calc(0.8mm * var(--cv-scale));
+  margin-bottom: calc(2mm * var(--cv-scale));
+}
+
+.cv-doc--kompakt .cv-entry {
+  margin-bottom: calc(2.6mm * var(--cv-scale));
+}
+
+/* Role and organisation share one line to save a whole line per entry. */
+.cv-doc--kompakt .cv-entry__head > div:first-child {
+  display: flex;
+  align-items: baseline;
+  gap: calc(2mm * var(--cv-scale));
+}
+
+.cv-doc--kompakt .cv-entry__role {
+  font-size: calc(9.8pt * var(--cv-scale));
+}
+
+.cv-doc--kompakt .cv-entry__org::before {
+  content: '·';
+  margin-right: calc(1.5mm * var(--cv-scale));
+}
+
+.cv-doc--kompakt .cv-bullets {
+  margin-top: calc(0.8mm * var(--cv-scale));
+}
+
+.cv-doc--kompakt .cv-bullets li {
+  margin-bottom: calc(0.3mm * var(--cv-scale));
+}
+
+.cv-doc--kompakt .cv-items {
+  grid-template-columns: repeat(3, 1fr);
+  gap: calc(1mm * var(--cv-scale)) calc(4mm * var(--cv-scale));
+}

@@ -246,3 +246,25 @@ describe('custom sections', () => {
     expect(container).toBeEmptyDOMElement()
   })
 })
+
+describe('reference contact line', () => {
+  it('uses a distinct class from the organisation line', () => {
+    const { container } = draw({
+      id: 's',
+      type: 'references',
+      enabled: true,
+      entries: [
+        {
+          id: 'r1',
+          name: 'Kari Nordmann',
+          role: 'Teamleder',
+          organisation: 'Acme AS',
+          email: 'kari@acme.no',
+          phone: '+47 900 00 000',
+        },
+      ],
+    })
+    expect(container.querySelector('.cv-entry__contact')).toHaveTextContent('kari@acme.no')
+    expect(container.querySelector('.cv-entry__org')).toHaveTextContent('Teamleder')
+  })
+})

@@ -3,7 +3,7 @@ import { TEMPLATES } from '@/components/cv/templates'
 import { mmToPx, PAPER } from '@/lib/print/paper'
 import { createDemoDocument } from '@/lib/schema/demo'
 
-const SCALE = 0.45
+const SCALE = 0.3
 
 /**
  * Template proof sheet: every registered template rendering the same realistic

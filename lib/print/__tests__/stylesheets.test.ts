@@ -104,3 +104,9 @@ describe('template stylesheets', () => {
     }
   })
 })
+
+describe('class contract additions', () => {
+  it('defines the reference contact class the renderers use', () => {
+    expect(readPublic('/cv/base.css')).toContain('.cv-entry__contact')
+  })
+})

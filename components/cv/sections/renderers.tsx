@@ -158,7 +158,10 @@ export const SECTION_RENDERERS: Record<SectionType, SectionRenderer> = {
             <div className="cv-entry__org">
               {[entry.role, entry.organisation].filter(Boolean).join(' · ')}
             </div>
-            <div className="cv-entry__org">
+            {/* A distinct class: an email is not an organisation name, and
+                templates that style organisations (small caps, say) must not
+                mangle it. */}
+            <div className="cv-entry__contact">
               {[entry.email, entry.phone].filter(Boolean).join(' · ')}
             </div>
           </article>

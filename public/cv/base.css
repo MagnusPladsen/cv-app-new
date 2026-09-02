@@ -143,6 +143,11 @@
   font-size: calc(9.4pt * var(--cv-scale));
 }
 
+.cv-entry__contact {
+  color: var(--cv-muted);
+  font-size: calc(9pt * var(--cv-scale));
+}
+
 .cv-entry__dates,
 .cv-entry__location {
   flex: 0 0 auto;

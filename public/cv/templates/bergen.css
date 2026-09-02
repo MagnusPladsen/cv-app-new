@@ -1,0 +1,35 @@
+/* Bergen - modern single column. */
+
+.cv-doc--bergen .cv-header__name {
+  font-size: calc(25pt * var(--cv-scale));
+  letter-spacing: -0.025em;
+}
+
+.cv-doc--bergen .cv-header {
+  padding-bottom: calc(5mm * var(--cv-scale));
+  border-bottom: 0.6mm solid var(--cv-accent);
+  margin-bottom: calc(8mm * var(--cv-scale));
+}
+
+.cv-doc--bergen .cv-section {
+  margin-bottom: calc(7.5mm * var(--cv-scale));
+}
+
+/* The rule leads the title rather than underlining it. */
+.cv-doc--bergen .cv-section__title {
+  border-bottom: 0;
+  padding-bottom: 0;
+  padding-left: calc(3.5mm * var(--cv-scale));
+  border-left: 1.2mm solid var(--cv-accent);
+  letter-spacing: 0.12em;
+  margin-bottom: calc(3.5mm * var(--cv-scale));
+}
+
+.cv-doc--bergen .cv-entry {
+  margin-bottom: calc(5mm * var(--cv-scale));
+}
+
+.cv-doc--bergen .cv-entry__org {
+  font-variant: small-caps;
+  letter-spacing: 0.03em;
+}

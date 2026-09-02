@@ -56,9 +56,14 @@ export function CvDocument({
   const sections = split.main.map(render)
   const sidebar = split.sidebar.map(render)
 
+  // The template class is what public/cv/templates/<id>.css scopes to.
+  const classNames = [CV_DOC_CLASS, `${CV_DOC_CLASS}--${template.id}`, className]
+    .filter(Boolean)
+    .join(' ')
+
   return (
     <div
-      className={className ? `${CV_DOC_CLASS} ${className}` : CV_DOC_CLASS}
+      className={classNames}
       style={style}
       lang={document.language}
     >

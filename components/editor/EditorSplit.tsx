@@ -4,11 +4,13 @@ import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 
 import { getCvLabels } from '@/lib/cv-labels'
+import { useDocumentsTemporal } from '@/lib/store/documents'
 import type { DocumentEditorHandlers } from '@/lib/hooks/use-document-editor'
 import { DESKTOP_QUERY, useMediaQuery } from '@/lib/hooks/use-media-query'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { DesignPanel } from './DesignPanel'
 import { ExportButton } from './ExportButton'
+import { HistoryControls } from './HistoryControls'
 import { PersonaliaForm } from './PersonaliaForm'
 import { PhotoField } from './PhotoField'
 import { PreviewPane } from './PreviewPane'
@@ -32,6 +34,11 @@ export function EditorSplit({
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
   const [sheetOpen, setSheetOpen] = useState(false)
 
+  const undo = useDocumentsTemporal((state) => state.undo)
+  const redo = useDocumentsTemporal((state) => state.redo)
+  const canUndo = useDocumentsTemporal((state) => state.pastStates.length > 0)
+  const canRedo = useDocumentsTemporal((state) => state.futureStates.length > 0)
+
   const getNode = () => previewRef.current?.querySelector<HTMLElement>('.cv-doc') ?? null
 
   const labels = getCvLabels(document.language)
@@ -40,7 +47,13 @@ export function EditorSplit({
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
       <div className="flex flex-col gap-8">
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between gap-3">
+          <HistoryControls
+            canRedo={canRedo}
+            canUndo={canUndo}
+            onRedo={() => redo()}
+            onUndo={() => undo()}
+          />
           <ExportButton document={document} getNode={getNode} />
         </div>
 

@@ -69,6 +69,7 @@ describe('cvDocumentSchema', () => {
   })
 
   it('requires personalia to declare photo visibility', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- destructured to omit
     const { showPhoto, ...personaliaWithoutFlag } = validDocument.personalia
     const result = cvDocumentSchema.safeParse({
       ...validDocument,

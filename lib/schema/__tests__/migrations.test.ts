@@ -18,6 +18,7 @@ describe('migrateDocument', () => {
   })
 
   it('throws when schemaVersion is missing', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars -- destructured to omit
     const { schemaVersion, ...withoutVersion } = fixture()
     expect(() => migrateDocument(withoutVersion)).toThrowError(SchemaError)
     try {

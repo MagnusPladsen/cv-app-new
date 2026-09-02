@@ -26,7 +26,8 @@
     "exportHintMobile": "Velg «Skriv ut» og deretter «Lagre som PDF» i dialogen som åpnes.",
     "undo": "Angre",
     "redo": "Gjør om",
-    "pageCount": "{count, plural, one {# side} other {# sider}}"
+    "pageCount": "{count, plural, one {# side} other {# sider}}",
+    "closePreview": "Lukk"
   },
   "personalia": {
     "title": "Personalia",

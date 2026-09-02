@@ -26,7 +26,8 @@
     "exportHintMobile": "Choose Print, then Save as PDF in the dialog that opens.",
     "undo": "Undo",
     "redo": "Redo",
-    "pageCount": "{count, plural, one {# page} other {# pages}}"
+    "pageCount": "{count, plural, one {# page} other {# pages}}",
+    "closePreview": "Close"
   },
   "personalia": {
     "title": "Personal details",

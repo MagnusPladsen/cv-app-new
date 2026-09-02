@@ -69,5 +69,12 @@
     "moveUp": "Move up",
     "moveDown": "Move down",
     "reorder": "Reorder"
+  },
+  "items": {
+    "add": "Add",
+    "remove": "Remove",
+    "name": "Name",
+    "level": "Level",
+    "noLevel": "None"
   }
 }

@@ -26,6 +26,9 @@ function handlers() {
     onUpdateEntry: vi.fn(),
     onRemoveEntry: vi.fn(),
     onMoveEntry: vi.fn(),
+    onAddItem: vi.fn(),
+    onUpdateItem: vi.fn(),
+    onRemoveItem: vi.fn(),
   }
 }
 

@@ -69,5 +69,12 @@
     "moveUp": "Flytt opp",
     "moveDown": "Flytt ned",
     "reorder": "Endre rekkefølge"
+  },
+  "items": {
+    "add": "Legg til",
+    "remove": "Fjern",
+    "name": "Navn",
+    "level": "Nivå",
+    "noLevel": "Ingen"
   }
 }

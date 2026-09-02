@@ -2,9 +2,10 @@
 
 import { sectionTitle } from '@/components/cv/sections'
 import type { CvLabels } from '@/lib/cv-labels'
-import type { Section, TimelineEntry } from '@/lib/schema/cv'
+import type { LanguageItem, Section, SkillItem, TimelineEntry } from '@/lib/schema/cv'
 import { CustomTextForm } from './forms/CustomTextForm'
 import { StringListForm } from './forms/StringListForm'
+import { LeveledItemsForm } from './forms/LeveledItemsForm'
 import { SummaryForm } from './forms/SummaryForm'
 import { TimelineForm } from './forms/TimelineForm'
 
@@ -16,6 +17,13 @@ export type SectionEditorHandlers = {
   onUpdateEntry: (sectionId: string, entryId: string, patch: Partial<TimelineEntry>) => void
   onRemoveEntry: (sectionId: string, entryId: string) => void
   onMoveEntry: (sectionId: string, from: number, to: number) => void
+  onAddItem: (sectionId: string) => void
+  onUpdateItem: (
+    sectionId: string,
+    itemId: string,
+    patch: Partial<SkillItem> | Partial<LanguageItem>,
+  ) => void
+  onRemoveItem: (sectionId: string, itemId: string) => void
 }
 
 /**
@@ -56,6 +64,21 @@ export function SectionEditor({
           onMoveEntry={handlers.onMoveEntry}
           onRemoveEntry={handlers.onRemoveEntry}
           onUpdateEntry={handlers.onUpdateEntry}
+          sectionId={section.id}
+          title={title}
+        />
+      )
+
+    case 'skills':
+    case 'languages':
+      return (
+        <LeveledItemsForm
+          items={section.items}
+          kind={section.type}
+          labels={labels}
+          onAddItem={handlers.onAddItem}
+          onRemoveItem={handlers.onRemoveItem}
+          onUpdateItem={handlers.onUpdateItem}
           sectionId={section.id}
           title={title}
         />

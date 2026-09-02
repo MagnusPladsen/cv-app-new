@@ -226,3 +226,57 @@
     min-height: 0;
   }
 }
+
+/* Layout shells */
+
+.cv-shell--sidebar {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(7mm * var(--cv-scale));
+}
+
+.cv-shell__aside {
+  flex: 0 0 auto;
+  width: calc(52mm * var(--cv-scale));
+}
+
+.cv-shell__main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* A one-column grid keeps sidebar items readable in a narrow column. */
+.cv-shell__aside .cv-items {
+  grid-template-columns: 1fr;
+}
+
+.cv-shell__aside .cv-item {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(0.8mm * var(--cv-scale));
+}
+
+.cv-shell__aside .cv-bar {
+  width: 100%;
+}
+
+/* Header band */
+
+.cv-band {
+  /* Full-bleed: cancels the page padding so the band meets the paper edge. */
+  margin: calc(-1 * var(--cv-margin)) calc(-1 * var(--cv-margin)) calc(8mm * var(--cv-scale));
+  padding: calc(11mm * var(--cv-scale)) var(--cv-margin);
+  background: var(--cv-accent);
+  color: var(--cv-accent-ink);
+}
+
+.cv-band .cv-header {
+  margin-bottom: 0;
+}
+
+.cv-band .cv-header__name,
+.cv-band .cv-header__title,
+.cv-band .cv-header__contact,
+.cv-band .cv-links__item {
+  color: var(--cv-accent-ink);
+}

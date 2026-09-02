@@ -1,10 +1,14 @@
 import { Fragment } from 'react'
 import { getCvLabels } from '@/lib/cv-labels'
 import { DEFAULT_MARGIN_MM, PAPER } from '@/lib/print/paper'
-import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
+import type { CvDocument as CvDocumentData, Section } from '@/lib/schema/cv'
 import { buildThemeTokens, themeTokensToStyle, type CvThemeStyle } from '@/lib/theme/tokens'
 import { PersonaliaHeader } from './PersonaliaHeader'
 import { renderSection } from './sections'
+import { splitSections } from './split-sections'
+import { HeaderBand } from './shells/HeaderBand'
+import { SidebarLeft } from './shells/SidebarLeft'
+import { SidebarRight } from './shells/SidebarRight'
 import { SingleColumn } from './shells/SingleColumn'
 import { getTemplate } from './templates'
 import type { RenderContext, ShellId } from './types'
@@ -13,11 +17,9 @@ export const CV_DOC_CLASS = 'cv-doc'
 
 const SHELLS: Record<ShellId, typeof SingleColumn> = {
   single: SingleColumn,
-  // Plan 2 adds the sidebar and header-band shells; until then every template
-  // falls back to the single column so the app never renders a blank page.
-  'sidebar-left': SingleColumn,
-  'sidebar-right': SingleColumn,
-  'header-band': SingleColumn,
+  'sidebar-left': SidebarLeft,
+  'sidebar-right': SidebarRight,
+  'header-band': HeaderBand,
 }
 
 export function CvDocument({
@@ -45,11 +47,14 @@ export function CvDocument({
 
   const Shell = SHELLS[template.shell]
 
-  const sections = document.sections
-    .filter((section) => section.enabled)
-    .map((section) => (
-      <Fragment key={section.id}>{renderSection(section, context, template.overrides)}</Fragment>
-    ))
+  const split = splitSections(document.sections, template.sidebarSections)
+
+  const render = (section: Section) => (
+    <Fragment key={section.id}>{renderSection(section, context, template.overrides)}</Fragment>
+  )
+
+  const sections = split.main.map(render)
+  const sidebar = split.sidebar.map(render)
 
   return (
     <div
@@ -57,7 +62,11 @@ export function CvDocument({
       style={style}
       lang={document.language}
     >
-      <Shell header={<PersonaliaHeader personalia={document.personalia} />} sections={sections} />
+      <Shell
+        header={<PersonaliaHeader personalia={document.personalia} />}
+        sections={sections}
+        sidebar={sidebar}
+      />
     </div>
   )
 }

@@ -38,21 +38,6 @@
     "city": "Sted",
     "country": "Land"
   },
-  "experience": {
-    "title": "Arbeidserfaring",
-    "add": "Legg til stilling",
-    "remove": "Fjern",
-    "role": "Rolle",
-    "organisation": "Arbeidsgiver",
-    "location": "Sted",
-    "from": "Fra",
-    "to": "Til",
-    "current": "Jobber her nå",
-    "description": "Beskrivelse",
-    "descriptionHint": "Én linje per punkt. Anbefalt, men valgfritt.",
-    "modeBullets": "Punkter",
-    "modeProse": "Løpende tekst"
-  },
   "sections": {
     "title": "Seksjoner",
     "addCustom": "Legg til egen seksjon",
@@ -66,5 +51,23 @@
   "forms": {
     "onePerLine": "Én per linje.",
     "summaryHint": "To til fire setninger om hvem du er og hva du er god til."
+  },
+  "timeline": {
+    "title": "Arbeidserfaring",
+    "add": "Legg til stilling",
+    "remove": "Fjern",
+    "role": "Rolle",
+    "organisation": "Arbeidsgiver",
+    "location": "Sted",
+    "from": "Fra",
+    "to": "Til",
+    "current": "Jobber her nå",
+    "description": "Beskrivelse",
+    "descriptionHint": "Én linje per punkt. Anbefalt, men valgfritt.",
+    "modeBullets": "Punkter",
+    "modeProse": "Løpende tekst",
+    "moveUp": "Flytt opp",
+    "moveDown": "Flytt ned",
+    "reorder": "Endre rekkefølge"
   }
 }

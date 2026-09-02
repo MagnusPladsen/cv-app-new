@@ -38,21 +38,6 @@
     "city": "City",
     "country": "Country"
   },
-  "experience": {
-    "title": "Work Experience",
-    "add": "Add position",
-    "remove": "Remove",
-    "role": "Role",
-    "organisation": "Employer",
-    "location": "Location",
-    "from": "From",
-    "to": "To",
-    "current": "I work here now",
-    "description": "Description",
-    "descriptionHint": "One line per bullet. Recommended, but optional.",
-    "modeBullets": "Bullets",
-    "modeProse": "Prose"
-  },
   "sections": {
     "title": "Sections",
     "addCustom": "Add custom section",
@@ -66,5 +51,23 @@
   "forms": {
     "onePerLine": "One per line.",
     "summaryHint": "Two to four sentences on who you are and what you are good at."
+  },
+  "timeline": {
+    "title": "Work Experience",
+    "add": "Add position",
+    "remove": "Remove",
+    "role": "Role",
+    "organisation": "Employer",
+    "location": "Location",
+    "from": "From",
+    "to": "To",
+    "current": "I work here now",
+    "description": "Description",
+    "descriptionHint": "One line per bullet. Recommended, but optional.",
+    "modeBullets": "Bullets",
+    "modeProse": "Prose",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "reorder": "Reorder"
   }
 }

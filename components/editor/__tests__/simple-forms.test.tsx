@@ -22,6 +22,10 @@ function handlers() {
     onSummaryChange: vi.fn(),
     onStringListChange: vi.fn(),
     onCustomTextChange: vi.fn(),
+    onAddEntry: vi.fn(),
+    onUpdateEntry: vi.fn(),
+    onRemoveEntry: vi.fn(),
+    onMoveEntry: vi.fn(),
   }
 }
 
@@ -47,9 +51,8 @@ function Live({
       section={section}
       labels={getCvLabels('no')}
       handlers={{
-        onSummaryChange: vi.fn(),
-        onCustomTextChange: vi.fn(),
-        onStringListChange: (_id, values) => {
+        ...handlers(),
+        onStringListChange: (_id: string, values: string[]) => {
           onValues(values)
           setSection((current) =>
             current.type === 'interests'
@@ -154,7 +157,7 @@ describe('custom sections', () => {
     const { container } = render(
       <NextIntlClientProvider locale="no" messages={messages}>
         <SectionEditor
-          section={{ id: 's', type: 'experience', enabled: true, entries: [] }}
+          section={{ id: 's', type: 'certifications', enabled: true, entries: [] }}
           labels={getCvLabels('no')}
           handlers={handlers()}
         />

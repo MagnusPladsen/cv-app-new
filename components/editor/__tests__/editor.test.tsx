@@ -57,10 +57,6 @@ describe('PersonaliaForm', () => {
 
 const splitHandlers = {
   onPersonaliaChange: vi.fn(),
-  experienceEntries: [],
-  onAddEntry: vi.fn(),
-  onUpdateEntry: vi.fn(),
-  onRemoveEntry: vi.fn(),
 }
 
 describe('EditorSplit', () => {

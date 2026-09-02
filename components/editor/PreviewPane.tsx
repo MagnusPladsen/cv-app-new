@@ -4,7 +4,8 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState, type RefObject } from 'react'
 
 import { CvDocument } from '@/components/cv/CvDocument'
-import { PAPER, countPages, mmToPx, pxToMm } from '@/lib/print/paper'
+import { contentHeightMm } from '@/lib/print/measure'
+import { PAPER, countPages, mmToPx } from '@/lib/print/paper'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { PageGuides } from './PageGuides'
 
@@ -14,6 +15,9 @@ import { PageGuides } from './PageGuides'
  * markup the print pipeline clones is unscaled — and so the height measured
  * for the page guides is the real printed height.
  */
+/** Matches the p-4 on the scroll frame. */
+const PREVIEW_PADDING_PX = 16
+
 export function PreviewPane({
   document,
   containerRef,
@@ -24,7 +28,7 @@ export function PreviewPane({
   const t = useTranslations('editor')
   const frameRef = useRef<HTMLDivElement | null>(null)
   const [scale, setScale] = useState(1)
-  const [contentHeightMm, setContentHeightMm] = useState(0)
+  const [contentMm, setContentMm] = useState(0)
 
   const pageWidthPx = mmToPx(PAPER[document.paper].widthMm)
   const pageHeightPx = mmToPx(PAPER[document.paper].heightMm)
@@ -34,13 +38,14 @@ export function PreviewPane({
     if (!frame || typeof ResizeObserver === 'undefined') return
 
     const measure = () => {
-      const available = frame.clientWidth
+      // The frame is padded, so subtract it or the page overflows its container.
+      const available = frame.clientWidth - PREVIEW_PADDING_PX * 2
       if (available > 0) setScale(Math.min(1, available / pageWidthPx))
 
       const doc = containerRef.current?.querySelector<HTMLElement>('.cv-doc')
-      // offsetHeight ignores the wrapper's transform, so this is the real
-      // unscaled document height.
-      if (doc) setContentHeightMm(pxToMm(doc.offsetHeight))
+      // Measured from the content box: .cv-doc carries the page padding and a
+      // full-page min-height, so its raw height is the paper height.
+      if (doc) setContentMm(contentHeightMm(doc, getComputedStyle(doc)))
     }
 
     measure()
@@ -53,8 +58,8 @@ export function PreviewPane({
     return () => observer.disconnect()
   }, [containerRef, pageWidthPx, document])
 
-  const pages = countPages(contentHeightMm, document.paper)
-  const renderedHeightPx = Math.max(pageHeightPx, mmToPx(contentHeightMm))
+  const pages = countPages(contentMm, document.paper)
+  const renderedHeightPx = Math.max(pageHeightPx, mmToPx(contentMm))
 
   return (
     <div className="flex flex-col gap-2">
@@ -64,7 +69,7 @@ export function PreviewPane({
         </span>
       </div>
 
-      <div className="w-full overflow-auto" ref={frameRef}>
+      <div className="w-full overflow-auto rounded-2xl bg-neutral-200/60 p-4" ref={frameRef}>
         <div style={{ height: renderedHeightPx * scale, width: pageWidthPx * scale }}>
           <div
             className="relative origin-top-left shadow-[0_10px_40px_-12px_rgb(0_0_0/0.25)]"
@@ -72,7 +77,7 @@ export function PreviewPane({
             style={{ transform: `scale(${scale})`, width: pageWidthPx }}
           >
             <CvDocument document={document} />
-            <PageGuides contentHeightMm={contentHeightMm} paper={document.paper} />
+            <PageGuides contentHeightMm={contentMm} paper={document.paper} />
           </div>
         </div>
       </div>

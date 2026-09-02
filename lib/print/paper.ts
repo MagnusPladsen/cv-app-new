@@ -10,8 +10,15 @@ export const DEFAULT_MARGIN_MM = 16
 const MM_PER_INCH = 25.4
 const CSS_PX_PER_INCH = 96
 
-/** Guards against float noise making a perfectly-filled page count as two. */
-const EPSILON_MM = 0.01
+/**
+ * Absorbs measurement noise so a perfectly filled page never counts as two.
+ *
+ * Browsers report scrollHeight as a whole number of pixels, so a 297mm page
+ * measures 1123px rather than 1122.52px - an overshoot of ~0.13mm. One CSS
+ * pixel of slack covers that, and is two orders of magnitude smaller than a
+ * line of text, so a genuine overflow still counts.
+ */
+const EPSILON_MM = 0.27
 
 export function mmToPx(mm: number): number {
   return (mm / MM_PER_INCH) * CSS_PX_PER_INCH

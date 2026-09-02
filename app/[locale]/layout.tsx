@@ -8,7 +8,9 @@ import { routing } from '@/i18n/routing'
 import { CV_STYLESHEETS } from '@/lib/print/stylesheets'
 import '../globals.css'
 
-const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
+// shadcn's globals.css maps Tailwind's font-sans to --font-sans, so the
+// next/font variable must use that exact name or body text falls back to serif.
+const geistSans = Geist({ variable: '--font-sans', subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'CVApp',

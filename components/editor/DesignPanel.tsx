@@ -15,6 +15,10 @@ const DENSITIES: Density[] = ['compact', 'normal', 'roomy']
 /** WCAG AA for normal text. Below this the accent is unreadable on white paper. */
 const MIN_ACCENT_CONTRAST = 4.5
 
+/**
+ * Collapsed by default: the editor should open on your content, not on styling
+ * controls. The fields stay in the DOM while closed, so they remain findable.
+ */
 export function DesignPanel({
   theme,
   paper,
@@ -31,63 +35,65 @@ export function DesignPanel({
   const lowContrast = contrastRatio(theme.accent, '#ffffff') < MIN_ACCENT_CONTRAST
 
   return (
-    <section className="flex flex-col gap-4 rounded-2xl border border-neutral-200 p-4">
-      <h2 className="text-sm font-semibold tracking-wide text-neutral-500 uppercase">
+    <details className="rounded-2xl border border-neutral-200 px-4 py-3">
+      <summary className="cursor-pointer text-sm font-semibold tracking-wide text-neutral-500 uppercase">
         {t('title')}
-      </h2>
+      </summary>
 
-      <SelectField
-        label={t('template')}
-        onChange={(templateId) => onThemeChange({ templateId })}
-        options={TEMPLATES.map((candidate) => ({
-          value: candidate.id,
-          label: candidate.name,
-        }))}
-        value={theme.templateId}
-      />
+      <div className="mt-4 flex flex-col gap-4">
+        <SelectField
+          label={t('template')}
+          onChange={(templateId) => onThemeChange({ templateId })}
+          options={TEMPLATES.map((candidate) => ({
+            value: candidate.id,
+            label: candidate.name,
+          }))}
+          value={theme.templateId}
+        />
 
-      <ColourPicker
-        customLabel={t('custom')}
-        label={t('accent')}
-        onChange={(accent) => onThemeChange({ accent })}
-        swatches={template.swatches}
-        value={theme.accent}
-      />
+        <ColourPicker
+          customLabel={t('custom')}
+          label={t('accent')}
+          onChange={(accent) => onThemeChange({ accent })}
+          swatches={template.swatches}
+          value={theme.accent}
+        />
 
-      {lowContrast ? <p className="text-xs text-amber-700">{t('contrastWarning')}</p> : null}
+        {lowContrast ? <p className="text-xs text-amber-700">{t('contrastWarning')}</p> : null}
 
-      <SelectField
-        label={t('font')}
-        onChange={(fontPairId) => onThemeChange({ fontPairId })}
-        options={FONT_PAIRS.map((pair) => ({ value: pair.id, label: pair.name }))}
-        value={theme.fontPairId}
-      />
+        <SelectField
+          label={t('font')}
+          onChange={(fontPairId) => onThemeChange({ fontPairId })}
+          options={FONT_PAIRS.map((pair) => ({ value: pair.id, label: pair.name }))}
+          value={theme.fontPairId}
+        />
 
-      <SelectField
-        label={t('density')}
-        onChange={(density) => onThemeChange({ density: density as Density })}
-        options={DENSITIES.map((density) => ({
-          value: density,
-          label: t(
-            density === 'compact'
-              ? 'densityCompact'
-              : density === 'roomy'
-                ? 'densityRoomy'
-                : 'densityNormal',
-          ),
-        }))}
-        value={theme.density}
-      />
+        <SelectField
+          label={t('density')}
+          onChange={(density) => onThemeChange({ density: density as Density })}
+          options={DENSITIES.map((density) => ({
+            value: density,
+            label: t(
+              density === 'compact'
+                ? 'densityCompact'
+                : density === 'roomy'
+                  ? 'densityRoomy'
+                  : 'densityNormal',
+            ),
+          }))}
+          value={theme.density}
+        />
 
-      <SelectField
-        label={t('paper')}
-        onChange={(value) => onPaperChange(value as PaperId)}
-        options={(Object.keys(PAPER) as PaperId[]).map((id) => ({
-          value: id,
-          label: PAPER[id].cssSize,
-        }))}
-        value={paper}
-      />
-    </section>
+        <SelectField
+          label={t('paper')}
+          onChange={(value) => onPaperChange(value as PaperId)}
+          options={(Object.keys(PAPER) as PaperId[]).map((id) => ({
+            value: id,
+            label: PAPER[id].cssSize,
+          }))}
+          value={paper}
+        />
+      </div>
+    </details>
   )
 }

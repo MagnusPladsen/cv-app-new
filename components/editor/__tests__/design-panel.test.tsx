@@ -116,3 +116,17 @@ describe('DesignPanel', () => {
     ).toBeNull()
   })
 })
+
+describe('DesignPanel disclosure', () => {
+  it('starts collapsed so the editor opens on content, not styling', () => {
+    const { container } = wrap(<DesignPanel {...props()} />)
+    const details = container.querySelector('details')
+    expect(details).not.toBeNull()
+    expect(details).not.toHaveAttribute('open')
+  })
+
+  it('keeps its controls reachable while collapsed', () => {
+    wrap(<DesignPanel {...props()} />)
+    expect(screen.getByLabelText('Mal')).toBeInTheDocument()
+  })
+})

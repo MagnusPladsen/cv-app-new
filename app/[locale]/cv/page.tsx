@@ -2,11 +2,14 @@
 
 import { useTranslations } from 'next-intl'
 
+import { DEFAULT_TEMPLATE_ID, getTemplate } from '@/components/cv/templates'
 import { BackupControls } from '@/components/dashboard/BackupControls'
 import { CvCard } from '@/components/dashboard/CvCard'
 import { useRouter } from '@/i18n/navigation'
 import { useHydrated } from '@/lib/hooks/use-hydrated'
 import { backupFilename, parseBackup, serialiseDocument } from '@/lib/store/backup'
+import { useShallow } from 'zustand/react/shallow'
+
 import { selectOrderedDocuments, useDocuments } from '@/lib/store/documents'
 
 function downloadJson(filename: string, contents: string) {
@@ -23,7 +26,10 @@ export default function DashboardPage() {
   const router = useRouter()
   const hydrated = useHydrated()
 
-  const documents = useDocuments(selectOrderedDocuments)
+  // useShallow keeps the reference stable across renders. selectOrderedDocuments
+  // builds a new array each call, and zustand v5 reads through
+  // useSyncExternalStore, so an unstable reference is an infinite render loop.
+  const documents = useDocuments(useShallow(selectOrderedDocuments))
   const createDocument = useDocuments((state) => state.createDocument)
   const duplicateDocument = useDocuments((state) => state.duplicateDocument)
   const renameDocument = useDocuments((state) => state.renameDocument)
@@ -31,7 +37,11 @@ export default function DashboardPage() {
   const importDocument = useDocuments((state) => state.importDocument)
 
   function handleCreate() {
-    router.push(`/cv/${createDocument({})}`)
+    // Start from the template's own accent rather than a hardcoded default, so
+    // a new CV looks the way that template is meant to look.
+    const template = getTemplate(DEFAULT_TEMPLATE_ID)
+    const id = createDocument({ templateId: template.id, accent: template.defaultAccent })
+    router.push(`/cv/${id}`)
   }
 
   function handleDuplicate(id: string) {

@@ -57,13 +57,6 @@ export function EditorSplit({
           <ExportButton document={document} getNode={getNode} />
         </div>
 
-        <DesignPanel
-          onPaperChange={handlers.onPaperChange}
-          onThemeChange={handlers.onThemeChange}
-          paper={document.paper}
-          theme={document.theme}
-        />
-
         <SectionList
           activeSectionId={activeSectionId}
           labels={labels}
@@ -91,6 +84,13 @@ export function EditorSplit({
         {activeSection ? (
           <SectionEditor handlers={handlers} labels={labels} section={activeSection} />
         ) : null}
+
+        <DesignPanel
+          onPaperChange={handlers.onPaperChange}
+          onThemeChange={handlers.onThemeChange}
+          paper={document.paper}
+          theme={document.theme}
+        />
       </div>
 
       {/* Exactly one preview is mounted at a time. A CSS-hidden second copy

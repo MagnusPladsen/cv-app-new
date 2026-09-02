@@ -177,3 +177,19 @@ describe('storage failures', () => {
     expect(s.getState().documents[id]?.name).toBe('Persisted')
   })
 })
+
+describe('selector stability', () => {
+  it('returns a new array on every call, so consumers must memoise', () => {
+    const s = createDocumentsStore({ storage: memoryStorage(), deps: deterministicDeps() })
+    s.getState().createDocument({ name: 'A' })
+
+    const first = selectOrderedDocuments(s.getState())
+    const second = selectOrderedDocuments(s.getState())
+
+    expect(first).toEqual(second)
+    // Documented, not accidental: zustand v5 reads through useSyncExternalStore,
+    // so a component calling this selector directly would re-render forever.
+    // Every consumer wraps it in useShallow.
+    expect(first).not.toBe(second)
+  })
+})

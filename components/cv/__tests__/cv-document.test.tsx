@@ -170,3 +170,14 @@ describe('CvDocument', () => {
     expect(container.querySelectorAll('.cv-bar')).toHaveLength(0)
   })
 })
+
+describe('template accents', () => {
+  it('gives every template a default accent that is one of its swatches', () => {
+    for (const template of TEMPLATES) {
+      expect(
+        template.swatches.map((s) => s.toLowerCase()),
+        `${template.id}'s defaultAccent is not offered as a swatch`,
+      ).toContain(template.defaultAccent.toLowerCase())
+    }
+  })
+})

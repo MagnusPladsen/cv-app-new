@@ -52,6 +52,15 @@ describe('countPages', () => {
     expect(countPages(usableHeightMm('a4') + 1, 'a4')).toBe(2)
   })
 
+  it('absorbs the sub-pixel rounding of an integer scrollHeight', () => {
+    // A browser reports a 297mm page as 1123px, overshooting by ~0.13mm.
+    expect(countPages(usableHeightMm('a4') + 0.13, 'a4')).toBe(1)
+  })
+
+  it('still counts a real overflow of one line of text', () => {
+    expect(countPages(usableHeightMm('a4') + 4, 'a4')).toBe(2)
+  })
+
   it('is 3 for content just over two pages', () => {
     expect(countPages(usableHeightMm('a4') * 2 + 1, 'a4')).toBe(3)
   })

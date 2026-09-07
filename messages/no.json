@@ -39,7 +39,11 @@
     "undo": "Angre",
     "redo": "Gjør om",
     "pageCount": "{count, plural, one {# side} other {# sider}}",
-    "closePreview": "Lukk"
+    "closePreview": "Lukk",
+    "exportHintStep1": "Velg «Skriv ut» i menyen som åpnes.",
+    "exportHintStep2": "Velg så «Lagre i Filer» eller «Lagre som PDF».",
+    "exportHintContinue": "Fortsett",
+    "exportHintCancel": "Avbryt"
   },
   "personalia": {
     "title": "Personalia",

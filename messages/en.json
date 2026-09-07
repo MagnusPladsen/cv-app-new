@@ -39,7 +39,11 @@
     "undo": "Undo",
     "redo": "Redo",
     "pageCount": "{count, plural, one {# page} other {# pages}}",
-    "closePreview": "Close"
+    "closePreview": "Close",
+    "exportHintStep1": "Choose Print in the menu that opens.",
+    "exportHintStep2": "Then choose Save to Files or Save as PDF.",
+    "exportHintContinue": "Continue",
+    "exportHintCancel": "Cancel"
   },
   "personalia": {
     "title": "Personal details",

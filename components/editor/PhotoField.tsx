@@ -43,7 +43,7 @@ export function PhotoField({
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold tracking-wide text-neutral-500 uppercase">
+      <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
         {t('label')}
       </h2>
 
@@ -56,12 +56,12 @@ export function PhotoField({
             src={photo.dataUrl}
           />
         ) : (
-          <div className="size-16 shrink-0 rounded-full bg-neutral-100" />
+          <div className="size-16 shrink-0 rounded-full bg-sand-deep" />
         )}
 
         <div className="flex flex-col gap-2">
           <label
-            className="cursor-pointer rounded-full border border-neutral-300 px-4 py-1.5 text-sm font-semibold transition hover:border-neutral-900"
+            className="cursor-pointer rounded-full border border-border px-4 py-1.5 text-sm font-semibold transition hover:border-brand"
             htmlFor={inputId}
           >
             {photo?.dataUrl ? t('replace') : t('upload')}
@@ -76,7 +76,7 @@ export function PhotoField({
 
           {photo?.dataUrl ? (
             <button
-              className="text-left text-sm font-medium text-neutral-500 underline-offset-2 hover:text-neutral-900 hover:underline"
+              className="text-left text-sm font-medium text-muted-foreground underline-offset-2 hover:text-brand-strong hover:underline"
               onClick={onRemove}
               type="button"
             >
@@ -86,7 +86,7 @@ export function PhotoField({
         </div>
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-neutral-700">
+      <label className="flex items-center gap-2 text-sm text-foreground">
         <input
           checked={showPhoto}
           onChange={(event) => onToggle(event.target.checked)}
@@ -94,7 +94,7 @@ export function PhotoField({
         />
         {t('show')}
       </label>
-      <p className="text-xs text-neutral-500">{t('norwegianNote')}</p>
+      <p className="text-xs text-muted-foreground">{t('norwegianNote')}</p>
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
     </section>

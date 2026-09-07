@@ -19,7 +19,7 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
   if (!document) {
     return (
       <main className="mx-auto max-w-3xl px-6 py-12">
-        <p className="text-neutral-600">{t('notFound')}</p>
+        <p className="text-muted-foreground">{t('notFound')}</p>
         <Link className="underline" href="/cv">
           {t('backToList')}
         </Link>

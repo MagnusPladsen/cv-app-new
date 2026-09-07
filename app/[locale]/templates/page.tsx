@@ -31,7 +31,7 @@ export default function TemplateGalleryPage() {
     <main className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-12">
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
-        <p className="text-neutral-600">{t('subtitle')}</p>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
         <Link className="text-sm underline underline-offset-4" href="/cv">
           {t('back')}
         </Link>

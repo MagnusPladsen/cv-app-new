@@ -23,7 +23,7 @@ export function BackupControls({
   return (
     <div className="flex flex-col gap-2">
       <label
-        className="w-fit cursor-pointer rounded-full border border-neutral-300 px-4 py-1.5 text-sm font-semibold transition hover:border-neutral-900"
+        className="w-fit cursor-pointer rounded-full border border-border px-4 py-1.5 text-sm font-semibold transition hover:border-brand"
         htmlFor={inputId}
       >
         {t('import')}

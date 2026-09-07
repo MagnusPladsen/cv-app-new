@@ -46,7 +46,7 @@ export function PreviewSheet({
           so the backdrop stays out of the accessibility tree and the tab order. */}
       <button
         aria-hidden="true"
-        className="absolute inset-0 bg-neutral-900/40"
+        className="absolute inset-0 bg-foreground/40"
         onClick={() => onOpenChange(false)}
         tabIndex={-1}
         type="button"
@@ -55,13 +55,13 @@ export function PreviewSheet({
       <div
         aria-label={t('preview')}
         aria-modal="true"
-        className="relative max-h-[85dvh] overflow-auto rounded-t-3xl bg-white p-4 shadow-2xl"
+        className="relative max-h-[85dvh] overflow-auto rounded-t-3xl bg-card p-4 shadow-2xl"
         role="dialog"
       >
         <div className="mb-3 flex items-center justify-between">
           <span className="text-sm font-semibold">{t('preview')}</span>
           <button
-            className="rounded-full px-3 py-1 text-sm font-medium text-neutral-600 hover:bg-neutral-100"
+            className="rounded-full px-3 py-1 text-sm font-medium text-muted-foreground hover:bg-brand-soft"
             onClick={() => onOpenChange(false)}
             ref={closeRef}
             type="button"

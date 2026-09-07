@@ -27,7 +27,7 @@ export function PersonaliaForm({
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold tracking-wide text-neutral-500 uppercase">
+      <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
         {t('title')}
       </h2>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

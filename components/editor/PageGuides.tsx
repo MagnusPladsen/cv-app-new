@@ -22,12 +22,12 @@ export function PageGuides({
     <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0">
       {offsets.map((offsetMm, index) => (
         <div
-          className="absolute inset-x-0 border-t border-dashed border-neutral-400/70"
+          className="absolute inset-x-0 border-t border-dashed border-brand/40"
           data-testid="page-guide"
           key={offsetMm}
           style={{ top: mmToPx(offsetMm) }}
         >
-          <span className="absolute -top-2 right-1 bg-white px-1 text-[10px] text-neutral-400">
+          <span className="absolute -top-2 right-1 bg-card px-1 text-[10px] text-muted-foreground/70">
             {index + 2}
           </span>
         </div>

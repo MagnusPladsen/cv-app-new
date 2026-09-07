@@ -14,7 +14,7 @@ export default function TemplatePreviewPage() {
   const width = mmToPx(PAPER.a4.widthMm)
 
   return (
-    <main className="mx-auto flex max-w-none flex-col gap-8 bg-neutral-200/60 px-8 py-10">
+    <main className="mx-auto flex max-w-none flex-col gap-8 bg-sand-deep px-8 py-10">
       <h1 className="text-2xl font-bold tracking-tight">Maler ({TEMPLATES.length})</h1>
 
       <div className="flex flex-wrap gap-10">

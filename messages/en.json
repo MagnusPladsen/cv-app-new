@@ -1,11 +1,14 @@
 {
   "app": {
     "name": "CVApp",
-    "tagline": "Build a CV you're proud of"
+    "tagline": "Build a CV you're proud of",
+    "taglineRich": "Build a CV you're <hi>proud of</hi>"
   },
   "nav": {
     "myCvs": "My CVs",
-    "templates": "Templates"
+    "templates": "Templates",
+    "home": "Home",
+    "switchLocale": "Change language"
   },
   "dashboard": {
     "title": "My CVs",
@@ -129,5 +132,16 @@
     "subtitle": "You can switch template at any time without losing your content.",
     "choose": "Use this one",
     "back": "Back to my CVs"
+  },
+  "landing": {
+    "lead": "Free. No account. No watermark.",
+    "cta": "Get started",
+    "secondary": "See the templates",
+    "point1Title": "Unlimited",
+    "point1Body": "As many CVs as you like, and as many downloads.",
+    "point2Title": "No account",
+    "point2Body": "Your CVs live in this browser. Nothing is sent anywhere.",
+    "point3Title": "Norwegian and English",
+    "point3Body": "Write your CV in one language while the app is in another."
   }
 }

@@ -35,8 +35,8 @@ export function DesignPanel({
   const lowContrast = contrastRatio(theme.accent, '#ffffff') < MIN_ACCENT_CONTRAST
 
   return (
-    <details className="rounded-2xl border border-neutral-200 px-4 py-3">
-      <summary className="cursor-pointer text-sm font-semibold tracking-wide text-neutral-500 uppercase">
+    <details className="rounded-2xl border border-border px-4 py-3">
+      <summary className="cursor-pointer text-sm font-semibold tracking-wide text-muted-foreground uppercase">
         {t('title')}
       </summary>
 

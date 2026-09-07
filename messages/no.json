@@ -1,11 +1,14 @@
 {
   "app": {
     "name": "CVApp",
-    "tagline": "Lag en CV du er stolt av"
+    "tagline": "Lag en CV du er stolt av",
+    "taglineRich": "Lag en CV du er <hi>stolt av</hi>"
   },
   "nav": {
     "myCvs": "Mine CV-er",
-    "templates": "Maler"
+    "templates": "Maler",
+    "home": "Hjem",
+    "switchLocale": "Bytt språk"
   },
   "dashboard": {
     "title": "Mine CV-er",
@@ -129,5 +132,16 @@
     "subtitle": "Du kan bytte mal når som helst uten å miste innholdet.",
     "choose": "Bruk denne",
     "back": "Tilbake til mine CV-er"
+  },
+  "landing": {
+    "lead": "Gratis. Uten konto. Uten vannmerke.",
+    "cta": "Kom i gang",
+    "secondary": "Se malene",
+    "point1Title": "Ubegrenset",
+    "point1Body": "Så mange CV-er du vil, og like mange nedlastinger.",
+    "point2Title": "Ingen konto",
+    "point2Body": "CV-ene ligger i nettleseren din. Ingenting sendes noe sted.",
+    "point3Title": "Norsk og engelsk",
+    "point3Body": "Skriv CV-en på ett språk mens appen er på et annet."
   }
 }

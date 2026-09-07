@@ -34,7 +34,7 @@ type SectionListProps = {
 }
 
 const iconButtonClass =
-  'rounded-lg px-1.5 py-1 text-xs text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent'
+  'rounded-lg px-1.5 py-1 text-xs text-muted-foreground transition hover:bg-brand-soft hover:text-brand-strong disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent'
 
 function SectionRow({
   section,
@@ -65,14 +65,14 @@ function SectionRow({
   return (
     <li
       className={`flex items-center gap-1.5 rounded-xl border px-2 py-1.5 transition ${
-        isActive ? 'border-neutral-900 bg-neutral-50' : 'border-transparent hover:bg-neutral-50'
+        isActive ? 'border-brand bg-brand-soft' : 'border-transparent hover:bg-brand-soft/40'
       } ${isDragging ? 'opacity-60' : ''}`}
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
     >
       <button
         aria-label={t('reorder')}
-        className="cursor-grab rounded-lg px-1 text-neutral-400 hover:text-neutral-700"
+        className="cursor-grab rounded-lg px-1 text-muted-foreground/70 hover:text-foreground"
         type="button"
         {...attributes}
         {...listeners}
@@ -83,7 +83,7 @@ function SectionRow({
       <input
         aria-label={section.enabled ? t('hide') : t('show')}
         checked={section.enabled}
-        className="size-4 shrink-0 accent-neutral-900"
+        className="size-4 shrink-0 accent-brand"
         onChange={(event) => onToggle(section.id, event.target.checked)}
         type="checkbox"
       />
@@ -91,7 +91,7 @@ function SectionRow({
       <button
         aria-current={isActive ? 'true' : undefined}
         className={`flex-1 truncate text-left text-sm ${
-          section.enabled ? 'text-neutral-900' : 'text-neutral-400'
+          section.enabled ? 'text-foreground' : 'text-muted-foreground/70'
         }`}
         onClick={() => onSelect(section.id)}
         type="button"
@@ -161,7 +161,7 @@ export function SectionList({
 
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold tracking-wide text-neutral-500 uppercase">
+      <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
         {t('title')}
       </h2>
 
@@ -195,7 +195,7 @@ export function SectionList({
 
       <div>
         <button
-          className="rounded-full border border-neutral-300 px-4 py-1.5 text-sm font-semibold transition hover:border-neutral-900"
+          className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold transition hover:border-brand"
           onClick={onAddCustom}
           type="button"
         >

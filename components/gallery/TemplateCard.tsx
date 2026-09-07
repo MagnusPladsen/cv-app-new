@@ -37,7 +37,7 @@ export function TemplateCard({
     <li className="flex flex-col gap-3">
       <button
         aria-label={template.name}
-        className="group overflow-hidden rounded-2xl bg-white shadow-[0_8px_30px_-12px_rgb(0_0_0/0.3)] ring-1 ring-neutral-200 transition hover:-translate-y-1 hover:shadow-[0_18px_45px_-15px_rgb(0_0_0/0.35)] focus-visible:ring-2 focus-visible:ring-neutral-900"
+        className="group overflow-hidden rounded-2xl bg-card shadow-[0_8px_30px_-12px_rgb(0_0_0/0.3)] ring-1 ring-border transition hover:-translate-y-1 hover:shadow-[0_18px_45px_-15px_rgb(0_0_0/0.35)] focus-visible:ring-2 focus-visible:ring-brand"
         onClick={() => onChoose(template.id)}
         style={{ width: pageWidth * SCALE, height: pageHeight * SCALE }}
         type="button"
@@ -56,7 +56,7 @@ export function TemplateCard({
 
       <div className="flex items-center justify-between gap-2">
         <span className="text-sm font-semibold">{template.name}</span>
-        <span className="text-xs text-neutral-500">{t('choose')}</span>
+        <span className="text-xs text-muted-foreground">{t('choose')}</span>
       </div>
     </li>
   )

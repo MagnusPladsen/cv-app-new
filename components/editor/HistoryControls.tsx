@@ -48,7 +48,7 @@ export function HistoryControls({
   useHistoryShortcuts({ onUndo, onRedo })
 
   const buttonClass =
-    'rounded-full border border-neutral-300 px-3 py-1.5 text-sm font-medium transition hover:border-neutral-900 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-neutral-300'
+    'rounded-full border border-border px-3 py-1.5 text-sm font-medium transition hover:border-brand disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border'
 
   return (
     <div className="flex gap-2">

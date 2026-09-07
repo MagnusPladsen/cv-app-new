@@ -3,7 +3,7 @@
 import { useId, type ReactNode } from 'react'
 
 export const controlClass =
-  'w-full rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-neutral-400 focus:ring-2 focus:ring-neutral-900/10 disabled:bg-neutral-100 disabled:text-neutral-400'
+  'w-full rounded-xl border border-border bg-card px-3 py-2 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:bg-sand-deep disabled:text-muted-foreground/70'
 
 /**
  * The hint is a sibling of the label, never a child. Nesting it would fold the
@@ -22,11 +22,11 @@ function FieldShell({
 }) {
   return (
     <div className="flex flex-col gap-1.5 text-sm">
-      <label className="font-medium text-neutral-700" htmlFor={id}>
+      <label className="font-medium text-foreground" htmlFor={id}>
         {label}
       </label>
       {children}
-      {hint ? <p className="text-xs text-neutral-500">{hint}</p> : null}
+      {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
     </div>
   )
 }

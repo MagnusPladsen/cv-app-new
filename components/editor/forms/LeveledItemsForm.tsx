@@ -60,12 +60,12 @@ export function LeveledItemsForm({
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-sm font-semibold tracking-wide text-neutral-500 uppercase">{title}</h2>
+      <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">{title}</h2>
 
       <div className="flex flex-col gap-3">
         {items.map((item) => (
           <div
-            className="grid grid-cols-1 items-end gap-3 rounded-2xl border border-neutral-200 p-3 sm:grid-cols-[1fr_10rem_auto]"
+            className="grid grid-cols-1 items-end gap-3 rounded-2xl border border-border p-3 sm:grid-cols-[1fr_10rem_auto]"
             key={item.id}
           >
             <TextField
@@ -80,7 +80,7 @@ export function LeveledItemsForm({
               value={item.level === undefined ? '' : String(item.level)}
             />
             <button
-              className="pb-2 text-sm font-medium text-neutral-500 underline-offset-2 hover:text-neutral-900 hover:underline"
+              className="pb-2 text-sm font-medium text-muted-foreground underline-offset-2 hover:text-brand-strong hover:underline"
               onClick={() => onRemoveItem(sectionId, item.id)}
               type="button"
             >
@@ -92,7 +92,7 @@ export function LeveledItemsForm({
 
       <div>
         <button
-          className="rounded-full border border-neutral-300 px-4 py-2 text-sm font-semibold transition hover:border-neutral-900"
+          className="rounded-full border border-border px-4 py-2 text-sm font-semibold transition hover:border-brand"
           onClick={() => onAddItem(sectionId)}
           type="button"
         >

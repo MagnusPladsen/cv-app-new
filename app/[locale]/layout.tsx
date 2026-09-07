@@ -4,6 +4,7 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 
+import { AppHeader } from '@/components/chrome/AppHeader'
 import { ALL_TEMPLATE_STYLESHEETS } from '@/components/cv/templates'
 import { routing } from '@/i18n/routing'
 import { CV_STYLESHEETS } from '@/lib/print/stylesheets'
@@ -42,7 +43,10 @@ export default async function LocaleLayout({
         ))}
       </head>
       <body className="flex min-h-full flex-col">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <AppHeader />
+          {children}
+        </NextIntlClientProvider>
       </body>
     </html>
   )

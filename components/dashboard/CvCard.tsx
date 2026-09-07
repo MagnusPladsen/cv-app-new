@@ -27,10 +27,10 @@ export function CvCard({
 
   const displayName = document.name || t('untitled')
   const actionClass =
-    'rounded-lg px-2 py-1 text-sm font-medium text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-900'
+    'rounded-lg px-2 py-1 text-sm font-medium text-muted-foreground transition hover:bg-brand-soft hover:text-brand-strong'
 
   return (
-    <li className="flex flex-col gap-3 rounded-2xl border border-neutral-200 px-5 py-4">
+    <li className="flex flex-col gap-3 rounded-2xl border border-border px-5 py-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         {renaming ? (
           <form
@@ -44,7 +44,7 @@ export function CvCard({
             <input
               aria-label={t('renamePrompt')}
               autoFocus
-              className="flex-1 rounded-xl border border-neutral-200 px-3 py-1.5 text-sm"
+              className="flex-1 rounded-xl border border-border px-3 py-1.5 text-sm"
               onChange={(event) => setDraftName(event.target.value)}
               value={draftName}
             />

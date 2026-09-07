@@ -40,3 +40,22 @@ describe('UI messages', () => {
     }
   })
 })
+
+describe('rich tagline', () => {
+  it('marks the emphasised words in both languages', () => {
+    for (const [locale, messages] of [
+      ['no', no],
+      ['en', en],
+    ] as const) {
+      const tagline = (messages as { app: { taglineRich: string } }).app.taglineRich
+      expect(tagline, `${locale} tagline has no <hi> span`).toMatch(/<hi>.+<\/hi>/)
+    }
+  })
+
+  it('emphasises the meaningful word, not a trailing preposition', () => {
+    const highlighted = (no as { app: { taglineRich: string } }).app.taglineRich.match(
+      /<hi>(.+)<\/hi>/,
+    )?.[1]
+    expect(highlighted).toBe('stolt av')
+  })
+})

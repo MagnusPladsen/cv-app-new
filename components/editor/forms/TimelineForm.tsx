@@ -32,7 +32,7 @@ type TimelineFormProps = {
 }
 
 const iconButtonClass =
-  'rounded-lg px-1.5 py-1 text-xs text-neutral-500 transition hover:bg-neutral-100 hover:text-neutral-900 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent'
+  'rounded-lg px-1.5 py-1 text-xs text-muted-foreground transition hover:bg-brand-soft hover:text-brand-strong disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent'
 
 function EntryCard({
   entry,
@@ -60,7 +60,7 @@ function EntryCard({
 
   return (
     <fieldset
-      className={`flex flex-col gap-3 rounded-2xl border border-neutral-200 p-4 ${
+      className={`flex flex-col gap-3 rounded-2xl border border-border p-4 ${
         isDragging ? 'opacity-60' : ''
       }`}
       ref={setNodeRef}
@@ -71,7 +71,7 @@ function EntryCard({
       <div className="flex items-center justify-end gap-1">
         <button
           aria-label={t('reorder')}
-          className="mr-auto cursor-grab rounded-lg px-1 text-neutral-400 hover:text-neutral-700"
+          className="mr-auto cursor-grab rounded-lg px-1 text-muted-foreground/70 hover:text-foreground"
           type="button"
           {...attributes}
           {...listeners}
@@ -131,7 +131,7 @@ function EntryCard({
         </div>
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-neutral-700">
+      <label className="flex items-center gap-2 text-sm text-foreground">
         <input
           checked={entry.current}
           onChange={(event) =>
@@ -146,7 +146,7 @@ function EntryCard({
       </label>
 
       <div className="flex flex-col gap-1.5">
-        <div className="flex flex-wrap items-center justify-end gap-3 text-xs text-neutral-600">
+        <div className="flex flex-wrap items-center justify-end gap-3 text-xs text-muted-foreground">
           {(['bullets', 'prose'] as const).map((mode) => (
             <label className="flex items-center gap-1.5" key={mode}>
               <input
@@ -169,7 +169,7 @@ function EntryCard({
 
       <div className="flex justify-end">
         <button
-          className="text-sm font-medium text-neutral-500 underline-offset-2 hover:text-neutral-900 hover:underline"
+          className="text-sm font-medium text-muted-foreground underline-offset-2 hover:text-brand-strong hover:underline"
           onClick={() => onRemoveEntry(sectionId, entry.id)}
           type="button"
         >
@@ -207,7 +207,7 @@ export function TimelineForm({
 
   return (
     <section className="flex flex-col gap-4">
-      <h2 className="text-sm font-semibold tracking-wide text-neutral-500 uppercase">{title}</h2>
+      <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">{title}</h2>
 
       <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd} sensors={sensors}>
         <SortableContext
@@ -233,7 +233,7 @@ export function TimelineForm({
 
       <div>
         <button
-          className="rounded-full border border-neutral-300 px-4 py-2 text-sm font-semibold transition hover:border-neutral-900"
+          className="rounded-full border border-border px-4 py-2 text-sm font-semibold transition hover:border-brand"
           onClick={() => onAddEntry(sectionId)}
           type="button"
         >

@@ -64,12 +64,12 @@ export function PreviewPane({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex justify-end">
-        <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-600">
+        <span className="rounded-full bg-sand-deep px-3 py-1 text-xs font-medium text-muted-foreground">
           {t('pageCount', { count: pages })}
         </span>
       </div>
 
-      <div className="w-full overflow-auto rounded-2xl bg-neutral-200/60 p-4" ref={frameRef}>
+      <div className="w-full overflow-auto rounded-2xl bg-sand-deep p-4" ref={frameRef}>
         <div style={{ height: renderedHeightPx * scale, width: pageWidthPx * scale }}>
           <div
             className="relative origin-top-left shadow-[0_10px_40px_-12px_rgb(0_0_0/0.25)]"

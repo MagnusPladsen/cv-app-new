@@ -63,7 +63,7 @@ export default function DashboardPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
         <button
-          className="rounded-full bg-neutral-900 px-5 py-2.5 text-sm font-semibold text-white"
+          className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink"
           onClick={handleCreate}
           type="button"
         >
@@ -74,7 +74,7 @@ export default function DashboardPage() {
       {!hydrated ? null : (
         <>
           {documents.length === 0 ? (
-            <p className="text-neutral-600">{t('empty')}</p>
+            <p className="text-muted-foreground">{t('empty')}</p>
           ) : (
             <ul className="flex flex-col gap-3">
               {documents.map((document) => (

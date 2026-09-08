@@ -21,6 +21,14 @@ export type DocumentsState = {
   documents: Record<string, CvDocument>
   /** Document ids, newest first. */
   order: string[]
+  /**
+   * The Supabase user these documents belong to, or null while anonymous.
+   * Scoping the whole store rather than each document is what makes the
+   * sign-out rule enforceable in one place.
+   */
+  ownerId: string | null
+  /** Deleted document id -> deletion time in ms. */
+  tombstones: Record<string, number>
 }
 
 export type ImportResult = { ok: true; id: string } | { ok: false; error: SchemaError }
@@ -32,7 +40,19 @@ export type DocumentsActions = {
   renameDocument(id: string, name: string): void
   updateDocument(id: string, recipe: (draft: CvDocument) => void): void
   importDocument(raw: unknown): ImportResult
+  adoptOwner(userId: string): AdoptOutcome
+  releaseOwner(): void
+  applyRemote(documents: CvDocument[]): void
+  applyRemoteDeletes(ids: string[]): void
+  forgetTombstones(ids: string[]): void
 }
+
+/**
+ * What happened when a user signed in: their own documents were already here,
+ * anonymous work was claimed for them, or a different account's documents had
+ * to be cleared out first.
+ */
+export type AdoptOutcome = 'unchanged' | 'claimed' | 'switched'
 
 export type DocumentsStore = DocumentsState & DocumentsActions
 
@@ -70,7 +90,7 @@ function resolve(deps: FactoryDeps = {}) {
 
 /** Validates every stored document, silently dropping ones that no longer parse. */
 function reviveState(persisted: unknown): DocumentsState {
-  const empty: DocumentsState = { documents: {}, order: [] }
+  const empty: DocumentsState = { documents: {}, order: [], ownerId: null, tombstones: {} }
   if (typeof persisted !== 'object' || persisted === null) return empty
 
   const candidate = persisted as Partial<DocumentsState>
@@ -93,7 +113,19 @@ function reviveState(persisted: unknown): DocumentsState {
     if (!order.includes(id)) order.push(id)
   }
 
-  return { documents, order }
+  const ownerId = typeof candidate.ownerId === 'string' ? candidate.ownerId : null
+
+  const tombstones: Record<string, number> = {}
+  const rawTombstones = candidate.tombstones
+  if (typeof rawTombstones === 'object' && rawTombstones !== null) {
+    for (const [id, at] of Object.entries(rawTombstones)) {
+      // A tombstone for a document we also hold would delete it on the next
+      // merge, so the live document wins here.
+      if (typeof at === 'number' && !(id in documents)) tombstones[id] = at
+    }
+  }
+
+  return { documents, order, ownerId, tombstones }
 }
 
 export type DocumentsHistory = Pick<DocumentsState, 'documents' | 'order'>
@@ -125,6 +157,8 @@ export function createDocumentsStore(options: DocumentsStoreOptions = {}): Docum
         immer((set, get) => ({
         documents: {},
         order: [],
+        ownerId: null,
+        tombstones: {},
 
         createDocument(input = {}) {
           const doc = createEmptyDocument(input, { newId, now })
@@ -155,6 +189,10 @@ export function createDocumentsStore(options: DocumentsStoreOptions = {}): Docum
           set((state) => {
             delete state.documents[id]
             state.order = state.order.filter((existing) => existing !== id)
+            // Without this, a delete here is undone by any other device that
+            // still holds the document: sync would read it as "missing
+            // locally, present remotely" and pull it straight back.
+            state.tombstones[id] = now()
           })
         },
 
@@ -186,6 +224,66 @@ export function createDocumentsStore(options: DocumentsStoreOptions = {}): Docum
           })
           return { ok: true, id: imported.id }
         },
+
+        adoptOwner(userId) {
+          const current = get().ownerId
+          if (current === userId) return 'unchanged'
+
+          if (current === null) {
+            // Anonymous work becomes theirs. This is the promise the beta
+            // banner makes: what you build now comes with you.
+            set((state) => {
+              state.ownerId = userId
+            })
+            return 'claimed'
+          }
+
+          // A different account on the same browser. Their documents are on
+          // the server; the local copies are the previous user's and must not
+          // follow them into this account.
+          set((state) => {
+            state.documents = {}
+            state.order = []
+            state.tombstones = {}
+            state.ownerId = userId
+          })
+          return 'switched'
+        },
+
+        releaseOwner() {
+          set((state) => {
+            state.documents = {}
+            state.order = []
+            state.tombstones = {}
+            state.ownerId = null
+          })
+        },
+
+        applyRemote(documents) {
+          set((state) => {
+            for (const doc of documents) {
+              state.documents[doc.id] = doc
+              delete state.tombstones[doc.id]
+              if (!state.order.includes(doc.id)) state.order.unshift(doc.id)
+            }
+          })
+        },
+
+        applyRemoteDeletes(ids) {
+          set((state) => {
+            for (const id of ids) {
+              delete state.documents[id]
+              state.order = state.order.filter((existing) => existing !== id)
+              delete state.tombstones[id]
+            }
+          })
+        },
+
+        forgetTombstones(ids) {
+          set((state) => {
+            for (const id of ids) delete state.tombstones[id]
+          })
+        },
         })),
         {
           limit: HISTORY_LIMIT,
@@ -198,9 +296,22 @@ export function createDocumentsStore(options: DocumentsStoreOptions = {}): Docum
       ),
       {
         name: DOCUMENTS_STORAGE_KEY,
-        version: 1,
+        version: 2,
         storage: createJSONStorage(() => stringStorage),
-        partialize: (state) => ({ documents: state.documents, order: state.order }),
+        partialize: (state) => ({
+          documents: state.documents,
+          order: state.order,
+          ownerId: state.ownerId,
+          tombstones: state.tombstones,
+        }),
+        // Mandatory, not decorative: zustand discards the entire persisted
+        // state on a version bump when no migrate function is provided, which
+        // would silently delete every CV a returning user has. v1 predates
+        // accounts, so everything in it is anonymous work.
+        migrate: (persisted, version) =>
+          version < 2
+            ? { ...(persisted as object), ownerId: null, tombstones: {} }
+            : persisted,
         merge: (persisted, current) => ({ ...current, ...reviveState(persisted) }),
       },
     ),

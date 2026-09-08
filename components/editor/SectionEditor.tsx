@@ -33,6 +33,7 @@ export type SectionEditorHandlers = {
     patch: Partial<SkillItem> | Partial<LanguageItem>,
   ) => void
   onRemoveItem: (sectionId: string, itemId: string) => void
+  onMoveItem: (sectionId: string, from: number, to: number) => void
   onAddCert: (sectionId: string) => void
   onUpdateCert: (sectionId: string, entryId: string, patch: Partial<CertEntry>) => void
   onAddReference: (sectionId: string) => void
@@ -94,6 +95,7 @@ export function SectionEditor({
           kind={section.type}
           labels={labels}
           onAddItem={handlers.onAddItem}
+          onMoveItem={handlers.onMoveItem}
           onRemoveItem={handlers.onRemoveItem}
           onUpdateItem={handlers.onUpdateItem}
           sectionId={section.id}

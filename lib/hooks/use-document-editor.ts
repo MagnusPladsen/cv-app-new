@@ -122,6 +122,9 @@ export function useDocumentEditor(
       onRemoveItem: (sectionId, itemId) =>
         edit((draft) => actions.removeItem(draft, sectionId, itemId)),
 
+      onMoveItem: (sectionId, from, to) =>
+        edit((draft) => actions.moveItem(draft, sectionId, from, to)),
+
       onAddCert: (sectionId) =>
         edit((draft) => void actions.addCertEntry(draft, sectionId, newId)),
 

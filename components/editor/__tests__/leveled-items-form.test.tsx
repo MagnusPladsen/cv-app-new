@@ -26,6 +26,7 @@ function props(overrides: Record<string, unknown> = {}) {
     onAddItem: vi.fn(),
     onUpdateItem: vi.fn(),
     onRemoveItem: vi.fn(),
+    onMoveItem: vi.fn(),
     ...overrides,
   }
 }
@@ -103,5 +104,35 @@ describe('LeveledItemsForm', () => {
   it('shows the blank option selected for an item with no level', () => {
     wrap(<LeveledItemsForm {...props({ items: [{ id: 'i1', name: 'Rust' }] })} />)
     expect(screen.getByLabelText('Nivå')).toHaveValue('')
+  })
+})
+
+describe('reordering', () => {
+  const two = [
+    { id: 'i1', name: 'TypeScript', level: 5 as const },
+    { id: 'i2', name: 'Rust', level: 2 as const },
+  ]
+
+  it('moves an item down', async () => {
+    const p = props({ items: two })
+    wrap(<LeveledItemsForm {...p} />)
+
+    await userEvent.click(screen.getAllByRole('button', { name: 'Flytt ned' })[0]!)
+    expect(p.onMoveItem).toHaveBeenCalledWith('s', 0, 1)
+  })
+
+  it('moves an item up', async () => {
+    const p = props({ items: two })
+    wrap(<LeveledItemsForm {...p} />)
+
+    await userEvent.click(screen.getAllByRole('button', { name: 'Flytt opp' })[1]!)
+    expect(p.onMoveItem).toHaveBeenCalledWith('s', 1, 0)
+  })
+
+  it('disables the moves at each end', () => {
+    wrap(<LeveledItemsForm {...props({ items: two })} />)
+
+    expect(screen.getAllByRole('button', { name: 'Flytt opp' })[0]!).toBeDisabled()
+    expect(screen.getAllByRole('button', { name: 'Flytt ned' })[1]!).toBeDisabled()
   })
 })

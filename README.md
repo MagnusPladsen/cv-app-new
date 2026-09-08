@@ -87,10 +87,9 @@ Vitest covers logic. Playwright covers what logic cannot see: layout, fonts,
 page breaks and the actual PDF. The snapshot budget is `maxDiffPixels`, not a
 ratio — a ratio scales with the image and silently passes a deleted border.
 
-CI is not installed yet; see `docs/ci-setup.md`.
+CI runs on Vercel.
 
 ## Documentation
 
 - `docs/superpowers/specs/` — the design spec
 - `docs/superpowers/plans/` — the three implementation plans
-- `docs/ci-setup.md` — enabling GitHub Actions

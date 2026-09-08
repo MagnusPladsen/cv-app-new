@@ -29,6 +29,7 @@ function handlers() {
     onAddItem: vi.fn(),
     onUpdateItem: vi.fn(),
     onRemoveItem: vi.fn(),
+    onMoveItem: vi.fn(),
     onAddCert: vi.fn(),
     onUpdateCert: vi.fn(),
     onAddReference: vi.fn(),

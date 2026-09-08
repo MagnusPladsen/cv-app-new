@@ -32,7 +32,6 @@ export type DocumentsActions = {
   renameDocument(id: string, name: string): void
   updateDocument(id: string, recipe: (draft: CvDocument) => void): void
   importDocument(raw: unknown): ImportResult
-  replaceAll(documents: CvDocument[]): void
 }
 
 export type DocumentsStore = DocumentsState & DocumentsActions
@@ -186,13 +185,6 @@ export function createDocumentsStore(options: DocumentsStoreOptions = {}): Docum
             state.order.unshift(imported.id)
           })
           return { ok: true, id: imported.id }
-        },
-
-        replaceAll(documents) {
-          set((state) => {
-            state.documents = Object.fromEntries(documents.map((doc) => [doc.id, doc]))
-            state.order = documents.map((doc) => doc.id)
-          })
         },
         })),
         {

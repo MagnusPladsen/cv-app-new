@@ -6,6 +6,9 @@ import { SelectField, TextField } from '@/components/editor/fields'
 import type { CvLabels } from '@/lib/cv-labels'
 import type { LanguageItem, LanguageLevel, SkillItem, SkillLevel } from '@/lib/schema/cv'
 
+const iconButtonClass =
+  'rounded-lg px-1.5 py-1 text-xs text-muted-foreground transition hover:bg-brand-soft hover:text-brand-strong disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent'
+
 const SKILL_LEVELS: SkillLevel[] = [1, 2, 3, 4, 5]
 const LANGUAGE_LEVELS: LanguageLevel[] = ['a1', 'a2', 'b1', 'b2', 'c1', 'c2', 'native']
 
@@ -20,6 +23,7 @@ export function LeveledItemsForm({
   onAddItem,
   onUpdateItem,
   onRemoveItem,
+  onMoveItem,
 }: {
   sectionId: string
   title: string
@@ -33,8 +37,10 @@ export function LeveledItemsForm({
     patch: Partial<SkillItem> | Partial<LanguageItem>,
   ) => void
   onRemoveItem: (sectionId: string, itemId: string) => void
+  onMoveItem: (sectionId: string, from: number, to: number) => void
 }) {
   const t = useTranslations('items')
+  const tTimeline = useTranslations('timeline')
 
   // Options come from the CV label dictionary, so the words in the picker are
   // exactly the words that will appear on the CV.
@@ -63,9 +69,9 @@ export function LeveledItemsForm({
       <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">{title}</h2>
 
       <div className="flex flex-col gap-3">
-        {items.map((item) => (
+        {items.map((item, index) => (
           <div
-            className="grid grid-cols-1 items-end gap-3 rounded-2xl border border-border p-3 sm:grid-cols-[1fr_10rem_auto]"
+            className="grid grid-cols-1 items-end gap-3 rounded-2xl border border-border p-3 sm:grid-cols-[1fr_10rem_auto_auto]"
             key={item.id}
           >
             <TextField
@@ -79,6 +85,28 @@ export function LeveledItemsForm({
               options={levelOptions}
               value={item.level === undefined ? '' : String(item.level)}
             />
+            {/* Ordering matters on a CV: your strongest skill goes first. */}
+            <div className="flex items-center gap-1 pb-1">
+              <button
+                aria-label={tTimeline('moveUp')}
+                className={iconButtonClass}
+                disabled={index === 0}
+                onClick={() => onMoveItem(sectionId, index, index - 1)}
+                type="button"
+              >
+                ↑
+              </button>
+              <button
+                aria-label={tTimeline('moveDown')}
+                className={iconButtonClass}
+                disabled={index === items.length - 1}
+                onClick={() => onMoveItem(sectionId, index, index + 1)}
+                type="button"
+              >
+                ↓
+              </button>
+            </div>
+
             <button
               className="pb-2 text-sm font-medium text-muted-foreground underline-offset-2 hover:text-brand-strong hover:underline"
               onClick={() => onRemoveItem(sectionId, item.id)}

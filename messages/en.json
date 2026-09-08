@@ -171,7 +171,7 @@
     "point2Body": "Selectable text that the applicant tracking systems employers use can read.",
     "point3Title": "Norwegian and English",
     "point3Body": "Write your CV in one language while the app is in another.",
-    "templatesTitle": "Nine templates to choose from"
+    "templatesTitle": "{count} templates to choose from"
   },
   "beta": {
     "badge": "Beta",

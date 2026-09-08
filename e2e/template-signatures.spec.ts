@@ -163,3 +163,87 @@ test('every template renders in the CV font it was designed around', async ({ pa
     expect(font, `${id} is not rendering in ${family}`).toContain(family)
   }
 })
+
+test('Kontrast fills its sidebar with the accent and runs it the full column height', async ({
+  page,
+}) => {
+  const background = await styleOf(page, '.cv-doc--kontrast .cv-shell__aside', 'background-color')
+  expect(background).not.toBe('rgba(0, 0, 0, 0)')
+
+  // Left at the base flex-start the panel stops where its content ends,
+  // leaving a block of white below it that reads as a mistake.
+  const heights = await page.evaluate(() => {
+    const aside = document.querySelector('.cv-doc--kontrast .cv-shell__aside') as HTMLElement
+    const main = document.querySelector('.cv-doc--kontrast .cv-shell__main') as HTMLElement
+    return { aside: aside.offsetHeight, main: main.offsetHeight }
+  })
+  expect(heights.aside).toBeGreaterThanOrEqual(heights.main - 1)
+})
+
+test('Kontrast keeps the reading column black on white, whatever the accent', async ({ page }) => {
+  const colour = await styleOf(page, '.cv-doc--kontrast .cv-shell__main', 'color')
+  expect(colour).toBe('rgb(17, 17, 17)')
+})
+
+test('Tidslinje rails its entries, with the rail stopping at the last dot', async ({ page }) => {
+  const rail = await styleOf(page, '.cv-doc--tidslinje .cv-entry', 'border-left-width')
+  expect(parseFloat(rail)).toBeGreaterThan(0)
+
+  const dot = await page.evaluate(() => {
+    const entry = document.querySelector('.cv-doc--tidslinje .cv-entry')!
+    const before = getComputedStyle(entry, '::before')
+    const after = getComputedStyle(
+      document.querySelector('.cv-doc--tidslinje .cv-entry:last-child')!,
+      '::after',
+    )
+    return {
+      radius: before.borderTopLeftRadius,
+      dotColour: before.backgroundColor,
+      // The mask that ends the rail must be the paper colour, not the rule
+      // colour: painting a grey stub over the dot is what made it look broken.
+      maskColour: after.backgroundColor,
+    }
+  })
+  expect(dot.radius).toBe('50%')
+  expect(dot.dotColour).not.toBe('rgba(0, 0, 0, 0)')
+  expect(dot.maskColour).toBe('rgb(255, 255, 255)')
+})
+
+test('Portrett leads with an oversized portrait, ringed in the accent', async ({ page }) => {
+  const photo = await page.evaluate(() => {
+    const own = document.querySelector<HTMLElement>('.cv-doc--portrett .cv-header__photo')!
+    // Oslo carries the default header photo, so it is the baseline "ordinary"
+    // size a photo-led template has to beat.
+    const baseline = document.querySelector<HTMLElement>('.cv-doc--oslo .cv-header__photo')!
+    const style = getComputedStyle(own)
+    return {
+      radius: style.borderRadius,
+      ring: parseFloat(style.borderTopWidth),
+      width: own.offsetWidth,
+      baseline: baseline.offsetWidth,
+    }
+  })
+  expect(photo.radius).toBe('50%')
+  expect(photo.ring).toBeGreaterThan(0)
+  expect(photo.width).toBeGreaterThan(photo.baseline)
+})
+
+test('Minimal uses no rules and no bars, which is what makes it parser-safe', async ({ page }) => {
+  const rule = await styleOf(page, '.cv-doc--minimal .cv-section__title', 'border-bottom-width')
+  expect(parseFloat(rule)).toBe(0)
+  expect(await page.locator('.cv-doc--minimal .cv-bar').count()).toBe(0)
+})
+
+test('Ramme boxes its header and marks each heading with a square', async ({ page }) => {
+  const border = await styleOf(page, '.cv-doc--ramme .cv-header', 'border-top-width')
+  expect(parseFloat(border)).toBeGreaterThan(0)
+
+  const marker = await page.evaluate(() => {
+    const title = document.querySelector('.cv-doc--ramme .cv-section__title')!
+    const before = getComputedStyle(title, '::before')
+    return { width: parseFloat(before.width), radius: before.borderTopLeftRadius }
+  })
+  expect(marker.width).toBeGreaterThan(0)
+  // A square, not a dot: that is the difference from Tidslinje.
+  expect(marker.radius).toBe('0px')
+})

@@ -72,8 +72,22 @@ describe('TemplateCard', () => {
 })
 
 describe('the gallery set', () => {
-  it('offers all nine templates', () => {
-    expect(TEMPLATES).toHaveLength(9)
+  it('offers a gallery worth browsing, with no duplicate ids', () => {
+    // A floor, not an exact count: the number grows, and a test that has to be
+    // edited every time one is added is only testing that someone edited it.
+    // Unique ids matter more - a collision would make two templates share a
+    // stylesheet and silently overwrite each other in saved CVs.
+    expect(TEMPLATES.length).toBeGreaterThanOrEqual(12)
+    expect(new Set(TEMPLATES.map((template) => template.id)).size).toBe(TEMPLATES.length)
+  })
+
+  it('gives every template a name, an accent and swatches to choose from', () => {
+    for (const template of TEMPLATES) {
+      expect(template.name.trim(), `${template.id} has no name`).not.toBe('')
+      expect(template.defaultAccent, `${template.id} has no accent`).toMatch(/^#[0-9a-f]{6}$/i)
+      expect(template.swatches.length, `${template.id} has no swatches`).toBeGreaterThan(2)
+      expect(template.tags.length, `${template.id} has no tags`).toBeGreaterThan(0)
+    }
   })
 
   it('renders one thumbnail per template with no duplicates', () => {

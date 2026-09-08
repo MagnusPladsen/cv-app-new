@@ -5,9 +5,14 @@ import { aurora } from './aurora'
 import { bergen } from './bergen'
 import { fjord } from './fjord'
 import { kompakt } from './kompakt'
+import { kontrast } from './kontrast'
+import { minimal } from './minimal'
 import { nord } from './nord'
 import { oslo } from './oslo'
+import { portrett } from './portrett'
+import { ramme } from './ramme'
 import { studio } from './studio'
+import { tidslinje } from './tidslinje'
 import { trondheim } from './trondheim'
 
 export const DEFAULT_TEMPLATE_ID = 'oslo'
@@ -27,6 +32,11 @@ export const TEMPLATES: Template[] = [
   aurora,
   fjord,
   akademisk,
+  kontrast,
+  tidslinje,
+  portrett,
+  minimal,
+  ramme,
   bergen,
   kompakt,
   nord,

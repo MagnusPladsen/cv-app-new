@@ -1,0 +1,45 @@
+/* Ramme — the header in a ruled box, section titles marked by a small square.
+   No large areas of colour, so it prints cheaply on an office printer. */
+
+.cv-doc--ramme .cv-header {
+  padding: calc(6mm * var(--cv-scale));
+  border: 0.4mm solid var(--cv-rule);
+  border-top: 1.4mm solid var(--cv-accent);
+  margin-bottom: calc(8mm * var(--cv-scale));
+}
+
+.cv-doc--ramme .cv-header__name {
+  font-size: calc(24pt * var(--cv-scale));
+}
+
+.cv-doc--ramme .cv-header__title {
+  color: var(--cv-accent);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.cv-doc--ramme .cv-header__photo {
+  width: calc(27mm * var(--cv-scale));
+  height: calc(27mm * var(--cv-scale));
+  border-radius: 0;
+}
+
+.cv-doc--ramme .cv-section__title {
+  position: relative;
+  padding-left: calc(5mm * var(--cv-scale));
+  border-bottom-color: var(--cv-rule);
+}
+
+.cv-doc--ramme .cv-section__title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: calc(1.5mm * var(--cv-scale));
+  width: calc(2.6mm * var(--cv-scale));
+  height: calc(2.6mm * var(--cv-scale));
+  background: var(--cv-accent);
+}
+
+.cv-doc--ramme .cv-bullets li::before {
+  content: '\2013';
+}

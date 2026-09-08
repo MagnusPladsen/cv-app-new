@@ -6,6 +6,15 @@ import { expect, test } from '@playwright/test'
  *
  * A template that passes its unit tests can still have a broken sidebar, a
  * wrapped heading or an orphaned page. Only a picture catches that.
+ *
+ * These snapshots are position-sensitive. The proof sheet wraps, so adding or
+ * reordering a template moves its neighbours to different rows, and a scaled
+ * thumbnail at a fractional offset rounds its bottom edge by a pixel. That
+ * shows up as "expected 239x437, received 239x438" for templates you did not
+ * touch. Before updating those, prove it is positional rather than a real
+ * regression: confirm the moved templates' own files are unchanged
+ * (`git status`), and that every selector in any new stylesheet is scoped to
+ * its own `.cv-doc--<id>` and so cannot reach them.
  */
 
 const TEMPLATE_IDS = [
@@ -18,6 +27,11 @@ const TEMPLATE_IDS = [
   'aurora',
   'akademisk',
   'studio',
+  'kontrast',
+  'tidslinje',
+  'portrett',
+  'minimal',
+  'ramme',
 ] as const
 
 test.beforeEach(async ({ page }) => {

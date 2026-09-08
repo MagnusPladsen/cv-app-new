@@ -1,0 +1,37 @@
+/* Portrett — photo-led. A large round portrait beside the name, with the
+   accent carried by one heavy rule under the header and nothing else. */
+
+.cv-doc--portrett .cv-header {
+  gap: calc(9mm * var(--cv-scale));
+  padding-bottom: calc(6mm * var(--cv-scale));
+  border-bottom: 1.6mm solid var(--cv-accent);
+  margin-bottom: calc(8mm * var(--cv-scale));
+}
+
+.cv-doc--portrett .cv-header__photo {
+  width: calc(32mm * var(--cv-scale));
+  height: calc(32mm * var(--cv-scale));
+  border-radius: 50%;
+  /* A ring, so the portrait reads as deliberate rather than dropped in. */
+  border: 0.8mm solid var(--cv-accent);
+}
+
+.cv-doc--portrett .cv-header__name {
+  /* Sized so a long Norwegian double-barrelled name still sets on one line
+     beside the portrait. */
+  font-size: calc(23pt * var(--cv-scale));
+  line-height: 1.12;
+}
+
+.cv-doc--portrett .cv-header__title {
+  color: var(--cv-accent);
+  font-size: calc(12pt * var(--cv-scale));
+}
+
+.cv-doc--portrett .cv-section__title {
+  border-bottom-width: 0.35mm;
+}
+
+.cv-doc--portrett .cv-bar__fill {
+  border-radius: 1mm;
+}

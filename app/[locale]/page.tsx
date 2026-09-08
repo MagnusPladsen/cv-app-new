@@ -1,6 +1,7 @@
 import { ArrowRight, LayoutGrid, Sparkles } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 
+import { TEMPLATES } from '@/components/cv/templates'
 import { LandingTemplates } from '@/components/gallery/LandingTemplates'
 import { Link } from '@/i18n/navigation'
 
@@ -64,7 +65,7 @@ export default async function HomePage() {
 
       <section className="flex flex-col gap-6">
         <div className="flex items-baseline justify-between gap-4">
-          <h2 className="text-2xl font-bold tracking-tight">{t('landing.templatesTitle')}</h2>
+          <h2 className="text-2xl font-bold tracking-tight">{t('landing.templatesTitle', { count: TEMPLATES.length })}</h2>
           <Link
             className="text-sm font-semibold text-brand underline-offset-4 hover:underline"
             href="/templates"

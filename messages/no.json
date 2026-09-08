@@ -171,7 +171,7 @@
     "point2Body": "Teksten kan markeres og leses av søkesystemene arbeidsgivere bruker.",
     "point3Title": "Norsk og engelsk",
     "point3Body": "Skriv CV-en på ett språk mens appen er på et annet.",
-    "templatesTitle": "Ni maler å velge mellom"
+    "templatesTitle": "{count} maler å velge mellom"
   },
   "beta": {
     "badge": "Beta",

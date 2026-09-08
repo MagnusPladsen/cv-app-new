@@ -61,7 +61,7 @@ export function PhotoField({
 
         <div className="flex flex-col gap-2">
           <label
-            className="cursor-pointer rounded-full border border-border px-4 py-1.5 text-sm font-semibold transition hover:border-brand"
+            className="cursor-pointer rounded-full border border-border bg-card px-4 py-1.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
             htmlFor={inputId}
           >
             {photo?.dataUrl ? t('replace') : t('upload')}
@@ -76,7 +76,7 @@ export function PhotoField({
 
           {photo?.dataUrl ? (
             <button
-              className="text-left text-sm font-medium text-muted-foreground underline-offset-2 hover:text-brand-strong hover:underline"
+              className="text-left rounded text-sm font-medium text-muted-foreground underline-offset-2 transition hover:text-brand-strong hover:underline focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
               onClick={onRemove}
               type="button"
             >

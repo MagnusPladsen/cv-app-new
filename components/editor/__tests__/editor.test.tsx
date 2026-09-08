@@ -82,14 +82,25 @@ describe('EditorSplit', () => {
     expect(container.querySelector('.cv-doc')).toHaveTextContent('Ola Nordmann')
   })
 
-  it('renders exactly one CV document node for the export path to clone', () => {
+  it('renders exactly one CV document inside the preview, for export to clone', () => {
     const { container } = wrap(<EditorSplit {...splitProps(fixture())} />)
-    expect(container.querySelectorAll('.cv-doc')).toHaveLength(1)
+    expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(1)
+  })
+
+  it('keeps the template thumbnails outside the preview container', () => {
+    const { container } = wrap(<EditorSplit {...splitProps(fixture())} />)
+
+    // The strip renders a .cv-doc per template. They must never be reachable
+    // from the preview container, or export would clone the wrong one.
+    const all = container.querySelectorAll('.cv-doc').length
+    const inPreview = container.querySelectorAll('[data-cv-preview] .cv-doc').length
+    expect(all).toBeGreaterThan(1)
+    expect(inPreview).toBe(1)
   })
 
   it('keeps the page guides outside the node the print path clones', () => {
     const { container } = wrap(<EditorSplit {...splitProps(fixture())} />)
-    const printedNode = container.querySelector('.cv-doc')!
+    const printedNode = container.querySelector('[data-cv-preview] .cv-doc')!
     expect(printedNode.querySelector('[data-testid="page-guide"]')).toBeNull()
   })
 

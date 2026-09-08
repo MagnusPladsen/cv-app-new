@@ -63,7 +63,7 @@ export default function DashboardPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
         <button
-          className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink"
+          className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink transition duration-200 hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lg focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
           onClick={handleCreate}
           type="button"
         >

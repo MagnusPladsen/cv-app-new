@@ -135,13 +135,25 @@
     "densityNormal": "Normal",
     "densityRoomy": "Roomy",
     "paper": "Paper",
-    "contrastWarning": "This colour has low contrast against white and may be hard to read in print."
+    "contrastWarning": "This colour has low contrast against white and may be hard to read in print.",
+    "templates": "Templates",
+    "seeAll": "See all templates",
+    "colours": "Colours and type"
   },
   "gallery": {
     "title": "Choose a template",
     "subtitle": "You can switch template at any time without losing your content.",
     "choose": "Use this one",
-    "back": "Back to my CVs"
+    "back": "Back to my CVs",
+    "count": "{count} templates",
+    "filterAll": "All",
+    "filterAts": "ATS",
+    "filterSimple": "Simple",
+    "filterModern": "Modern",
+    "filterProfessional": "Professional",
+    "filterCreative": "Creative",
+    "filterOneColumn": "One column",
+    "empty": "No templates in this category."
   },
   "landing": {
     "lead": "Free. No account. No watermark.",

@@ -42,7 +42,9 @@ export default async function LocaleLayout({
           <link key={href} rel="stylesheet" href={href} />
         ))}
       </head>
-      <body className="flex min-h-full flex-col">
+      {/* Not a flex column: `mx-auto` on a flex item shrinks it to fit rather
+          than filling and then capping, so every max-w-* container collapsed. */}
+      <body className="min-h-full">
         <NextIntlClientProvider>
           <AppHeader />
           {children}

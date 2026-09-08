@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 
 import { DesignPanel } from '@/components/editor/DesignPanel'
-import { TEMPLATES, getTemplate } from '@/components/cv/templates'
+import { getTemplate } from '@/components/cv/templates'
 import { FONT_PAIRS } from '@/lib/theme/fonts'
 import messages from '@/messages/no.json'
 
@@ -33,19 +33,9 @@ function props(overrides: Record<string, unknown> = {}) {
 }
 
 describe('DesignPanel', () => {
-  it('offers every registered template', () => {
+  it('does not duplicate the template picker, which lives in the strip', () => {
     wrap(<DesignPanel {...props()} />)
-    const select = screen.getByLabelText('Mal')
-    for (const template of TEMPLATES) {
-      expect(within(select).getByRole('option', { name: template.name })).toBeInTheDocument()
-    }
-  })
-
-  it('reports a template change', async () => {
-    const p = props()
-    wrap(<DesignPanel {...p} />)
-    await userEvent.selectOptions(screen.getByLabelText('Mal'), 'Oslo')
-    expect(p.onThemeChange).toHaveBeenCalledWith({ templateId: 'oslo' })
+    expect(screen.queryByLabelText('Mal')).toBeNull()
   })
 
   it('shows the active template swatches', () => {
@@ -127,6 +117,6 @@ describe('DesignPanel disclosure', () => {
 
   it('keeps its controls reachable while collapsed', () => {
     wrap(<DesignPanel {...props()} />)
-    expect(screen.getByLabelText('Mal')).toBeInTheDocument()
+    expect(screen.getByLabelText('Skrift')).toBeInTheDocument()
   })
 })

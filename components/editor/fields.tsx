@@ -3,7 +3,7 @@
 import { useId, type ReactNode } from 'react'
 
 export const controlClass =
-  'w-full rounded-xl border border-border bg-card px-3 py-2 text-sm outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:bg-sand-deep disabled:text-muted-foreground/70'
+  'w-full rounded-xl border border-border bg-card px-3 py-2 text-sm outline-none transition duration-150 hover:border-brand/50 focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:bg-sand-deep disabled:text-muted-foreground/70'
 
 /**
  * The hint is a sibling of the label, never a child. Nesting it would fold the

@@ -57,9 +57,10 @@ printed page have to agree.
 localizes the app. A Norwegian UI can produce an English CV, which is the whole
 point. Both are parity-checked by tests.
 
-**4. Exactly one `.cv-doc` is ever mounted.** The export clones the first one it
-finds, so the mobile preview switches layout on a real media query rather than
-CSS visibility.
+**4. Exactly one `.cv-doc` lives inside `[data-cv-preview]`.** The export clones
+that one. Thumbnails in the template strip and gallery render `.cv-doc` too, so
+the marker is the contract; the mobile preview also switches layout on a real
+media query rather than CSS visibility, so only one preview mounts at a time.
 
 ### How export works
 

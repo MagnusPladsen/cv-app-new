@@ -135,13 +135,25 @@
     "densityNormal": "Normal",
     "densityRoomy": "Luftig",
     "paper": "Papir",
-    "contrastWarning": "Denne fargen har lav kontrast mot hvitt og kan bli vanskelig å lese på papir."
+    "contrastWarning": "Denne fargen har lav kontrast mot hvitt og kan bli vanskelig å lese på papir.",
+    "templates": "Maler",
+    "seeAll": "Se alle maler",
+    "colours": "Farger og skrift"
   },
   "gallery": {
     "title": "Velg en mal",
     "subtitle": "Du kan bytte mal når som helst uten å miste innholdet.",
     "choose": "Bruk denne",
-    "back": "Tilbake til mine CV-er"
+    "back": "Tilbake til mine CV-er",
+    "count": "{count} maler",
+    "filterAll": "Alle",
+    "filterAts": "ATS",
+    "filterSimple": "Enkel",
+    "filterModern": "Moderne",
+    "filterProfessional": "Profesjonell",
+    "filterCreative": "Kreativ",
+    "filterOneColumn": "Én kolonne",
+    "empty": "Ingen maler i denne kategorien."
   },
   "landing": {
     "lead": "Gratis. Uten konto. Uten vannmerke.",

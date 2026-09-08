@@ -7,9 +7,10 @@ import type { Template } from '@/components/cv/types'
 import { mmToPx, PAPER } from '@/lib/print/paper'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 
-/** Thumbnail scale. The page width is fixed, so the card width follows from it. */
-const SCALE = 0.34
-
+/**
+ * Card width is capped rather than fluid: a CV thumbnail rendered huge on a
+ * wide monitor is harder to compare, not easier. The grid adds columns instead.
+ */
 export function TemplateCard({
   template,
   document,
@@ -34,30 +35,40 @@ export function TemplateCard({
   }
 
   return (
-    <li className="flex flex-col gap-3">
+    <li className="group flex flex-col gap-2.5">
       <button
         aria-label={template.name}
-        className="group overflow-hidden rounded-2xl bg-card shadow-[0_8px_30px_-12px_rgb(0_0_0/0.3)] ring-1 ring-border transition hover:-translate-y-1 hover:shadow-[0_18px_45px_-15px_rgb(0_0_0/0.35)] focus-visible:ring-2 focus-visible:ring-brand"
+        className="relative block w-full overflow-hidden rounded-xl bg-white ring-1 ring-border transition duration-200 group-hover:-translate-y-1 group-hover:shadow-[0_18px_45px_-18px_rgb(0_0_0/0.4)] group-hover:ring-brand focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
         onClick={() => onChoose(template.id)}
-        style={{ width: pageWidth * SCALE, height: pageHeight * SCALE }}
+        // container-type lets the thumbnail scale to whatever width the grid gives
+        // the card, so one component works at every breakpoint.
+        style={{ aspectRatio: `${pageWidth} / ${pageHeight}`, containerType: 'inline-size' }}
         type="button"
       >
-        {/* The thumbnail is decorative: the button's aria-label names the
-            template, so screen readers do not read a whole CV per card. */}
-        <span aria-hidden="true" className="block">
-          <span
-            className="block origin-top-left"
-            style={{ transform: `scale(${SCALE})`, width: pageWidth }}
-          >
-            <CvDocument document={preview} />
+        {/* Decorative: the button is labelled, so a screen reader is not read
+            an entire CV for every card. Scaled by container width so the card
+            can size itself responsively. */}
+        <span
+          aria-hidden="true"
+          className="absolute top-0 left-0 origin-top-left"
+          style={{
+            width: pageWidth,
+            height: pageHeight,
+            // length / length yields a unitless number, which is what scale() needs.
+            transform: `scale(calc(100cqw / ${pageWidth}px))`,
+          }}
+        >
+          <CvDocument document={preview} />
+        </span>
+
+        <span className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent p-3 opacity-0 transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100">
+          <span className="rounded-full bg-brand px-4 py-2 text-xs font-bold text-brand-ink shadow-lg">
+            {t('choose')}
           </span>
         </span>
       </button>
 
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-sm font-semibold">{template.name}</span>
-        <span className="text-xs text-muted-foreground">{t('choose')}</span>
-      </div>
+      <span className="text-sm font-semibold">{template.name}</span>
     </li>
   )
 }

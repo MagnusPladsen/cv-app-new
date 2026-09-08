@@ -32,7 +32,7 @@ type TimelineFormProps = {
 }
 
 const iconButtonClass =
-  'rounded-lg px-1.5 py-1 text-xs text-muted-foreground transition hover:bg-brand-soft hover:text-brand-strong disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent'
+  'rounded-lg px-1.5 py-1 text-xs text-muted-foreground transition duration-150 hover:bg-brand-soft hover:text-brand-strong focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent'
 
 function EntryCard({
   entry,
@@ -169,7 +169,7 @@ function EntryCard({
 
       <div className="flex justify-end">
         <button
-          className="text-sm font-medium text-muted-foreground underline-offset-2 hover:text-brand-strong hover:underline"
+          className="rounded text-sm font-medium text-muted-foreground underline-offset-2 transition hover:text-brand-strong hover:underline focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
           onClick={() => onRemoveEntry(sectionId, entry.id)}
           type="button"
         >
@@ -233,7 +233,7 @@ export function TimelineForm({
 
       <div>
         <button
-          className="rounded-full border border-border px-4 py-2 text-sm font-semibold transition hover:border-brand"
+          className="rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
           onClick={() => onAddEntry(sectionId)}
           type="button"
         >

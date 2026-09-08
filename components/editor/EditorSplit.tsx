@@ -18,6 +18,7 @@ import { PreviewSheet } from './PreviewSheet'
 import { SectionEditor } from './SectionEditor'
 import { SectionList } from './SectionList'
 import { SectionSettings } from './SectionSettings'
+import { TemplateStrip } from './TemplateStrip'
 
 export function EditorSplit({
   document,
@@ -40,6 +41,8 @@ export function EditorSplit({
   const canUndo = useDocumentsTemporal((state) => state.pastStates.length > 0)
   const canRedo = useDocumentsTemporal((state) => state.futureStates.length > 0)
 
+  // Scoped to the preview container: the template strip renders thumbnails
+  // that are also .cv-doc nodes.
   const getNode = () => previewRef.current?.querySelector<HTMLElement>('.cv-doc') ?? null
 
   const labels = getCvLabels(document.language)
@@ -47,7 +50,9 @@ export function EditorSplit({
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-      <div className="flex flex-col gap-8">
+      {/* min-w-0: a grid item defaults to min-width:auto, so the scrollable
+          template strip would otherwise stretch the whole column past the screen. */}
+      <div className="flex min-w-0 flex-col gap-8">
         <div className="flex items-center justify-between gap-3">
           <HistoryControls
             canRedo={canRedo}
@@ -57,6 +62,11 @@ export function EditorSplit({
           />
           <ExportButton document={document} getNode={getNode} />
         </div>
+
+        <TemplateStrip
+          document={document}
+          onSelect={(templateId) => handlers.onThemeChange({ templateId })}
+        />
 
         <SectionList
           activeSectionId={activeSectionId}
@@ -106,7 +116,7 @@ export function EditorSplit({
           would still be in the DOM, and the export path clones the first
           .cv-doc it finds. */}
       {isDesktop ? (
-        <div className="lg:sticky lg:top-6 lg:self-start">
+        <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
           <PreviewPane containerRef={previewRef} document={document} />
         </div>
       ) : (

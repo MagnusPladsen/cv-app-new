@@ -34,7 +34,7 @@ type SectionListProps = {
 }
 
 const iconButtonClass =
-  'rounded-lg px-1.5 py-1 text-xs text-muted-foreground transition hover:bg-brand-soft hover:text-brand-strong disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent'
+  'rounded-lg px-1.5 py-1 text-xs text-muted-foreground transition duration-150 hover:bg-brand-soft hover:text-brand-strong focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent'
 
 function SectionRow({
   section,
@@ -65,7 +65,7 @@ function SectionRow({
   return (
     <li
       className={`flex items-center gap-1.5 rounded-xl border px-2 py-1.5 transition ${
-        isActive ? 'border-brand bg-brand-soft' : 'border-transparent hover:bg-brand-soft/40'
+        isActive ? 'border-brand bg-brand-soft' : 'border-transparent hover:border-brand/30 hover:bg-brand-soft/50'
       } ${isDragging ? 'opacity-60' : ''}`}
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
@@ -195,7 +195,7 @@ export function SectionList({
 
       <div>
         <button
-          className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold transition hover:border-brand"
+          className="rounded-full border border-border bg-card px-4 py-1.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
           onClick={onAddCustom}
           type="button"
         >

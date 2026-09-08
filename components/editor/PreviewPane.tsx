@@ -75,6 +75,10 @@ export function PreviewPane({
         <div style={{ height: renderedHeightPx * scale, width: pageWidthPx * scale }}>
           <div
             className="relative origin-top-left shadow-[0_10px_40px_-12px_rgb(0_0_0/0.25)]"
+            /* The export clones the .cv-doc inside this element. Thumbnails
+               elsewhere on the page render .cv-doc too, so the marker makes the
+               contract explicit instead of implicit in a ref. */
+            data-cv-preview=""
             ref={containerRef}
             style={{ transform: `scale(${scale})`, width: pageWidthPx }}
           >

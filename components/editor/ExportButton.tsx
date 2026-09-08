@@ -68,7 +68,7 @@ export function ExportButton({
   return (
     <>
       <button
-        className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink transition hover:bg-brand-strong disabled:opacity-50"
+        className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink transition duration-200 hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lg focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none transition duration-200 hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lg focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
         disabled={busy}
         onClick={handleClick}
         type="button"

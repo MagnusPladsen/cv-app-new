@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 
-import { getTemplate, TEMPLATES } from '@/components/cv/templates'
+import { getTemplate } from '@/components/cv/templates'
 import { SelectField } from '@/components/editor/fields'
 import { PAPER } from '@/lib/print/paper'
 import type { CvTheme, Density, PaperId } from '@/lib/schema/cv'
@@ -36,21 +36,11 @@ export function DesignPanel({
 
   return (
     <details className="rounded-2xl border border-border px-4 py-3">
-      <summary className="cursor-pointer text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-        {t('title')}
+      <summary className="cursor-pointer list-none text-sm font-semibold tracking-wide text-muted-foreground uppercase transition hover:text-brand-strong">
+        {t('colours')}
       </summary>
 
       <div className="mt-4 flex flex-col gap-4">
-        <SelectField
-          label={t('template')}
-          onChange={(templateId) => onThemeChange({ templateId })}
-          options={TEMPLATES.map((candidate) => ({
-            value: candidate.id,
-            label: candidate.name,
-          }))}
-          value={theme.templateId}
-        />
-
         <ColourPicker
           customLabel={t('custom')}
           label={t('accent')}

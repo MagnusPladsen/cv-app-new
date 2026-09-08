@@ -113,13 +113,13 @@ describe('EditorSplit layout', () => {
   it('mounts exactly one CV document on desktop', () => {
     setViewport(true)
     const { container } = wrap(<EditorSplit {...splitProps(fixture())} />)
-    expect(container.querySelectorAll('.cv-doc')).toHaveLength(1)
+    expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(1)
   })
 
   it('mounts no CV document on mobile until the sheet is opened', () => {
     setViewport(false)
     const { container } = wrap(<EditorSplit {...splitProps(fixture())} />)
-    expect(container.querySelectorAll('.cv-doc')).toHaveLength(0)
+    expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(0)
     expect(screen.getByRole('button', { name: 'Forhåndsvis' })).toBeInTheDocument()
   })
 
@@ -128,7 +128,7 @@ describe('EditorSplit layout', () => {
     const { container } = wrap(<EditorSplit {...splitProps(fixture())} />)
 
     await userEvent.click(screen.getByRole('button', { name: 'Forhåndsvis' }))
-    expect(container.querySelectorAll('.cv-doc')).toHaveLength(1)
+    expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(1)
   })
 
   it('closes the mobile sheet again', async () => {
@@ -137,6 +137,6 @@ describe('EditorSplit layout', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Forhåndsvis' }))
     await userEvent.click(screen.getByRole('button', { name: 'Lukk' }))
-    expect(container.querySelectorAll('.cv-doc')).toHaveLength(0)
+    expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(0)
   })
 })

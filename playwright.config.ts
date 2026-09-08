@@ -36,7 +36,9 @@ export default defineConfig({
 
   webServer: {
     // Production build: dev-mode HMR overlays and timing make snapshots flaky.
-    command: `bun run build && bun run start --port ${PORT}`,
+    // Not `bun run start`, whose script already pins a port; the flag would
+    // then be passed twice.
+    command: `bun run build && bunx next start --port ${PORT}`,
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,

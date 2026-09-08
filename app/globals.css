@@ -64,6 +64,13 @@
   --brand-ink: #ffffff;
   --sand: #faf7f2;
   --sand-deep: #f3ede4;
+  /* An ambient wash of the brand colour, anchored to the viewport so it does
+     not tile or repeat down a long editor page. */
+  --page-glow: radial-gradient(
+    900px 520px at 12% -8%,
+    rgba(15, 118, 110, 0.14),
+    transparent 60%
+  );
 
   --background: var(--sand);
   --foreground: #1c2422;
@@ -109,6 +116,11 @@
   --brand-ink: #04211e;
   --sand: #14171a;
   --sand-deep: #1c2126;
+  --page-glow: radial-gradient(
+    900px 520px at 12% -8%,
+    rgba(45, 212, 191, 0.10),
+    transparent 60%
+  );
 
   --background: var(--sand);
   --foreground: #eef2f1;
@@ -144,6 +156,9 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image: var(--page-glow);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
   }
   html {
     @apply font-sans;

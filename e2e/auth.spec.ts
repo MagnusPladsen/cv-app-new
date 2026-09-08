@@ -63,3 +63,20 @@ test('an OAuth redirect cannot be pointed at another site', async ({ request }) 
   })
   expect(response.headers()['location'] ?? '').not.toContain('evil.example')
 })
+
+test('a failed sign-in says why, instead of a blank apology', async ({ page }) => {
+  // The two likeliest causes - a callback URL missing from Supabase's
+  // redirect allowlist, and a misconfigured provider - are otherwise
+  // indistinguishable from the user changing their mind.
+  await page.goto('/auth/callback?error=access_denied&error_description=The+user+denied+access')
+  await expect(page).toHaveURL(/auth-code-error/)
+  await expect(page.getByText('The user denied access')).toBeVisible()
+})
+
+test('the failure reason cannot lay out lines of its own on the page', async ({ page }) => {
+  // It arrives on a provider-controlled redirect, so it is untrusted text.
+  const hostile = 'a'.repeat(400)
+  await page.goto(`/auth/auth-code-error?reason=${hostile}`)
+  const shown = await page.locator('main p').last().innerText()
+  expect(shown.length).toBeLessThan(200)
+})

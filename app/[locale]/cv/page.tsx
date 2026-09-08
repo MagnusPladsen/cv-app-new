@@ -56,7 +56,9 @@ export default function DashboardPage() {
   function handleImportText(text: string) {
     const parsed = parseBackup(text)
     if (!parsed.ok) return { ok: false }
-    return { ok: importDocument(parsed.document).ok }
+    // A file can hold one CV or a whole account; both arrive as a list.
+    const results = parsed.documents.map((document) => importDocument(document))
+    return { ok: results.some((result) => result.ok) }
   }
 
   return (

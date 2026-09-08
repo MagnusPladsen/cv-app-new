@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
 import { createEmptyDocument } from '@/lib/schema/defaults'
-import { backupFilename, parseBackup, serialiseDocument } from '@/lib/store/backup'
+import {
+  backupFilename,
+  bundleFilename,
+  parseBackup,
+  serialiseBundle,
+  serialiseDocument,
+} from '@/lib/store/backup'
 
 function fixture() {
   let counter = 0
@@ -22,7 +28,44 @@ describe('serialiseDocument', () => {
     const doc = fixture()
     const result = parseBackup(serialiseDocument(doc))
     expect(result.ok).toBe(true)
-    if (result.ok) expect(result.document).toEqual(doc)
+    if (result.ok) expect(result.documents).toEqual([doc])
+  })
+})
+
+describe('serialiseBundle', () => {
+  it('round-trips every CV in one file', () => {
+    // A whole-account export cannot be one download per CV: browsers block
+    // the second and later files of a multi-file download.
+    const docs = [fixture(), { ...fixture(), id: 'second' }]
+    const result = parseBackup(serialiseBundle(docs))
+    expect(result.ok).toBe(true)
+    if (result.ok) expect(result.documents.map((d) => d.id)).toEqual(['id-1', 'second'])
+  })
+
+  it('reads a bare array too, since that is the obvious shape to hand-write', () => {
+    const result = parseBackup(JSON.stringify([fixture()]))
+    expect(result.ok).toBe(true)
+    if (result.ok) expect(result.documents).toHaveLength(1)
+  })
+
+  it('keeps the readable CVs when one in the bundle is corrupt', () => {
+    const result = parseBackup(JSON.stringify({ documents: [fixture(), { id: 'broken' }] }))
+    expect(result.ok).toBe(true)
+    if (result.ok) expect(result.documents).toHaveLength(1)
+  })
+
+  it('fails when nothing in the bundle can be read', () => {
+    expect(parseBackup(JSON.stringify({ documents: [{ id: 'broken' }] })).ok).toBe(false)
+  })
+
+  it('fails on an empty bundle rather than silently importing nothing', () => {
+    expect(parseBackup(JSON.stringify({ documents: [] })).ok).toBe(false)
+  })
+})
+
+describe('bundleFilename', () => {
+  it('is dated', () => {
+    expect(bundleFilename(new Date('2026-09-08T10:00:00Z'))).toBe('CVApp_alle-cv-er_2026-09-08.json')
   })
 })
 

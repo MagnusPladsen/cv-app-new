@@ -3,6 +3,7 @@
 import { Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
+import { SyncStatusBadge } from '@/components/auth/SyncStatusBadge'
 import { BackupControls } from '@/components/dashboard/BackupControls'
 import { CvCard } from '@/components/dashboard/CvCard'
 import { useRouter } from '@/i18n/navigation'
@@ -61,7 +62,10 @@ export default function DashboardPage() {
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-6 px-6 py-12">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+          <SyncStatusBadge />
+        </div>
         <button
           className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink transition duration-200 hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lg focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
           onClick={handleCreate}

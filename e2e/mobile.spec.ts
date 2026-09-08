@@ -94,3 +94,15 @@ test('opening the preview sheet mounts exactly one CV to export', async ({ page 
   await page.getByRole('button', { name: 'Forhåndsvis' }).click()
   await expect(page.locator('[data-cv-preview] .cv-doc')).toHaveCount(1)
 })
+
+test('the header fits a phone with the account link showing', async ({ page }) => {
+  // The widest the header ever gets: logo, beta badge, nav, account link and
+  // the locale switcher. It overflowed by 66px on a 375px screen the day the
+  // account link was added, and nothing caught it, because the suite used to
+  // run with auth switched off.
+  await page.goto('/no/cv')
+  await page.evaluate(() => document.fonts.ready)
+
+  await expect(page.getByRole('link', { name: 'Logg inn' })).toBeVisible()
+  expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1)
+})

@@ -42,5 +42,18 @@ export default defineConfig({
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
+    env: {
+      // Auth is switched *on* but signed *out*, which is the state the header
+      // is widest in and the one the suite could otherwise never see: with no
+      // credentials the account link does not render at all, so a header that
+      // overflows a phone once it appears would go unnoticed.
+      //
+      // The host is deliberately unroutable. Nothing here signs in, and a
+      // signed-out session is read from storage without a network call, so no
+      // request is ever made to it.
+      NEXT_PUBLIC_SUPABASE_URL: 'https://e2e-unroutable.invalid',
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_e2e',
+      NEXT_PUBLIC_AUTH_PROVIDERS: 'google,apple',
+    },
   },
 })

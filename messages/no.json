@@ -186,5 +186,29 @@
     "sent": "Takk! Det hjelper mer enn du tror.",
     "noDestination": "Tilbakemelding er ikke koblet til noe ennå.",
     "close": "Lukk"
+  },
+  "auth": {
+    "signIn": "Logg inn",
+    "signOut": "Logg ut",
+    "signInTitle": "Logg inn på CVApp",
+    "signInLead": "Da følger CV-ene dine med deg mellom mobil og PC. Alt du har laget nå blir liggende.",
+    "continueWith": "Fortsett med {provider}",
+    "unavailable": "Innlogging er ikke slått på ennå. CV-ene dine lagres på denne enheten.",
+    "account": "Konto",
+    "syncing": "Lagrer …",
+    "synced": "Lagret på kontoen din",
+    "offline": "Frakoblet — lagres når du er på nett igjen",
+    "error": "Klarte ikke å lagre til kontoen",
+    "localOnly": "Lagret bare på denne enheten",
+    "accountTitle": "Kontoen din",
+    "signedInAs": "Innlogget som {email}",
+    "signedInWith": "via {provider}",
+    "cvCount": "{count, plural, =0 {Ingen CV-er} =1 {# CV} other {# CV-er}} på kontoen",
+    "downloadAll": "Last ned alle CV-ene mine",
+    "deleteAccount": "Slett kontoen min",
+    "deleteWarning": "Dette sletter kontoen og alle CV-ene på den, for godt. Last ned CV-ene dine først hvis du vil beholde dem.",
+    "deleteConfirm": "Skriv SLETT for å bekrefte",
+    "deleteConfirmWord": "SLETT",
+    "claimed": "{count, plural, =1 {# CV} other {# CV-er}} ble lagret på kontoen din."
   }
 }

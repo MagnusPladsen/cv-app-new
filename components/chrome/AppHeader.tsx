@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl'
 
+import { AccountMenu } from '@/components/auth/AccountMenu'
 import { BetaBadge } from '@/components/chrome/BetaBadge'
 import { Link, usePathname } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
@@ -14,7 +15,7 @@ export function AppHeader() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-border/70 bg-sand/85 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-2">
           <Link className="text-lg font-extrabold tracking-tight text-brand" href="/">
             CVApp
@@ -23,8 +24,12 @@ export function AppHeader() {
         </div>
 
         <nav className="flex items-center gap-1 text-sm">
+          {/* Hidden on phones, where the row cannot fit four items beside the
+              logo. Templates stay one tap away: the landing page leads with
+              them, "Lag ny CV" opens the gallery, and the editor carries the
+              template strip. */}
           <Link
-            className="rounded-full px-3 py-1.5 font-medium transition hover:bg-brand-soft hover:text-brand-strong"
+            className="hidden rounded-full px-3 py-1.5 font-medium transition hover:bg-brand-soft hover:text-brand-strong sm:inline-flex"
             href="/templates"
           >
             {t('templates')}
@@ -35,6 +40,7 @@ export function AppHeader() {
           >
             {t('myCvs')}
           </Link>
+          <AccountMenu />
 
           <span aria-label={t('switchLocale')} className="ml-2 flex items-center gap-0.5">
             {routing.locales.map((candidate) => (

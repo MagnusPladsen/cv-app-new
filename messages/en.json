@@ -186,5 +186,29 @@
     "sent": "Thank you — that helps more than you think.",
     "noDestination": "Feedback is not wired to a destination yet.",
     "close": "Close"
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "signInTitle": "Sign in to CVApp",
+    "signInLead": "Your CVs then follow you between your phone and your computer. Everything you have made stays.",
+    "continueWith": "Continue with {provider}",
+    "unavailable": "Sign-in is not switched on yet. Your CVs are saved on this device.",
+    "account": "Account",
+    "syncing": "Saving …",
+    "synced": "Saved to your account",
+    "offline": "Offline — will save when you reconnect",
+    "error": "Could not save to your account",
+    "localOnly": "Saved on this device only",
+    "accountTitle": "Your account",
+    "signedInAs": "Signed in as {email}",
+    "signedInWith": "via {provider}",
+    "cvCount": "{count, plural, =0 {No CVs} =1 {# CV} other {# CVs}} on this account",
+    "downloadAll": "Download all my CVs",
+    "deleteAccount": "Delete my account",
+    "deleteWarning": "This permanently deletes your account and every CV on it. Download your CVs first if you want to keep them.",
+    "deleteConfirm": "Type DELETE to confirm",
+    "deleteConfirmWord": "DELETE",
+    "claimed": "{count, plural, =1 {# CV} other {# CVs}} saved to your account."
   }
 }

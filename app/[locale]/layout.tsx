@@ -4,6 +4,7 @@ import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 
+import { SessionProvider } from '@/components/auth/SessionProvider'
 import { AppHeader } from '@/components/chrome/AppHeader'
 import { ALL_TEMPLATE_STYLESHEETS } from '@/components/cv/templates'
 import { routing } from '@/i18n/routing'
@@ -46,8 +47,10 @@ export default async function LocaleLayout({
           than filling and then capping, so every max-w-* container collapsed. */}
       <body className="min-h-full">
         <NextIntlClientProvider>
-          <AppHeader />
-          {children}
+          <SessionProvider>
+            <AppHeader />
+            {children}
+          </SessionProvider>
         </NextIntlClientProvider>
       </body>
     </html>

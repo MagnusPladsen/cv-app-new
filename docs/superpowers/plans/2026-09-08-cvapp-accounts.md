@@ -359,6 +359,8 @@ git commit -m "feat(auth): add Supabase clients that no-op when unconfigured"
 **Files:**
 - Create: `supabase/migrations/20260908000001_cv_documents.sql`
 - Create: `supabase/README.md`
+- Create: `app/api/keep-alive/route.ts`
+- Create: `vercel.json`
 
 **Interfaces:**
 - Produces the table every later task reads and writes. Column names are the
@@ -479,12 +481,79 @@ once the CLI is linked).
   service-role key in this codebase, and adding one needs a deliberate
   decision, not a convenient import.
 - RLS is on for every table. A Supabase table without RLS is public.
+- A daily Vercel cron hits `/api/keep-alive` so the free project is never
+  paused for inactivity. If sign-in starts failing across the board, check
+  the project is not paused before debugging anything else.
 ```
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 5: Keep the free project awake**
+
+Supabase pauses a free project after roughly a week with no requests at all.
+A launched product never goes idle, but the gap between shipping this and
+having users does, and a paused project makes every sign-in fail until
+somebody clicks restore in the dashboard. One request a day removes the
+question.
+
+```ts
+// app/api/keep-alive/route.ts
+import { NextResponse } from 'next/server'
+
+import { readSupabaseEnv } from '@/lib/supabase/env'
+
+// Vercel Hobby allows one cron run per day, which is well inside Supabase's
+// inactivity window.
+export const dynamic = 'force-dynamic'
+
+export async function GET(request: Request) {
+  // Vercel signs cron requests with CRON_SECRET when it is set. Without this
+  // check the endpoint is a free anonymous query against your database for
+  // anyone who finds the URL.
+  const secret = process.env.CRON_SECRET
+  if (secret && request.headers.get('authorization') !== `Bearer ${secret}`) {
+    return new NextResponse('Unauthorized', { status: 401 })
+  }
+
+  const env = readSupabaseEnv()
+  if (!env) return NextResponse.json({ ok: true, skipped: 'unconfigured' })
+
+  // Any authenticated-or-not REST call counts as activity. RLS returns zero
+  // rows to an anonymous caller, which is exactly what we want: proof of
+  // life, no data.
+  const response = await fetch(`${env.url}/rest/v1/cv_documents?select=id&limit=1`, {
+    headers: { apikey: env.publishableKey, Authorization: `Bearer ${env.publishableKey}` },
+    cache: 'no-store',
+  })
+
+  return NextResponse.json({ ok: response.ok, status: response.status })
+}
+```
+
+```json
+// vercel.json — merge into the existing file if there is one
+{
+  "crons": [{ "path": "/api/keep-alive", "schedule": "0 6 * * *" }]
+}
+```
+
+Then set `CRON_SECRET` to a random string in the Vercel project's environment
+variables (Production only — cron does not run on previews).
+
+Two things to know about this endpoint: it lives under `/api`, which the
+proxy matcher already excludes, so it is never locale-rewritten; and it
+returns `skipped: unconfigured` rather than failing when Supabase is unset,
+so a fork with no credentials does not get a red cron every morning.
+
+Verify it locally:
 
 ```bash
-git add supabase
+curl -s http://localhost:3001/api/keep-alive
+# {"ok":true,"status":200}
+```
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add supabase app/api/keep-alive vercel.json
 git commit -m "feat(db): add cv_documents with row level security"
 ```
 

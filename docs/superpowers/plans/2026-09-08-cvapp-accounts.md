@@ -117,8 +117,10 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
 
 - [ ] **Step 6: Record the providers you actually enabled**
 
-Tell the executor of Task 8 which of Google/Apple are live. That list drives
-`NEXT_PUBLIC_AUTH_PROVIDERS` in Step 5 of Task 1.
+Set `NEXT_PUBLIC_AUTH_PROVIDERS` to exactly the providers that are switched
+on in the Supabase dashboard, locally and on Vercel. Leave it empty until at
+least one is: the sign-in page then explains that sign-in is not on yet,
+which is the correct thing for it to say.
 
 ---
 
@@ -185,8 +187,12 @@ describe('enabledProviders', () => {
     expect(enabledProviders({ NEXT_PUBLIC_AUTH_PROVIDERS: 'google,apple' })).toEqual([])
   })
 
-  it('defaults to Google alone, since Apple needs a paid developer account', () => {
-    expect(enabledProviders(full)).toEqual(['google'])
+  it('offers nothing until a provider is explicitly named', () => {
+    // A button for a provider that is not switched on in the Supabase
+    // dashboard fails at the worst possible moment, after the user has
+    // committed to signing in. Silence is the safer default.
+    expect(enabledProviders(full)).toEqual([])
+    expect(enabledProviders({ ...full, NEXT_PUBLIC_AUTH_PROVIDERS: '' })).toEqual([])
   })
 
   it('reads an explicit list, ignoring unknown names and whitespace', () => {
@@ -242,13 +248,16 @@ export function isSupabaseConfigured(source = defaultSource()): boolean {
 }
 
 /**
- * Apple is off unless asked for: it needs a paid Apple Developer account, and
- * a button that always errors is worse than no button.
+ * Opt-in, never inferred. Having a Supabase project says nothing about which
+ * providers are actually enabled in its dashboard, and a button that always
+ * errors is worse than no button. The cost of this default is that enabling
+ * Google without setting the variable shows no button — which the login page
+ * states plainly, so it diagnoses itself.
  */
 export function enabledProviders(source = defaultSource()): OAuthProvider[] {
   if (!readSupabaseEnv(source)) return []
   const raw = trimmed(source.NEXT_PUBLIC_AUTH_PROVIDERS)
-  if (!raw) return ['google']
+  if (!raw) return []
   return raw
     .split(',')
     .map((name) => name.trim())
@@ -337,9 +346,10 @@ Append to `.env.example`:
 # beta: everything local, no accounts, no sync.
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
-# Comma-separated. Defaults to "google". Add "apple" once Sign in with Apple
-# is configured in the Supabase dashboard.
-NEXT_PUBLIC_AUTH_PROVIDERS=google
+# Comma-separated, opt-in. Empty means no sign-in buttons at all. Set to
+# "google" once Google is enabled in the Supabase dashboard, and
+# "google,apple" once Sign in with Apple is too.
+NEXT_PUBLIC_AUTH_PROVIDERS=
 ```
 
 - [ ] **Step 9: Verify and commit**

@@ -16,7 +16,7 @@ const geistSans = Geist({ variable: '--font-sans', subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'CVApp',
-  description: 'Free CV builder. No account, no watermark, no paywall.',
+  description: 'Free CV builder. No watermark, no paywall.',
 }
 
 export function generateStaticParams() {

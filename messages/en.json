@@ -162,15 +162,16 @@
     "empty": "No templates in this category."
   },
   "landing": {
-    "lead": "Free. No account. No watermark.",
+    "lead": "Free in beta. No watermark.",
     "cta": "Get started",
     "secondary": "See the templates",
     "point1Title": "Unlimited",
     "point1Body": "As many CVs as you like, and as many downloads.",
-    "point2Title": "No account",
-    "point2Body": "Your CVs live in this browser. Nothing is sent anywhere.",
+    "point2Title": "A real PDF",
+    "point2Body": "Selectable text that the applicant tracking systems employers use can read.",
     "point3Title": "Norwegian and English",
-    "point3Body": "Write your CV in one language while the app is in another."
+    "point3Body": "Write your CV in one language while the app is in another.",
+    "templatesTitle": "Nine templates to choose from"
   },
   "beta": {
     "badge": "Beta",

@@ -1,27 +1,14 @@
 import { ArrowRight, LayoutGrid, Sparkles } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 
-import { CvDocument } from '@/components/cv/CvDocument'
-import { TEMPLATES } from '@/components/cv/templates'
+import { LandingTemplates } from '@/components/gallery/LandingTemplates'
 import { Link } from '@/i18n/navigation'
-import { mmToPx, PAPER } from '@/lib/print/paper'
-import { createDemoDocument } from '@/lib/schema/demo'
-
-const SHOWCASE = ['bergen', 'trondheim', 'studio']
-const THUMB_SCALE = 0.24
 
 export default async function HomePage() {
   const t = await getTranslations()
-  const demo = createDemoDocument()
-  const pageWidth = mmToPx(PAPER.a4.widthMm)
-  const pageHeight = mmToPx(PAPER.a4.heightMm)
-
-  const showcase = SHOWCASE.map((id) => TEMPLATES.find((template) => template.id === id)).filter(
-    (template) => template !== undefined,
-  )
 
   return (
-    <main className="mx-auto flex max-w-6xl flex-col gap-20 px-6 py-16 sm:py-24">
+    <main className="mx-auto flex max-w-7xl flex-col gap-16 px-4 py-12 sm:px-6 sm:py-20">
       <section className="flex flex-col gap-7">
         <p className="text-sm font-semibold tracking-widest text-brand-strong uppercase">
           {t('landing.lead')}
@@ -77,38 +64,18 @@ export default async function HomePage() {
 
       <section className="flex flex-col gap-6">
         <div className="flex items-baseline justify-between gap-4">
-          <h2 className="text-2xl font-bold tracking-tight">{t('nav.templates')}</h2>
-          <Link className="text-sm font-semibold text-brand underline-offset-4 hover:underline" href="/templates">
+          <h2 className="text-2xl font-bold tracking-tight">{t('landing.templatesTitle')}</h2>
+          <Link
+            className="text-sm font-semibold text-brand underline-offset-4 hover:underline"
+            href="/templates"
+          >
             {t('landing.secondary')}
           </Link>
         </div>
 
-        <ul aria-hidden="true" className="flex flex-wrap gap-6">
-          {showcase.map((template) => (
-            <li
-              className="overflow-hidden rounded-xl bg-card shadow-[0_10px_35px_-14px_rgb(0_0_0/0.35)] ring-1 ring-border"
-              key={template.id}
-              style={{ width: pageWidth * THUMB_SCALE, height: pageHeight * THUMB_SCALE }}
-            >
-              <span
-                className="block origin-top-left"
-                style={{ transform: `scale(${THUMB_SCALE})`, width: pageWidth }}
-              >
-                <CvDocument
-                  document={{
-                    ...demo,
-                    theme: {
-                      ...demo.theme,
-                      templateId: template.id,
-                      accent: template.defaultAccent,
-                      fontPairId: template.defaultFontPairId ?? demo.theme.fontPairId,
-                    },
-                  }}
-                />
-              </span>
-            </li>
-          ))}
-        </ul>
+        {/* The same component the gallery uses, so a template looks and behaves
+            identically wherever it appears. */}
+        <LandingTemplates limit={5} />
       </section>
     </main>
   )

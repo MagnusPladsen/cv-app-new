@@ -65,3 +65,35 @@ test('no template leaves content overflowing the page width', async ({ page }) =
 
   expect(overflowing).toEqual([])
 })
+
+test('the preview reserves room for the whole sheet, not just its content box', async ({
+  page,
+}) => {
+  await page.goto('/no/templates')
+  await page.getByRole('button', { name: 'Fjord' }).click()
+  await page.waitForURL(/\/no\/cv\/.+/)
+
+  // A CV long enough to run past one page.
+  await page
+    .getByLabel('Om meg', { exact: true })
+    .fill(
+      'Erfaren frontendutvikler som bygger tilgjengelige grensesnitt i TypeScript og React. '.repeat(
+        30,
+      ),
+    )
+  await page.evaluate(() => document.fonts.ready)
+  await page.waitForTimeout(600)
+
+  const { docBottom, frameBottom } = await page.evaluate(() => {
+    const doc = document.querySelector('[data-cv-preview] .cv-doc') as HTMLElement
+    const wrapper = document.querySelector('[data-cv-preview]')!.parentElement as HTMLElement
+    return {
+      docBottom: doc.getBoundingClientRect().bottom,
+      frameBottom: wrapper.getBoundingClientRect().bottom,
+    }
+  })
+
+  // The wrapper is sized from the scaled sheet. Sizing it from the content box
+  // instead leaves it short by both page margins and clips the page.
+  expect(docBottom).toBeLessThanOrEqual(frameBottom + 2)
+})

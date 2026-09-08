@@ -30,6 +30,7 @@ export function PreviewPane({
   const frameRef = useRef<HTMLDivElement | null>(null)
   const [scale, setScale] = useState(1)
   const [contentMm, setContentMm] = useState(0)
+  const [docHeightPx, setDocHeightPx] = useState(0)
 
   const pageWidthPx = mmToPx(PAPER[document.paper].widthMm)
   const pageHeightPx = mmToPx(PAPER[document.paper].heightMm)
@@ -44,9 +45,14 @@ export function PreviewPane({
       if (available > 0) setScale(Math.min(1, available / pageWidthPx))
 
       const doc = containerRef.current?.querySelector<HTMLElement>('.cv-doc')
-      // Measured from the content box: .cv-doc carries the page padding and a
-      // full-page min-height, so its raw height is the paper height.
-      if (doc) setContentMm(contentHeightMm(doc, getComputedStyle(doc)))
+      if (!doc) return
+
+      // Two different heights, and mixing them up clips the page:
+      // - contentMm is the content box, which is what page counting needs
+      // - offsetHeight is the whole sheet including its margins, which is what
+      //   the scaled wrapper has to reserve room for
+      setContentMm(contentHeightMm(doc, getComputedStyle(doc)))
+      setDocHeightPx(doc.offsetHeight)
     }
 
     measure()
@@ -61,7 +67,7 @@ export function PreviewPane({
 
   const marginMm = documentMarginMm(document)
   const pages = countPages(contentMm, document.paper, marginMm)
-  const renderedHeightPx = Math.max(pageHeightPx, mmToPx(contentMm))
+  const renderedHeightPx = Math.max(pageHeightPx, docHeightPx)
 
   return (
     <div className="flex flex-col gap-2">

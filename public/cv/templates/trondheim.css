@@ -1,22 +1,31 @@
-/* Trondheim - accent header band. */
+/* Trondheim — a full-bleed accent band in Lato. Ink inside the band is derived
+   from the accent's contrast, so any colour stays readable. */
+
+.cv-doc--trondheim .cv-band {
+  padding-top: calc(13mm * var(--cv-scale));
+  padding-bottom: calc(13mm * var(--cv-scale));
+}
 
 .cv-doc--trondheim .cv-band .cv-header__name {
-  font-size: calc(24pt * var(--cv-scale));
+  font-size: calc(26pt * var(--cv-scale));
+  letter-spacing: -0.02em;
+}
+
+.cv-doc--trondheim .cv-band .cv-header__title {
+  font-size: calc(12pt * var(--cv-scale));
+  font-weight: 400;
+  opacity: 0.92;
 }
 
 .cv-doc--trondheim .cv-band .cv-header__photo {
   width: calc(30mm * var(--cv-scale));
   height: calc(30mm * var(--cv-scale));
-  border: 0.8mm solid var(--cv-accent-ink);
+  border: 0.7mm solid var(--cv-accent-ink);
 }
 
-/* The band already carries the accent, so titles use ink for contrast. */
+/* The band already carries the accent, so headings use ink for contrast. */
 .cv-doc--trondheim .cv-section__title {
   color: var(--cv-ink);
-  border-bottom-width: 0.5mm;
+  border-bottom-width: 0.4mm;
   border-bottom-color: var(--cv-accent);
-}
-
-.cv-doc--trondheim .cv-entry__role {
-  font-size: calc(11pt * var(--cv-scale));
 }

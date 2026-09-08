@@ -11,5 +11,7 @@ export const bergen: Template = {
   shell: 'single',
   defaultAccent: '#2563eb',
   swatches: ['#2563eb', '#0f766e', '#7c3aed', '#be123c', '#ea580c', '#1f2933'],
+  defaultFontPairId: 'lato',
+  tags: ['modern', 'one-column'],
   levelDisplay: 'bar',
 }

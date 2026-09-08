@@ -1,12 +1,13 @@
 import { Fragment } from 'react'
 import { getCvLabels } from '@/lib/cv-labels'
-import { DEFAULT_MARGIN_MM, PAPER } from '@/lib/print/paper'
+import { PAPER } from '@/lib/print/paper'
 import type { CvDocument as CvDocumentData, Section } from '@/lib/schema/cv'
 import { buildThemeTokens, themeTokensToStyle, type CvThemeStyle } from '@/lib/theme/tokens'
 import { PersonaliaHeader } from './PersonaliaHeader'
 import { renderSection } from './sections'
 import { splitSections } from './split-sections'
 import { HeaderBand } from './shells/HeaderBand'
+import { SidebarFull } from './shells/SidebarFull'
 import { SidebarLeft } from './shells/SidebarLeft'
 import { SidebarRight } from './shells/SidebarRight'
 import { SingleColumn } from './shells/SingleColumn'
@@ -19,6 +20,7 @@ const SHELLS: Record<ShellId, typeof SingleColumn> = {
   single: SingleColumn,
   'sidebar-left': SidebarLeft,
   'sidebar-right': SidebarRight,
+  'sidebar-full': SidebarFull,
   'header-band': HeaderBand,
 }
 
@@ -37,7 +39,7 @@ export function CvDocument({
     ...themeTokensToStyle(tokens),
     '--cv-page-width': `${paper.widthMm}mm`,
     '--cv-page-height': `${paper.heightMm}mm`,
-    '--cv-margin': `${DEFAULT_MARGIN_MM}mm`,
+    '--cv-margin': `${tokens.marginMm}mm`,
   }
 
   const context: RenderContext = {

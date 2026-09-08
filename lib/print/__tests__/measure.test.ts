@@ -1,17 +1,23 @@
 import { describe, expect, it } from 'vitest'
 
 import { contentHeightMm } from '@/lib/print/measure'
-import { countPages, mmToPx, usableHeightMm } from '@/lib/print/paper'
+import { DEFAULT_MARGIN_MM, countPages, mmToPx, usableHeightMm } from '@/lib/print/paper'
 
-/** An empty A4 CV: min-height is a full page, with 16mm padding each end. */
+/** An empty A4 CV: min-height is a full page, with the page margin each end. */
 const EMPTY_A4 = {
   element: { scrollHeight: mmToPx(297) },
-  style: { paddingTop: `${mmToPx(16)}px`, paddingBottom: `${mmToPx(16)}px` },
+  style: {
+    paddingTop: `${mmToPx(DEFAULT_MARGIN_MM)}px`,
+    paddingBottom: `${mmToPx(DEFAULT_MARGIN_MM)}px`,
+  },
 }
 
 describe('contentHeightMm', () => {
   it('subtracts the vertical padding', () => {
-    expect(contentHeightMm(EMPTY_A4.element, EMPTY_A4.style)).toBeCloseTo(297 - 32, 4)
+    expect(contentHeightMm(EMPTY_A4.element, EMPTY_A4.style)).toBeCloseTo(
+      297 - DEFAULT_MARGIN_MM * 2,
+      4,
+    )
   })
 
   it('reports exactly one page for an empty A4 CV', () => {

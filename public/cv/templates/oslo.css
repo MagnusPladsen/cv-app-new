@@ -1,3 +1,69 @@
-/* Oslo needs no rules beyond the base sheet: it is the strict ATS template and
-   its restraint is the point. The file exists so every template has a
-   stylesheet at a predictable path. */
+/* Oslo — the traditional one, in Georgia and Open Sans.
+   Structure: centred masthead, and section headings set inside a full-width
+   tinted band rather than over a rule. Formal and unmistakably classic. */
+
+.cv-doc--oslo .cv-header {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: calc(3mm * var(--cv-scale));
+  padding-bottom: calc(4mm * var(--cv-scale));
+  margin-bottom: calc(6mm * var(--cv-scale));
+}
+
+.cv-doc--oslo .cv-header__body {
+  width: 100%;
+}
+
+.cv-doc--oslo .cv-header__photo {
+  order: -1;
+}
+
+.cv-doc--oslo .cv-header__name {
+  font-size: calc(26pt * var(--cv-scale));
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.cv-doc--oslo .cv-header__title {
+  color: var(--cv-ink);
+  font-weight: 400;
+  font-size: calc(11pt * var(--cv-scale));
+  letter-spacing: 0.05em;
+}
+
+.cv-doc--oslo .cv-links,
+.cv-doc--oslo .cv-header__contact {
+  justify-content: center;
+}
+
+/* The banded heading: full width, centred, no rule. */
+.cv-doc--oslo .cv-section__title {
+  background: color-mix(in srgb, var(--cv-accent) 10%, #ffffff);
+  color: var(--cv-ink);
+  border-bottom: 0;
+  text-align: center;
+  padding: calc(1.6mm * var(--cv-scale)) calc(3mm * var(--cv-scale));
+  letter-spacing: 0.2em;
+  font-size: calc(10.5pt * var(--cv-scale));
+  margin-bottom: calc(4mm * var(--cv-scale));
+}
+
+.cv-doc--oslo .cv-entry__role {
+  font-weight: 700;
+}
+
+.cv-doc--oslo .cv-entry__org {
+  font-style: italic;
+}
+
+.cv-doc--oslo .cv-bullets li::before {
+  content: '◆';
+  font-size: 0.62em;
+  top: 0.15em;
+  color: var(--cv-muted);
+}
+
+.cv-doc--oslo .cv-links__item {
+  color: var(--cv-ink);
+}

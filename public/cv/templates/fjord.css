@@ -1,29 +1,56 @@
-/* Fjord - tinted left sidebar. */
+/* Fjord — a full-height coloured column in Garamond and Lato.
+   The portrait, contact details and short sections live in the colour; the
+   narrative runs down the white main column. */
 
-.cv-doc--fjord .cv-header {
-  margin-bottom: calc(6mm * var(--cv-scale));
+.cv-doc--fjord .cv-shell__aside .cv-header__name {
+  font-size: calc(21pt * var(--cv-scale));
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1.15;
 }
 
-.cv-doc--fjord .cv-header__name {
-  font-size: calc(23pt * var(--cv-scale));
+.cv-doc--fjord .cv-shell__aside .cv-header__title {
+  font-size: calc(10pt * var(--cv-scale));
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
 }
 
-.cv-doc--fjord .cv-shell__aside {
-  /* A tint of the accent rather than a flat grey, so the sidebar belongs to
-     the chosen colour. */
-  background: color-mix(in srgb, var(--cv-accent) 8%, #ffffff);
-  border-radius: 2mm;
-  padding: calc(5mm * var(--cv-scale));
+.cv-doc--fjord .cv-shell__aside .cv-header__photo {
+  width: calc(34mm * var(--cv-scale));
+  height: calc(34mm * var(--cv-scale));
+  border: 0.6mm solid color-mix(in srgb, var(--cv-accent-ink) 45%, transparent);
 }
 
-.cv-doc--fjord .cv-shell__aside .cv-section:last-child {
-  margin-bottom: 0;
+.cv-doc--fjord .cv-shell__aside .cv-header__contact,
+.cv-doc--fjord .cv-shell__aside .cv-links {
+  font-size: calc(9pt * var(--cv-scale));
+  line-height: 1.6;
+}
+
+/* One per line in a narrow column. */
+.cv-doc--fjord .cv-shell__aside .cv-links {
+  flex-direction: column;
+  gap: calc(0.6mm * var(--cv-scale));
 }
 
 .cv-doc--fjord .cv-shell__aside .cv-section__title {
-  border-bottom-color: color-mix(in srgb, var(--cv-accent) 30%, #ffffff);
+  font-size: calc(10pt * var(--cv-scale));
+  letter-spacing: 0.13em;
 }
 
-.cv-doc--fjord .cv-section__title {
-  letter-spacing: 0.1em;
+.cv-doc--fjord .cv-shell__aside .cv-items {
+  grid-template-columns: 1fr;
+  gap: calc(2.4mm * var(--cv-scale));
+}
+
+.cv-doc--fjord .cv-shell__aside .cv-item {
+  flex-direction: column;
+  align-items: stretch;
+  gap: calc(1mm * var(--cv-scale));
+}
+
+.cv-doc--fjord .cv-shell__main .cv-section__title {
+  font-weight: 600;
+  letter-spacing: 0.13em;
 }

@@ -26,6 +26,7 @@ export const studio: Template = {
   shell: 'sidebar-left',
   defaultAccent: '#be123c',
   swatches: ['#be123c', '#4c1d95', '#0f766e', '#c2410c', '#1d4ed8', '#1f2933'],
+  tags: ['creative'],
   levelDisplay: 'bar',
   defaultFontPairId: 'inter-tight',
   sidebarSections: ['skills', 'languages', 'interests'],

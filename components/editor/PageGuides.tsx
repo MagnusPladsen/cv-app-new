@@ -11,11 +11,14 @@ import type { PaperId } from '@/lib/schema/cv'
 export function PageGuides({
   contentHeightMm,
   paper,
+  marginMm,
 }: {
   contentHeightMm: number
   paper: PaperId
+  /** The document's effective margin: a dense template may tighten it. */
+  marginMm?: number
 }) {
-  const offsets = pageBreakOffsetsMm(contentHeightMm, paper)
+  const offsets = pageBreakOffsetsMm(contentHeightMm, paper, marginMm)
   if (offsets.length === 0) return null
 
   return (

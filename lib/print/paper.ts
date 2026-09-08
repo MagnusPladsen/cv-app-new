@@ -5,7 +5,8 @@ export const PAPER = {
   letter: { widthMm: 215.9, heightMm: 279.4, cssSize: 'Letter' },
 } as const satisfies Record<PaperId, { widthMm: number; heightMm: number; cssSize: string }>
 
-export const DEFAULT_MARGIN_MM = 16
+/** ~0.79in. Career guidance calls for generous margins; tighter reads cramped. */
+export const DEFAULT_MARGIN_MM = 20
 
 const MM_PER_INCH = 25.4
 const CSS_PX_PER_INCH = 96

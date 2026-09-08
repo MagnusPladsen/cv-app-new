@@ -31,7 +31,7 @@ describe('unit conversion', () => {
 
 describe('usableHeightMm', () => {
   it('subtracts the margin from both ends', () => {
-    expect(usableHeightMm('a4', 16)).toBeCloseTo(297 - 32, 6)
+    expect(usableHeightMm('a4', 15)).toBeCloseTo(297 - 30, 6)
   })
 
   it('defaults to the standard margin', () => {

@@ -1,3 +1,4 @@
+import { DEFAULT_FONT_PAIR_ID } from '@/lib/theme/fonts'
 import {
   CURRENT_SCHEMA_VERSION,
   type CvDocument,
@@ -100,7 +101,7 @@ export function createEmptyDocument(
     theme: {
       templateId: input.templateId ?? 'oslo',
       accent: input.accent ?? '#2563eb',
-      fontPairId: input.fontPairId ?? 'inter',
+      fontPairId: input.fontPairId ?? DEFAULT_FONT_PAIR_ID,
       density: 'normal',
     },
     personalia: {

@@ -1,8 +1,10 @@
-/* Kompakt - dense single column. */
+/* Kompakt — dense single column in Open Sans, for a long career.
+   Structure: dates live in a narrow left gutter so every entry starts on the
+   same vertical line, which is what lets it stay readable while tight. */
 
 .cv-doc--kompakt {
-  font-size: calc(9.2pt * var(--cv-scale));
-  line-height: 1.35;
+  font-size: calc(9.4pt * var(--cv-scale));
+  line-height: 1.36;
 }
 
 .cv-doc--kompakt .cv-header {
@@ -10,48 +12,56 @@
 }
 
 .cv-doc--kompakt .cv-header__name {
-  font-size: calc(18pt * var(--cv-scale));
+  font-size: calc(20pt * var(--cv-scale));
+  font-weight: 700;
 }
 
 .cv-doc--kompakt .cv-section {
-  margin-bottom: calc(4mm * var(--cv-scale));
+  margin-bottom: calc(4.4mm * var(--cv-scale));
 }
 
 .cv-doc--kompakt .cv-section__title {
-  font-size: calc(9pt * var(--cv-scale));
-  padding-bottom: calc(0.8mm * var(--cv-scale));
-  margin-bottom: calc(2mm * var(--cv-scale));
+  font-size: calc(10pt * var(--cv-scale));
+  padding-bottom: calc(1mm * var(--cv-scale));
+  margin-bottom: calc(3mm * var(--cv-scale));
+  border-bottom-color: var(--cv-accent);
 }
 
 .cv-doc--kompakt .cv-entry {
-  margin-bottom: calc(2.6mm * var(--cv-scale));
+  margin-bottom: calc(2.8mm * var(--cv-scale));
 }
 
-/* Role and organisation share one line to save a whole line per entry. */
-.cv-doc--kompakt .cv-entry__head > div:first-child {
-  display: flex;
+/* Dates to the left, in their own column. */
+.cv-doc--kompakt .cv-entry__head {
+  display: grid;
+  grid-template-columns: calc(26mm * var(--cv-scale)) 1fr;
+  gap: calc(3mm * var(--cv-scale));
   align-items: baseline;
-  gap: calc(2mm * var(--cv-scale));
+}
+
+.cv-doc--kompakt .cv-entry__dates {
+  order: -1;
+  color: var(--cv-accent);
+  font-weight: 600;
+  white-space: normal;
 }
 
 .cv-doc--kompakt .cv-entry__role {
-  font-size: calc(9.8pt * var(--cv-scale));
+  font-size: calc(10.5pt * var(--cv-scale));
 }
 
-.cv-doc--kompakt .cv-entry__org::before {
-  content: '·';
-  margin-right: calc(1.5mm * var(--cv-scale));
-}
-
-.cv-doc--kompakt .cv-bullets {
-  margin-top: calc(0.8mm * var(--cv-scale));
+/* Bullets line up under the content column, not under the dates. */
+.cv-doc--kompakt .cv-bullets,
+.cv-doc--kompakt .cv-prose {
+  margin-left: calc(29mm * var(--cv-scale));
+  margin-top: calc(1.2mm * var(--cv-scale));
 }
 
 .cv-doc--kompakt .cv-bullets li {
-  margin-bottom: calc(0.3mm * var(--cv-scale));
+  margin-bottom: calc(0.6mm * var(--cv-scale));
 }
 
 .cv-doc--kompakt .cv-items {
   grid-template-columns: repeat(3, 1fr);
-  gap: calc(1mm * var(--cv-scale)) calc(4mm * var(--cv-scale));
+  gap: calc(1.4mm * var(--cv-scale)) calc(5mm * var(--cv-scale));
 }

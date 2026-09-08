@@ -37,14 +37,18 @@ describe('TemplateCard', () => {
     expect(container.querySelector('.cv-doc--fjord')).not.toBeNull()
   })
 
-  it('previews with the template accent and pairing, not the document default', () => {
+  it('previews with the template accent and pairing, not the document default', async () => {
+    const { getFontPair } = await import('@/lib/theme/fonts')
     const template = getTemplate('akademisk')
     const { container } = wrap(
       <TemplateCard document={demo()} onChoose={vi.fn()} template={template} />,
     )
+
     const root = container.querySelector('.cv-doc') as HTMLElement
     expect(root.style.getPropertyValue('--cv-accent')).toBe(template.defaultAccent)
-    expect(root.style.getPropertyValue('--cv-font-head')).toContain('Libre Baskerville')
+    expect(root.style.getPropertyValue('--cv-font-head')).toBe(
+      getFontPair(template.defaultFontPairId!).head,
+    )
   })
 
   it('reports the chosen template id', async () => {

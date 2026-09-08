@@ -1,7 +1,8 @@
-/* Akademisk - serif classic. */
+/* Akademisk — Garamond throughout, centred masthead. The traditional register
+   career guidance recommends for law, finance, academia and consulting. */
 
 .cv-doc--akademisk {
-  font-size: calc(10pt * var(--cv-scale));
+  font-size: calc(11.5pt * var(--cv-scale));
   line-height: 1.5;
 }
 
@@ -10,16 +11,16 @@
   align-items: center;
   text-align: center;
   gap: calc(3mm * var(--cv-scale));
-  padding-bottom: calc(5mm * var(--cv-scale));
+  padding-bottom: calc(6mm * var(--cv-scale));
   border-bottom: 0.3mm solid var(--cv-rule);
+  margin-bottom: calc(7mm * var(--cv-scale));
 }
 
 .cv-doc--akademisk .cv-header__body {
   width: 100%;
 }
 
-/* Portrait above the name, the conventional academic placement, rather than
-   trailing the contact block. */
+/* Portrait above the name, the conventional academic placement. */
 .cv-doc--akademisk .cv-header__photo {
   order: -1;
   width: calc(24mm * var(--cv-scale));
@@ -27,9 +28,9 @@
 }
 
 .cv-doc--akademisk .cv-header__name {
-  font-size: calc(22pt * var(--cv-scale));
-  font-weight: 700;
-  letter-spacing: 0;
+  font-size: calc(27pt * var(--cv-scale));
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .cv-doc--akademisk .cv-header__title {
@@ -46,14 +47,15 @@
   border-bottom: 0;
   text-transform: none;
   letter-spacing: 0.01em;
-  font-size: calc(12.5pt * var(--cv-scale));
-  font-weight: 700;
+  font-size: calc(14pt * var(--cv-scale));
+  font-weight: 600;
   color: var(--cv-accent);
-  margin-bottom: calc(2.5mm * var(--cv-scale));
+  margin-bottom: calc(3mm * var(--cv-scale));
 }
 
 .cv-doc--akademisk .cv-entry__role {
-  font-size: calc(10.5pt * var(--cv-scale));
+  font-size: calc(11.5pt * var(--cv-scale));
+  font-weight: 600;
 }
 
 .cv-doc--akademisk .cv-entry__org {

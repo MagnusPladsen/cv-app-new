@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react'
+import { DEFAULT_MARGIN_MM } from '@/lib/print/paper'
 import type { CvTheme, Density } from '@/lib/schema/cv'
 import { pickInk } from './contrast'
 import { getFontPair } from './fonts'
@@ -11,6 +12,8 @@ export const DENSITY_SCALE: Record<Density, number> = {
 
 export type ThemeTokenValues = {
   accent: string
+  /** Page margin in mm. Dense templates legitimately want a tighter page. */
+  marginMm: number
   accentInk: string
   ink: string
   muted: string
@@ -23,6 +26,7 @@ export type ThemeTokenValues = {
 
 /** Neutral defaults a template may override. */
 export const BASE_TOKENS = {
+  marginMm: DEFAULT_MARGIN_MM,
   ink: '#111111',
   muted: '#5b6472',
   rule: '#d8dde5',
@@ -40,6 +44,7 @@ export function buildThemeTokens(
 
   return {
     accent,
+    marginMm: overrides.marginMm ?? BASE_TOKENS.marginMm,
     accentInk: overrides.accentInk ?? pickInk(accent),
     ink: overrides.ink ?? BASE_TOKENS.ink,
     muted: overrides.muted ?? BASE_TOKENS.muted,

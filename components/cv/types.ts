@@ -3,7 +3,12 @@ import type { CvLabels } from '@/lib/cv-labels'
 import type { Section, SectionType } from '@/lib/schema/cv'
 import type { ThemeTokenValues } from '@/lib/theme/tokens'
 
-export type ShellId = 'single' | 'sidebar-left' | 'sidebar-right' | 'header-band'
+export type ShellId =
+  | 'single'
+  | 'sidebar-left'
+  | 'sidebar-right'
+  | 'sidebar-full'
+  | 'header-band'
 
 /** Whether skill and language levels render as a bar or as a word. */
 export type LevelDisplay = 'bar' | 'text'
@@ -11,11 +16,6 @@ export type LevelDisplay = 'bar' | 'text'
 export type RenderContext = {
   labels: CvLabels
   levelDisplay: LevelDisplay
-  /**
-   * The pairing this template is designed around. Applied when a CV is created
-   * from the template; the user can still change it afterwards.
-   */
-  defaultFontPairId?: string
 }
 
 export type SectionRendererProps = {
@@ -39,6 +39,18 @@ export const SIDEBAR_SAFE_SECTIONS = [
 
 export type SidebarSafeSection = (typeof SIDEBAR_SAFE_SECTIONS)[number]
 
+/** Gallery filters. Mirrors how people actually browse CV templates. */
+export const TEMPLATE_TAGS = [
+  'ats',
+  'simple',
+  'modern',
+  'professional',
+  'creative',
+  'one-column',
+] as const
+
+export type TemplateTag = (typeof TEMPLATE_TAGS)[number]
+
 export type Template = {
   id: string
   /** Display name in the template gallery. Not localized: these are proper names. */
@@ -47,6 +59,8 @@ export type Template = {
   defaultAccent: string
   /** Curated accents offered for this template, before the colour picker. */
   swatches: string[]
+  /** Gallery filters. */
+  tags: TemplateTag[]
   levelDisplay: LevelDisplay
   /**
    * The pairing this template is designed around. Applied when a CV is created

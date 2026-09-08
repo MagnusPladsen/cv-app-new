@@ -42,7 +42,9 @@ describe('buildThemeTokens', () => {
 
   it('resolves the font pair into font stacks', () => {
     const tokens = buildThemeTokens(theme)
-    expect(tokens.fontBody).toContain('Inter')
+    const expected = FONT_PAIRS.find((pair) => pair.id === DEFAULT_FONT_PAIR_ID)!
+    expect(tokens.fontBody).toBe(expected.body)
+    expect(tokens.fontHead).toBe(expected.head)
   })
 
   it('lets a template override base tokens', () => {

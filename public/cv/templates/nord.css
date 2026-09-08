@@ -1,23 +1,42 @@
-/* Nord - light right sidebar. */
+/* Nord — the clean ATS-first one, in Georgia and Open Sans.
+   Structure: accent name, accent headings each over a full-width rule, and a
+   quiet right sidebar. Maximum legibility, minimum decoration. */
 
 .cv-doc--nord .cv-header {
-  padding-bottom: calc(4mm * var(--cv-scale));
-  border-bottom: 0.3mm solid var(--cv-rule);
+  padding-bottom: calc(5mm * var(--cv-scale));
+  margin-bottom: calc(7mm * var(--cv-scale));
+}
+
+.cv-doc--nord .cv-header__name {
+  font-size: calc(26pt * var(--cv-scale));
+  font-weight: 700;
+  color: var(--cv-accent);
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+}
+
+.cv-doc--nord .cv-header__title {
+  color: var(--cv-ink);
+  font-weight: 600;
+  font-size: calc(12pt * var(--cv-scale));
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .cv-doc--nord .cv-shell__aside {
-  padding-left: calc(6mm * var(--cv-scale));
+  padding-left: calc(7mm * var(--cv-scale));
   border-left: 0.3mm solid var(--cv-rule);
 }
 
 .cv-doc--nord .cv-section__title {
-  border-bottom: 0;
-  color: var(--cv-ink);
-  font-size: calc(9.5pt * var(--cv-scale));
-  letter-spacing: 0.14em;
-  margin-bottom: calc(2.5mm * var(--cv-scale));
+  color: var(--cv-accent);
+  font-size: calc(11pt * var(--cv-scale));
+  letter-spacing: 0.1em;
+  border-bottom: 0.4mm solid var(--cv-accent);
+  padding-bottom: calc(1mm * var(--cv-scale));
+  margin-bottom: calc(3.4mm * var(--cv-scale));
 }
 
 .cv-doc--nord .cv-entry__role {
-  color: var(--cv-accent);
+  color: var(--cv-ink);
 }

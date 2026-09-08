@@ -11,8 +11,10 @@ export const nord: Template = {
   id: 'nord',
   name: 'Nord',
   shell: 'sidebar-right',
-  defaultAccent: '#1f2933',
-  swatches: ['#1f2933', '#334155', '#0f766e', '#1d4ed8', '#9d174d', '#a16207'],
+  defaultAccent: '#1d4ed8',
+  swatches: ['#1d4ed8', '#1f2933', '#0f766e', '#7f1d1d', '#9d174d', '#a16207'],
+  defaultFontPairId: 'georgia-opensans',
+  tags: ['ats', 'professional'],
   levelDisplay: 'text',
   sidebarSections: ['skills', 'languages', 'interests'],
 }

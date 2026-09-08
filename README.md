@@ -11,12 +11,12 @@ thing they charge for.
 
 ```bash
 bun install
-bun run dev            # http://localhost:3000 -> redirects to /no
+bun run dev            # http://localhost:3001 -> redirects to /no
 ```
 
 | Script | What it does |
 |---|---|
-| `bun run dev` | Dev server |
+| `bun run dev` | Dev server on **port 3001** |
 | `bun run build` / `bun run start` | Production build and serve |
 | `bun run test` | Vitest: schema, store, renderers, forms |
 | `bun run typecheck` | `tsc --noEmit` |

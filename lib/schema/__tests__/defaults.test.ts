@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { cvDocumentSchema, CURRENT_SCHEMA_VERSION } from '@/lib/schema/cv'
+import { DEFAULT_FONT_PAIR_ID } from '@/lib/theme/fonts'
 import {
   DEFAULT_ENABLED_SECTIONS,
   DEFAULT_SECTION_ORDER,
@@ -87,8 +88,10 @@ describe('createEmptySection', () => {
 })
 
 describe('font pairing input', () => {
-  it('defaults to inter', () => {
-    expect(createEmptyDocument({}, deterministicDeps()).theme.fontPairId).toBe('inter')
+  it('defaults to the registry default', () => {
+    expect(createEmptyDocument({}, deterministicDeps()).theme.fontPairId).toBe(
+      DEFAULT_FONT_PAIR_ID,
+    )
   })
 
   it('honours an explicit pairing, so a template can bring its own', () => {

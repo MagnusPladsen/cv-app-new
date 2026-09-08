@@ -54,15 +54,21 @@ test('the exported PDF embeds fonts, so its text is selectable', async ({ page }
   expect(pdf.byteLength).toBeGreaterThan(10_000)
 })
 
-test('a CV that fits one page prints as one page', async ({ page }) => {
-  // Kompakt is the dense template, sized so the demo CV fits a single sheet.
-  await page.setContent(await printHtmlFor(page, 'kompakt'), { waitUntil: 'networkidle' })
-  await page.evaluate(() => document.fonts.ready)
+test('the printed document never overflows the paper width', async ({ page }) => {
+  for (const id of ['kompakt', 'fjord', 'studio']) {
+    await page.setContent(await printHtmlFor(page, id), { waitUntil: 'networkidle' })
+    await page.evaluate(() => document.fonts.ready)
 
-  const height = await page.evaluate(
-    () => (document.querySelector('.cv-doc') as HTMLElement).offsetHeight,
-  )
-  expect(height).toBeLessThanOrEqual(A4_HEIGHT_PX + 2)
+    const { width, scrollWidth } = await page.evaluate(() => {
+      const doc = document.querySelector('.cv-doc') as HTMLElement
+      return { width: doc.offsetWidth, scrollWidth: doc.scrollWidth }
+    })
+
+    // Horizontal overflow is the one page-geometry failure that silently
+    // truncates content in a PDF rather than reflowing it.
+    expect(width, `${id} is not A4 wide`).toBe(A4_WIDTH_PX)
+    expect(scrollWidth, `${id} overflows the page width`).toBeLessThanOrEqual(width + 1)
+  }
 })
 
 test('entries are never split across a page break', async ({ page }) => {
@@ -71,7 +77,8 @@ test('entries are never split across a page break', async ({ page }) => {
 
   const split = await page.evaluate((pageHeight) => {
     const doc = document.querySelector('.cv-doc') as HTMLElement
-    const marginPx = (16 / 25.4) * 96
+    // Read the margin off the document: a template may tighten it.
+    const marginPx = Number.parseFloat(getComputedStyle(doc).paddingTop)
     const usable = pageHeight - marginPx * 2
 
     return [...doc.querySelectorAll('.cv-entry')]

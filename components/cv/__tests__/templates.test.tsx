@@ -41,7 +41,7 @@ describe.each(TEMPLATES.map((template) => [template.id, template] as const))(
 
     it('declares a sidebar only for a sidebar shell', () => {
       if (template.sidebarSections?.length) {
-        expect(['sidebar-left', 'sidebar-right']).toContain(template.shell)
+        expect(['sidebar-left', 'sidebar-right', 'sidebar-full']).toContain(template.shell)
       }
     })
 

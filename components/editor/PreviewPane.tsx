@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState, type RefObject } from 'react'
 
 import { CvDocument } from '@/components/cv/CvDocument'
+import { documentMarginMm } from '@/components/cv/margin'
 import { contentHeightMm } from '@/lib/print/measure'
 import { PAPER, countPages, mmToPx } from '@/lib/print/paper'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
@@ -58,7 +59,8 @@ export function PreviewPane({
     return () => observer.disconnect()
   }, [containerRef, pageWidthPx, document])
 
-  const pages = countPages(contentMm, document.paper)
+  const marginMm = documentMarginMm(document)
+  const pages = countPages(contentMm, document.paper, marginMm)
   const renderedHeightPx = Math.max(pageHeightPx, mmToPx(contentMm))
 
   return (
@@ -77,7 +79,7 @@ export function PreviewPane({
             style={{ transform: `scale(${scale})`, width: pageWidthPx }}
           >
             <CvDocument document={document} />
-            <PageGuides contentHeightMm={contentMm} paper={document.paper} />
+            <PageGuides contentHeightMm={contentMm} marginMm={marginMm} paper={document.paper} />
           </div>
         </div>
       </div>

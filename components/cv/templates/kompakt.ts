@@ -11,8 +11,13 @@ export const kompakt: Template = {
   shell: 'single',
   defaultAccent: '#0f766e',
   swatches: ['#0f766e', '#1f2933', '#2563eb', '#b45309', '#9f1239', '#4338ca'],
+  defaultFontPairId: 'opensans',
+  tags: ['ats', 'simple', 'one-column'],
   levelDisplay: 'text',
   tokens: {
     rule: '#d4d9e0',
+    /* A tighter page is the whole point: it is what lets fifteen years fit on
+       one sheet without dropping below a readable type size. */
+    marginMm: 14,
   },
 }

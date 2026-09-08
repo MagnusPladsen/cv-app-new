@@ -10,7 +10,8 @@ export const akademisk: Template = {
   shell: 'single',
   defaultAccent: '#7f1d1d',
   swatches: ['#7f1d1d', '#1f2933', '#14532d', '#1e3a8a', '#78350f', '#3b0764'],
-  defaultFontPairId: 'baskerville',
+  defaultFontPairId: 'garamond',
+  tags: ['simple', 'one-column'],
   levelDisplay: 'text',
   tokens: {
     rule: '#c8c2ba',

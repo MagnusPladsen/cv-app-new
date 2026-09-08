@@ -1,5 +1,6 @@
 'use client'
 
+import { Download } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
@@ -9,9 +10,11 @@ import { printCvNode } from '@/lib/print/print-cv'
 import { templateStylesheet } from '@/lib/print/stylesheets'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { readFlag, writeFlag, type FlagStorage } from '@/lib/storage/flag'
+import { ExportFeedback } from './ExportFeedback'
 import { ExportHint } from './ExportHint'
 
 export const EXPORT_HINT_KEY = 'cvapp:export-hint-seen:v1'
+export const BETA_NOTICE_KEY = 'cvapp:beta-notice-seen:v1'
 
 export function ExportButton({
   document,
@@ -29,6 +32,7 @@ export function ExportButton({
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
   const [busy, setBusy] = useState(false)
   const [hintOpen, setHintOpen] = useState(false)
+  const [feedbackOpen, setFeedbackOpen] = useState(false)
 
   async function runExport() {
     const node = getNode()
@@ -47,6 +51,13 @@ export function ExportButton({
       })
     } finally {
       setBusy(false)
+    }
+
+    // After the file, never before it: the notice must not stand between
+    // someone and the download they came for.
+    if (!readFlag(BETA_NOTICE_KEY, storage)) {
+      writeFlag(BETA_NOTICE_KEY, storage)
+      setFeedbackOpen(true)
     }
   }
 
@@ -68,11 +79,12 @@ export function ExportButton({
   return (
     <>
       <button
-        className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink transition duration-200 hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lg focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none transition duration-200 hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lg focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
+        className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink transition duration-200 hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lg focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none disabled:translate-y-0 disabled:opacity-50 disabled:shadow-none"
         disabled={busy}
         onClick={handleClick}
         type="button"
       >
+        <Download aria-hidden="true" className="size-4" />
         {t('export')}
       </button>
 
@@ -81,6 +93,8 @@ export function ExportButton({
         onContinue={handleContinue}
         open={hintOpen}
       />
+
+      <ExportFeedback onClose={() => setFeedbackOpen(false)} open={feedbackOpen} />
     </>
   )
 }

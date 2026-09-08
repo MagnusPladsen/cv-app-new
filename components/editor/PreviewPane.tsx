@@ -71,7 +71,7 @@ export function PreviewPane({
         </span>
       </div>
 
-      <div className="w-full overflow-auto rounded-2xl bg-sand-deep p-4" ref={frameRef}>
+      <div className="w-full overflow-auto rounded-md bg-sand-deep p-4" ref={frameRef}>
         <div style={{ height: renderedHeightPx * scale, width: pageWidthPx * scale }}>
           <div
             className="relative origin-top-left shadow-[0_10px_40px_-12px_rgb(0_0_0/0.25)]"

@@ -1,5 +1,6 @@
 'use client'
 
+import { Upload } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useId, useState } from 'react'
 
@@ -23,9 +24,10 @@ export function BackupControls({
   return (
     <div className="flex flex-col gap-2">
       <label
-        className="w-fit cursor-pointer rounded-full border border-border bg-card px-4 py-1.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+        className="inline-flex w-fit cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
         htmlFor={inputId}
       >
+        <Upload aria-hidden="true" className="size-4" />
         {t('import')}
       </label>
       <input

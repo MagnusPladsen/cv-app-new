@@ -79,7 +79,9 @@ describe('EditorSplit', () => {
     const { container } = wrap(<EditorSplit {...splitProps(doc)} />)
 
     expect(screen.getByLabelText('Fornavn')).toHaveValue('Ola')
-    expect(container.querySelector('.cv-doc')).toHaveTextContent('Ola Nordmann')
+    expect(container.querySelector('[data-cv-preview] .cv-doc')).toHaveTextContent(
+      'Ola Nordmann',
+    )
   })
 
   it('renders exactly one CV document inside the preview, for export to clone', () => {
@@ -172,5 +174,25 @@ describe('ExportButton', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Last ned PDF' }))
 
     expect(print.mock.calls[0]![0]).toMatchObject({ lang: 'en' })
+  })
+})
+
+describe('button affordances', () => {
+  it('gives the primary actions an icon, not text alone', () => {
+    const { container } = wrap(<EditorSplit {...splitProps(fixture())} />)
+
+    // lucide renders inline SVGs; a toolbar of bare text buttons is what this
+    // guards against.
+    const exportButton = screen.getByRole('button', { name: 'Last ned PDF' })
+    expect(exportButton.querySelector('svg')).not.toBeNull()
+
+    for (const name of ['Angre', 'Gjør om', 'Legg til egen seksjon']) {
+      expect(
+        screen.getByRole('button', { name }).querySelector('svg'),
+        `${name} has no icon`,
+      ).not.toBeNull()
+    }
+
+    expect(container.querySelectorAll('svg').length).toBeGreaterThan(5)
   })
 })

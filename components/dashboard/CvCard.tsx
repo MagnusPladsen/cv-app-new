@@ -1,5 +1,6 @@
 'use client'
 
+import { Copy, Download, Pencil, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
@@ -27,7 +28,7 @@ export function CvCard({
 
   const displayName = document.name || t('untitled')
   const actionClass =
-    'rounded-lg px-2 py-1 text-sm font-medium text-muted-foreground transition hover:bg-brand-soft hover:text-brand-strong'
+    'inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-muted-foreground transition duration-150 hover:bg-brand-soft hover:text-brand-strong focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none'
 
   return (
     <li className="flex flex-col gap-3 rounded-2xl border border-border px-5 py-4">
@@ -82,6 +83,7 @@ export function CvCard({
       ) : (
         <div className="flex flex-wrap gap-1">
           <button className={actionClass} onClick={() => setRenaming(true)} type="button">
+            <Pencil aria-hidden="true" className="size-3.5" />
             {t('rename')}
           </button>
           <button
@@ -89,12 +91,15 @@ export function CvCard({
             onClick={() => onDuplicate(document.id)}
             type="button"
           >
+            <Copy aria-hidden="true" className="size-3.5" />
             {t('duplicate')}
           </button>
           <button className={actionClass} onClick={() => onExport(document.id)} type="button">
+            <Download aria-hidden="true" className="size-3.5" />
             {t('export')}
           </button>
           <button className={actionClass} onClick={() => setConfirming(true)} type="button">
+            <Trash2 aria-hidden="true" className="size-3.5" />
             {t('delete')}
           </button>
         </div>

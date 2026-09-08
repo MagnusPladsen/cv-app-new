@@ -43,7 +43,9 @@
     "exportHintStep1": "Choose Print in the menu that opens.",
     "exportHintStep2": "Then choose Save to Files or Save as PDF.",
     "exportHintContinue": "Continue",
-    "exportHintCancel": "Cancel"
+    "exportHintCancel": "Cancel",
+    "pageBreak": "Page break",
+    "pageNumber": "Page {page}"
   },
   "personalia": {
     "title": "Personal details",
@@ -138,7 +140,11 @@
     "contrastWarning": "This colour has low contrast against white and may be hard to read in print.",
     "templates": "Templates",
     "seeAll": "See all templates",
-    "colours": "Colours and type"
+    "colours": "Colours and type",
+    "more": "+{count}",
+    "moreLabel": "Show {count} more templates",
+    "allTemplates": "All templates",
+    "close": "Close"
   },
   "gallery": {
     "title": "Choose a template",
@@ -165,5 +171,19 @@
     "point2Body": "Your CVs live in this browser. Nothing is sent anywhere.",
     "point3Title": "Norwegian and English",
     "point3Body": "Write your CV in one language while the app is in another."
+  },
+  "beta": {
+    "badge": "Beta",
+    "bannerTitle": "CVApp is in beta — and free",
+    "bannerBody": "Everything works, and you can build and download as many CVs as you like without paying. Later there will be a small charge to cover server and database costs. Anything you make now is yours, and comes with you.",
+    "thanksTitle": "Your CV is on its way",
+    "thanksFree": "CVApp is free while in beta. Later it will cost a small amount to cover server and database costs — what you have made comes with you.",
+    "feedbackPrompt": "Got 20 seconds? Tell us what worked or what annoyed you.",
+    "feedbackPlaceholder": "The thing that surprised me was …",
+    "send": "Send feedback",
+    "skip": "Not now",
+    "sent": "Thank you — that helps more than you think.",
+    "noDestination": "Feedback is not wired to a destination yet.",
+    "close": "Close"
   }
 }

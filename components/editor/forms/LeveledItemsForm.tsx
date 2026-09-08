@@ -1,5 +1,6 @@
 'use client'
 
+import { ChevronDown, ChevronUp, Plus, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 import { SelectField, TextField } from '@/components/editor/fields'
@@ -94,7 +95,7 @@ export function LeveledItemsForm({
                 onClick={() => onMoveItem(sectionId, index, index - 1)}
                 type="button"
               >
-                ↑
+                <ChevronUp aria-hidden="true" className="size-4" />
               </button>
               <button
                 aria-label={tTimeline('moveDown')}
@@ -103,7 +104,7 @@ export function LeveledItemsForm({
                 onClick={() => onMoveItem(sectionId, index, index + 1)}
                 type="button"
               >
-                ↓
+                <ChevronDown aria-hidden="true" className="size-4" />
               </button>
             </div>
 
@@ -112,6 +113,7 @@ export function LeveledItemsForm({
               onClick={() => onRemoveItem(sectionId, item.id)}
               type="button"
             >
+              <Trash2 aria-hidden="true" className="size-3.5" />
               {t('remove')}
             </button>
           </div>
@@ -124,6 +126,7 @@ export function LeveledItemsForm({
           onClick={() => onAddItem(sectionId)}
           type="button"
         >
+          <Plus aria-hidden="true" className="size-4" />
           {t('add')}
         </button>
       </div>

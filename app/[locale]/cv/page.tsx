@@ -1,5 +1,6 @@
 'use client'
 
+import { Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 import { BackupControls } from '@/components/dashboard/BackupControls'
@@ -29,7 +30,6 @@ export default function DashboardPage() {
   // builds a new array each call, and zustand v5 reads through
   // useSyncExternalStore, so an unstable reference is an infinite render loop.
   const documents = useDocuments(useShallow(selectOrderedDocuments))
-  const createDocument = useDocuments((state) => state.createDocument)
   const duplicateDocument = useDocuments((state) => state.duplicateDocument)
   const renameDocument = useDocuments((state) => state.renameDocument)
   const deleteDocument = useDocuments((state) => state.deleteDocument)
@@ -63,10 +63,11 @@ export default function DashboardPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
         <button
-          className="rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink transition duration-200 hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lg focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
+          className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-brand-ink transition duration-200 hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lg focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
           onClick={handleCreate}
           type="button"
         >
+          <Plus aria-hidden="true" className="size-4" />
           {t('create')}
         </button>
       </div>

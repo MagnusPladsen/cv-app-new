@@ -90,6 +90,20 @@ ratio — a ratio scales with the image and silently passes a deleted border.
 
 CI runs on Vercel.
 
+## Beta
+
+The app is free and fully usable. The header carries a Beta badge, the landing
+page explains that a small charge will follow to cover server and database
+costs, and the first download shows the same note plus an optional feedback box.
+
+Feedback opens the user's mail client, so set a destination:
+
+```bash
+cp .env.example .env.local   # then fill in NEXT_PUBLIC_FEEDBACK_EMAIL
+```
+
+Without it the box says so rather than silently discarding what someone wrote.
+
 ## Documentation
 
 - `docs/superpowers/specs/` — the design spec

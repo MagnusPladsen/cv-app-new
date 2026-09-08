@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl'
 
+import { BetaBadge } from '@/components/chrome/BetaBadge'
 import { Link, usePathname } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
 
@@ -14,12 +15,12 @@ export function AppHeader() {
   return (
     <header className="sticky top-0 z-30 border-b border-border/70 bg-sand/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
-        <Link
-          className="text-lg font-extrabold tracking-tight text-brand"
-          href="/"
-        >
-          CVApp
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link className="text-lg font-extrabold tracking-tight text-brand" href="/">
+            CVApp
+          </Link>
+          <BetaBadge />
+        </div>
 
         <nav className="flex items-center gap-1 text-sm">
           <Link

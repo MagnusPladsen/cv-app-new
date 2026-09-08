@@ -43,7 +43,9 @@
     "exportHintStep1": "Velg «Skriv ut» i menyen som åpnes.",
     "exportHintStep2": "Velg så «Lagre i Filer» eller «Lagre som PDF».",
     "exportHintContinue": "Fortsett",
-    "exportHintCancel": "Avbryt"
+    "exportHintCancel": "Avbryt",
+    "pageBreak": "Sideskift",
+    "pageNumber": "Side {page}"
   },
   "personalia": {
     "title": "Personalia",
@@ -138,7 +140,11 @@
     "contrastWarning": "Denne fargen har lav kontrast mot hvitt og kan bli vanskelig å lese på papir.",
     "templates": "Maler",
     "seeAll": "Se alle maler",
-    "colours": "Farger og skrift"
+    "colours": "Farger og skrift",
+    "more": "+{count}",
+    "moreLabel": "Vis {count} maler til",
+    "allTemplates": "Alle maler",
+    "close": "Lukk"
   },
   "gallery": {
     "title": "Velg en mal",
@@ -165,5 +171,19 @@
     "point2Body": "CV-ene ligger i nettleseren din. Ingenting sendes noe sted.",
     "point3Title": "Norsk og engelsk",
     "point3Body": "Skriv CV-en på ett språk mens appen er på et annet."
+  },
+  "beta": {
+    "badge": "Beta",
+    "bannerTitle": "CVApp er i beta — og gratis",
+    "bannerBody": "Alt fungerer, og du kan lage og laste ned så mange CV-er du vil uten å betale. På sikt kommer en liten sum for å dekke server- og databasekostnader. Alt du lager nå er ditt, og blir med videre.",
+    "thanksTitle": "CV-en er på vei",
+    "thanksFree": "CVApp er gratis i beta. Senere koster det en liten sum for å dekke server- og databasekostnader — det du har laget blir med videre.",
+    "feedbackPrompt": "Har du 20 sekunder? Fortell hva som var bra eller irriterende.",
+    "feedbackPlaceholder": "Det som overrasket meg var …",
+    "send": "Send tilbakemelding",
+    "skip": "Ikke nå",
+    "sent": "Takk! Det hjelper mer enn du tror.",
+    "noDestination": "Tilbakemelding er ikke koblet til noe ennå.",
+    "close": "Lukk"
   }
 }

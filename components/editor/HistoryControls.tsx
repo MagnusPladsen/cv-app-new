@@ -1,5 +1,6 @@
 'use client'
 
+import { Redo2, Undo2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
 
@@ -48,14 +49,16 @@ export function HistoryControls({
   useHistoryShortcuts({ onUndo, onRedo })
 
   const buttonClass =
-    'rounded-full border border-border px-3 py-1.5 text-sm font-medium transition hover:border-brand disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border'
+    'inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium transition duration-200 hover:border-brand hover:text-brand-strong focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border disabled:hover:text-inherit'
 
   return (
     <div className="flex gap-2">
       <button className={buttonClass} disabled={!canUndo} onClick={onUndo} type="button">
+        <Undo2 aria-hidden="true" className="size-4" />
         {t('undo')}
       </button>
       <button className={buttonClass} disabled={!canRedo} onClick={onRedo} type="button">
+        <Redo2 aria-hidden="true" className="size-4" />
         {t('redo')}
       </button>
     </div>

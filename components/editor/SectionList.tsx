@@ -16,6 +16,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { ChevronDown, ChevronUp, GripVertical, Plus, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 import { sectionTitle } from '@/components/cv/sections'
@@ -77,7 +78,7 @@ function SectionRow({
         {...attributes}
         {...listeners}
       >
-        ⠿
+        <GripVertical aria-hidden="true" className="size-4" />
       </button>
 
       <input
@@ -106,7 +107,7 @@ function SectionRow({
         onClick={() => onMove(index, index - 1)}
         type="button"
       >
-        ↑
+        <ChevronUp aria-hidden="true" className="size-4" />
       </button>
       <button
         aria-label={t('moveDown')}
@@ -115,7 +116,7 @@ function SectionRow({
         onClick={() => onMove(index, index + 1)}
         type="button"
       >
-        ↓
+        <ChevronDown aria-hidden="true" className="size-4" />
       </button>
 
       {section.type === 'custom' ? (
@@ -125,7 +126,7 @@ function SectionRow({
           onClick={() => onRemove(section.id)}
           type="button"
         >
-          ✕
+          <X aria-hidden="true" className="size-4" />
         </button>
       ) : null}
     </li>
@@ -195,10 +196,11 @@ export function SectionList({
 
       <div>
         <button
-          className="rounded-full border border-border bg-card px-4 py-1.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+          className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-4 py-1.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
           onClick={onAddCustom}
           type="button"
         >
+          <Plus aria-hidden="true" className="size-4" />
           {t('addCustom')}
         </button>
       </div>

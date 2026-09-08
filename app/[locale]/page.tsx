@@ -1,3 +1,4 @@
+import { ArrowRight, LayoutGrid, Sparkles } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 
 import { CvDocument } from '@/components/cv/CvDocument'
@@ -36,17 +37,27 @@ export default async function HomePage() {
 
         <div className="flex flex-wrap gap-3">
           <Link
-            className="rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-brand-ink transition hover:-translate-y-0.5 hover:bg-brand-strong"
+            className="inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-brand-ink transition duration-200 hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lg focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
             href="/templates"
           >
             {t('landing.cta')}
+            <ArrowRight aria-hidden="true" className="size-4" />
           </Link>
           <Link
-            className="rounded-full border border-border bg-card px-7 py-3.5 text-sm font-semibold transition hover:border-brand hover:text-brand-strong"
+            className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-7 py-3.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
             href="/cv"
           >
+            <LayoutGrid aria-hidden="true" className="size-4" />
             {t('nav.myCvs')}
           </Link>
+        </div>
+      </section>
+
+      <section className="flex items-start gap-3 rounded-2xl border border-brand/25 bg-brand-soft/50 p-5">
+        <Sparkles aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-brand" />
+        <div className="flex flex-col gap-1">
+          <h2 className="text-sm font-bold text-brand-strong">{t('beta.bannerTitle')}</h2>
+          <p className="text-sm text-foreground/80">{t('beta.bannerBody')}</p>
         </div>
       </section>
 

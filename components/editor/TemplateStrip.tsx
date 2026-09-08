@@ -1,23 +1,25 @@
 'use client'
 
+import { LayoutGrid } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useMemo, useState } from 'react'
 
-import { CvDocument } from '@/components/cv/CvDocument'
 import { TEMPLATES } from '@/components/cv/templates'
-import { Link } from '@/i18n/navigation'
-import { mmToPx, PAPER } from '@/lib/print/paper'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
+import { createDemoDocument } from '@/lib/schema/demo'
+import { TemplateDialog } from './TemplateDialog'
+import { TemplateThumb } from './TemplateThumb'
+
+/** How many fit comfortably before the row starts to feel like a list. */
+const VISIBLE = 4
+const THUMB_WIDTH = 84
 
 /**
- * Live thumbnails of every template, always visible in the editor.
+ * Template switching, kept in plain sight rather than behind a disclosure.
  *
- * Switching template is the single most consequential thing a person does here,
- * so it does not belong behind a "Design" disclosure. Each thumbnail previews
- * the user's own CV, not a demo, so the choice is concrete.
+ * Shows a few, then a "+N" tile into the full set. The thumbnails render demo
+ * content: a new CV is empty, and an empty sheet says nothing about a template.
  */
-/** Fixed, so the scale is a plain number rather than a container query. */
-const THUMB_WIDTH_PX = 74
-
 export function TemplateStrip({
   document,
   onSelect,
@@ -26,75 +28,77 @@ export function TemplateStrip({
   onSelect: (templateId: string) => void
 }) {
   const t = useTranslations('design')
-  const pageWidth = mmToPx(PAPER[document.paper].widthMm)
-  const pageHeight = mmToPx(PAPER[document.paper].heightMm)
+  const [dialogOpen, setDialogOpen] = useState(false)
+
+  const demo = useMemo(() => createDemoDocument({ paper: document.paper }), [document.paper])
+
+  // Always include the active template, even if it sits outside the first few.
+  const activeIndex = TEMPLATES.findIndex(
+    (template) => template.id === document.theme.templateId,
+  )
+  const shown =
+    activeIndex >= VISIBLE
+      ? [...TEMPLATES.slice(0, VISIBLE - 1), TEMPLATES[activeIndex]!]
+      : TEMPLATES.slice(0, VISIBLE)
+
+  const remaining = TEMPLATES.length - shown.length
 
   return (
     <section className="flex flex-col gap-3">
-      <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-          {t('templates')}
-        </h2>
-        <Link
-          className="text-xs font-semibold text-brand underline-offset-4 transition hover:underline"
-          href="/templates"
-        >
-          {t('seeAll')}
-        </Link>
-      </div>
+      <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+        {t('templates')}
+      </h2>
 
-      {/* A scroll strip on every size: it makes "there are more" self-evident
-          in a way a wrapped grid does not. */}
-      <ul className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 sm:mx-0 sm:px-0">
-        {TEMPLATES.map((template) => {
-          const active = template.id === document.theme.templateId
-          return (
-            <li className="shrink-0 snap-start" key={template.id}>
-              <button
-                aria-current={active ? 'true' : undefined}
-                aria-label={template.name}
-                className={`group block overflow-hidden rounded-lg bg-white ring-2 transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-12px_rgb(0_0_0/0.4)] focus-visible:outline-none ${
-                  active
-                    ? 'ring-brand'
-                    : 'ring-border hover:ring-brand/60 focus-visible:ring-brand'
-                }`}
-                onClick={() => onSelect(template.id)}
-                style={{ width: THUMB_WIDTH_PX, height: THUMB_WIDTH_PX * (pageHeight / pageWidth) }}
-                type="button"
-              >
-                <span
-                  aria-hidden="true"
-                  className="block origin-top-left"
-                  style={{
-                    width: pageWidth,
-                    height: pageHeight,
-                    transform: `scale(${THUMB_WIDTH_PX / pageWidth})`,
-                  }}
-                >
-                  <CvDocument
-                    document={{
-                      ...document,
-                      theme: {
-                        ...document.theme,
-                        templateId: template.id,
-                        accent: template.defaultAccent,
-                        fontPairId: template.defaultFontPairId ?? document.theme.fontPairId,
-                      },
-                    }}
-                  />
-                </span>
-              </button>
-              <span
-                className={`mt-1 block text-center text-[11px] font-medium ${
-                  active ? 'text-brand-strong' : 'text-muted-foreground'
-                }`}
-              >
-                {template.name}
-              </span>
-            </li>
-          )
-        })}
+      {/* Wraps rather than scrolls: five fixed tiles are wider than a phone,
+          and a wrapped second row is tidier than a hidden scroll area. */}
+      <ul className="flex flex-wrap items-start gap-3">
+        {shown.map((template) => (
+          <li className="flex flex-col items-center gap-1.5" key={template.id}>
+            <TemplateThumb
+              active={template.id === document.theme.templateId}
+              document={demo}
+              onSelect={onSelect}
+              template={template}
+              width={THUMB_WIDTH}
+            />
+            <span
+              className={`text-[11px] font-medium ${
+                template.id === document.theme.templateId
+                  ? 'text-brand-strong'
+                  : 'text-muted-foreground'
+              }`}
+            >
+              {template.name}
+            </span>
+          </li>
+        ))}
+
+        {remaining > 0 ? (
+          <li className="flex flex-col items-center gap-1.5">
+            <button
+              aria-label={t('moreLabel', { count: remaining })}
+              className="flex shrink-0 flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-border bg-card text-sm font-bold text-muted-foreground transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+              onClick={() => setDialogOpen(true)}
+              style={{ width: THUMB_WIDTH, height: THUMB_WIDTH * (297 / 210) }}
+              type="button"
+            >
+              <LayoutGrid aria-hidden="true" className="size-4" />
+              {t('more', { count: remaining })}
+            </button>
+            <span className="text-[11px] font-medium text-muted-foreground">
+              {t('allTemplates')}
+            </span>
+          </li>
+        ) : null}
       </ul>
+
+      <TemplateDialog
+        activeTemplateId={document.theme.templateId}
+        document={demo}
+        onClose={() => setDialogOpen(false)}
+        onSelect={onSelect}
+        open={dialogOpen}
+      />
     </section>
   )
 }

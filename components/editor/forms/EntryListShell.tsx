@@ -1,5 +1,6 @@
 'use client'
 
+import { Plus, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import type { ReactNode } from 'react'
 
@@ -42,6 +43,7 @@ export function EntryListShell({
                 onClick={() => onRemoveEntry(sectionId, entryId)}
                 type="button"
               >
+                <Trash2 aria-hidden="true" className="size-3.5" />
                 {t('remove')}
               </button>
             </div>
@@ -55,6 +57,7 @@ export function EntryListShell({
           onClick={() => onAddEntry(sectionId)}
           type="button"
         >
+          <Plus aria-hidden="true" className="size-4" />
           {t('add')}
         </button>
       </div>

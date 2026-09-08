@@ -16,6 +16,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { ChevronDown, ChevronUp, GripVertical, Plus, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 import { TextAreaField, TextField } from '@/components/editor/fields'
@@ -76,7 +77,7 @@ function EntryCard({
           {...attributes}
           {...listeners}
         >
-          ⠿
+          <GripVertical aria-hidden="true" className="size-4" />
         </button>
         <button
           aria-label={t('moveUp')}
@@ -85,7 +86,7 @@ function EntryCard({
           onClick={() => onMoveEntry(sectionId, index, index - 1)}
           type="button"
         >
-          ↑
+          <ChevronUp aria-hidden="true" className="size-4" />
         </button>
         <button
           aria-label={t('moveDown')}
@@ -94,7 +95,7 @@ function EntryCard({
           onClick={() => onMoveEntry(sectionId, index, index + 1)}
           type="button"
         >
-          ↓
+          <ChevronDown aria-hidden="true" className="size-4" />
         </button>
       </div>
 
@@ -173,6 +174,7 @@ function EntryCard({
           onClick={() => onRemoveEntry(sectionId, entry.id)}
           type="button"
         >
+          <Trash2 aria-hidden="true" className="size-3.5" />
           {t('remove')}
         </button>
       </div>
@@ -237,6 +239,7 @@ export function TimelineForm({
           onClick={() => onAddEntry(sectionId)}
           type="button"
         >
+          <Plus aria-hidden="true" className="size-4" />
           {t('add')}
         </button>
       </div>

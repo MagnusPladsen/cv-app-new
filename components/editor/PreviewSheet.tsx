@@ -1,5 +1,6 @@
 'use client'
 
+import { X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef, type RefObject } from 'react'
 
@@ -61,11 +62,12 @@ export function PreviewSheet({
         <div className="mb-3 flex items-center justify-between">
           <span className="text-sm font-semibold">{t('preview')}</span>
           <button
-            className="rounded-full px-3 py-1 text-sm font-medium text-muted-foreground hover:bg-brand-soft"
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-medium text-muted-foreground transition hover:bg-brand-soft"
             onClick={() => onOpenChange(false)}
             ref={closeRef}
             type="button"
           >
+            <X aria-hidden="true" className="size-4" />
             {t('closePreview')}
           </button>
         </div>

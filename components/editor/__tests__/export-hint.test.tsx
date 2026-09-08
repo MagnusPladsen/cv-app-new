@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from 'next-intl'
 import type { ReactNode } from 'react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { EXPORT_HINT_KEY, ExportButton } from '@/components/editor/ExportButton'
+import { BETA_NOTICE_KEY, EXPORT_HINT_KEY, ExportButton } from '@/components/editor/ExportButton'
 import type { PrintCvNodeOptions } from '@/lib/print/print-cv'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { createEmptyDocument } from '@/lib/schema/defaults'
@@ -46,7 +46,8 @@ function memory(initial: Record<string, string> = {}) {
   }
 }
 
-function setup(isDesktop: boolean, storage = memory()) {
+/** The beta notice is pre-dismissed: these tests are about the hint. */
+function setup(isDesktop: boolean, storage = memory({ [BETA_NOTICE_KEY]: '1' })) {
   setViewport(isDesktop)
   const print = vi.fn(async (options: PrintCvNodeOptions) => void options)
   const node = window.document.createElement('div')
@@ -72,7 +73,7 @@ describe('export hint', () => {
     await userEvent.click(exportButton())
 
     expect(print).toHaveBeenCalledTimes(1)
-    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(screen.queryByText('Velg «Skriv ut» i menyen som åpnes.')).toBeNull()
   })
 
   it('explains the share sheet before a first mobile export', async () => {
@@ -112,10 +113,13 @@ describe('export hint', () => {
   })
 
   it('never shows the hint again once acknowledged', async () => {
-    const { print } = setup(false, memory({ [EXPORT_HINT_KEY]: '1' }))
+    const { print } = setup(
+      false,
+      memory({ [EXPORT_HINT_KEY]: '1', [BETA_NOTICE_KEY]: '1' }),
+    )
     await userEvent.click(exportButton())
 
-    expect(screen.queryByRole('dialog')).toBeNull()
+    expect(screen.queryByText('Velg «Skriv ut» i menyen som åpnes.')).toBeNull()
     expect(print).toHaveBeenCalledTimes(1)
   })
 

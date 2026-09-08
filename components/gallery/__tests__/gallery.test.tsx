@@ -25,9 +25,11 @@ function wrap(ui: ReactNode) {
 
 describe('TemplateCard', () => {
   it('names the template', () => {
+    // Taken from the registry rather than hard-coded: display names are
+    // branding and change, the behaviour under test does not.
     const template = getTemplate('bergen')
     wrap(<TemplateCard document={demo()} onChoose={vi.fn()} template={template} />)
-    expect(screen.getByRole('button', { name: 'Bergen' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: template.name })).toBeInTheDocument()
   })
 
   it('renders a thumbnail of the CV in that template', () => {
@@ -53,8 +55,9 @@ describe('TemplateCard', () => {
 
   it('reports the chosen template id', async () => {
     const onChoose = vi.fn()
-    wrap(<TemplateCard document={demo()} onChoose={onChoose} template={getTemplate('studio')} />)
-    await userEvent.click(screen.getByRole('button', { name: 'Studio' }))
+    const template = getTemplate('studio')
+    wrap(<TemplateCard document={demo()} onChoose={onChoose} template={template} />)
+    await userEvent.click(screen.getByRole('button', { name: template.name }))
     expect(onChoose).toHaveBeenCalledWith('studio')
   })
 

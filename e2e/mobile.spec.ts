@@ -17,6 +17,14 @@ test.use({
   hasTouch: true,
 })
 
+/**
+ * Picks a template card by the template it renders, not by its display name.
+ * Names are branding and change; the `cv-doc--<id>` class is the identity.
+ */
+function templateCard(page: import('@playwright/test').Page, id: string) {
+  return page.locator(`button:has(.cv-doc--${id})`)
+}
+
 async function horizontalOverflow(page: import('@playwright/test').Page) {
   return page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
@@ -64,19 +72,24 @@ test('the filter chips scroll rather than wrapping into a wall', async ({ page }
 
 test('the editor fits, with the template strip reachable', async ({ page }) => {
   await page.goto('/no/templates')
-  await page.getByRole('button', { name: 'Bergen' }).click()
+  await templateCard(page, 'bergen').click()
   await page.waitForURL(/\/no\/cv\/.+/)
   await page.evaluate(() => document.fonts.ready)
 
   expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1)
 
   // The strip is the point: switching template must not be hidden on a phone.
-  await expect(page.getByRole('button', { name: 'Fjord' })).toBeVisible()
+  // Which templates it shows depends on gallery order and on keeping the
+  // active one visible, so this asserts the affordance rather than any
+  // particular template: alternatives on screen, and a way to the rest.
+  const strip = page.locator('button:has(.cv-doc)')
+  expect(await strip.count()).toBeGreaterThan(1)
+  await expect(page.getByRole('button', { name: /maler til$/ })).toBeVisible()
 })
 
 test('the editor shows a preview button rather than a side-by-side preview', async ({ page }) => {
   await page.goto('/no/templates')
-  await page.getByRole('button', { name: 'Oslo' }).click()
+  await templateCard(page, 'oslo').click()
   await page.waitForURL(/\/no\/cv\/.+/)
 
   await expect(page.getByRole('button', { name: 'Forhåndsvis' })).toBeVisible()
@@ -88,7 +101,7 @@ test('the editor shows a preview button rather than a side-by-side preview', asy
 
 test('opening the preview sheet mounts exactly one CV to export', async ({ page }) => {
   await page.goto('/no/templates')
-  await page.getByRole('button', { name: 'Oslo' }).click()
+  await templateCard(page, 'oslo').click()
   await page.waitForURL(/\/no\/cv\/.+/)
 
   await page.getByRole('button', { name: 'Forhåndsvis' }).click()

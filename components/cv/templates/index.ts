@@ -12,16 +12,24 @@ import { trondheim } from './trondheim'
 
 export const DEFAULT_TEMPLATE_ID = 'oslo'
 
-/** Every template the app can render. */
+/**
+ * Every template the app can render, in gallery order.
+ *
+ * The `id` of each is frozen: it is stored in every saved CV as
+ * `theme.templateId` and names that template's stylesheet, so renaming one
+ * would orphan documents people already have. Display names live in the
+ * template's `name` and can change freely - which is why the ids here still
+ * read as place names while the gallery shows what each template looks like.
+ */
 export const TEMPLATES: Template[] = [
   oslo,
-  bergen,
-  kompakt,
-  fjord,
-  nord,
   trondheim,
   aurora,
+  fjord,
   akademisk,
+  bergen,
+  kompakt,
+  nord,
   studio,
 ]
 

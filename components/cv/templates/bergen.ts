@@ -7,7 +7,7 @@ import type { Template } from '@/components/cv/types'
  */
 export const bergen: Template = {
   id: 'bergen',
-  name: 'Bergen',
+  name: 'Tidløs',
   shell: 'single',
   defaultAccent: '#2563eb',
   swatches: ['#2563eb', '#0f766e', '#7c3aed', '#be123c', '#ea580c', '#1f2933'],

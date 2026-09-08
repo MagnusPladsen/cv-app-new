@@ -7,7 +7,7 @@ import type { Template } from '@/components/cv/types'
  */
 export const trondheim: Template = {
   id: 'trondheim',
-  name: 'Trondheim',
+  name: 'Profesjonell',
   shell: 'header-band',
   defaultAccent: '#1e3a8a',
   swatches: ['#1e3a8a', '#0f766e', '#7c2d12', '#4c1d95', '#134e4a', '#1f2933'],

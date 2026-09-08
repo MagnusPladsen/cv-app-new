@@ -7,7 +7,7 @@ import type { Template } from '@/components/cv/types'
  */
 export const fjord: Template = {
   id: 'fjord',
-  name: 'Fjord',
+  name: 'Elegant',
   shell: 'sidebar-full',
   defaultAccent: '#0e7490',
   swatches: ['#0e7490', '#155e75', '#166534', '#7c2d12', '#3730a3', '#1f2933'],

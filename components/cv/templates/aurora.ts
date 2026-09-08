@@ -6,7 +6,7 @@ import type { Template } from '@/components/cv/types'
  */
 export const aurora: Template = {
   id: 'aurora',
-  name: 'Aurora',
+  name: 'Moderne',
   shell: 'header-band',
   defaultAccent: '#4c1d95',
   swatches: ['#4c1d95', '#0f766e', '#be123c', '#1d4ed8', '#c2410c', '#134e4a'],

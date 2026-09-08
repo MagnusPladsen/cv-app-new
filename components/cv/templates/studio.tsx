@@ -22,7 +22,7 @@ const leadSummary: SectionRenderer = ({ section }) => {
 
 export const studio: Template = {
   id: 'studio',
-  name: 'Studio',
+  name: 'Kreativ',
   shell: 'sidebar-left',
   defaultAccent: '#be123c',
   swatches: ['#be123c', '#4c1d95', '#0f766e', '#c2410c', '#1d4ed8', '#1f2933'],

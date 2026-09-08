@@ -7,7 +7,7 @@ import type { Template } from '@/components/cv/types'
  */
 export const oslo: Template = {
   id: 'oslo',
-  name: 'Oslo',
+  name: 'Klassisk',
   shell: 'single',
   defaultAccent: '#1f2933',
   swatches: ['#1f2933', '#2563eb', '#0f766e', '#b45309', '#7c2d12', '#4c1d95'],

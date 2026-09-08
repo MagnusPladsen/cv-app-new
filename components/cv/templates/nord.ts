@@ -9,7 +9,7 @@ import type { Template } from '@/components/cv/types'
  */
 export const nord: Template = {
   id: 'nord',
-  name: 'Nord',
+  name: 'Balansert',
   shell: 'sidebar-right',
   defaultAccent: '#1d4ed8',
   swatches: ['#1d4ed8', '#1f2933', '#0f766e', '#7f1d1d', '#9d174d', '#a16207'],

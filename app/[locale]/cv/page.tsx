@@ -3,6 +3,7 @@
 import { Plus } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
+import { ClaimNotice } from '@/components/auth/ClaimNotice'
 import { SyncStatusBadge } from '@/components/auth/SyncStatusBadge'
 import { BackupControls } from '@/components/dashboard/BackupControls'
 import { CvCard } from '@/components/dashboard/CvCard'
@@ -77,6 +78,8 @@ export default function DashboardPage() {
           {t('create')}
         </button>
       </div>
+
+      <ClaimNotice />
 
       {!hydrated ? null : (
         <>

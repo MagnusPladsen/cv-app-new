@@ -176,7 +176,7 @@
   "beta": {
     "badge": "Beta",
     "bannerTitle": "CVApp is in beta — and free",
-    "bannerBody": "Everything works, and you can build and download as many CVs as you like without paying. Later there will be a small charge to cover server and database costs. Anything you make now is yours, and comes with you.",
+    "bannerBody": "Everything works, and you can build and download as many CVs as you like without paying. In time there will be a small charge to cover server and database costs. What you make now is yours: sign in whenever you like and your CVs follow you between your phone and your computer.",
     "thanksTitle": "Your CV is on its way",
     "thanksFree": "CVApp is free while in beta. Later it will cost a small amount to cover server and database costs — what you have made comes with you.",
     "feedbackPrompt": "Got 20 seconds? Tell us what worked or what annoyed you.",

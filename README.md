@@ -43,7 +43,7 @@ lib/print/               paper geometry, print HTML, the export pipeline
 public/cv/               the CV's own CSS and self-hosted fonts
 ```
 
-### Four rules that are load-bearing
+### Five rules that are load-bearing
 
 **1. No Tailwind inside `components/cv/**`.** The CV is styled entirely by
 `public/cv/*.css`. The print iframe is a separate document and cannot see the
@@ -61,6 +61,12 @@ point. Both are parity-checked by tests.
 that one. Thumbnails in the template strip and gallery render `.cv-doc` too, so
 the marker is the contract; the mobile preview also switches layout on a real
 media query rather than CSS visibility, so only one preview mounts at a time.
+
+**5. Signing out clears the local store.** Documents on an account live on the
+server, so leaving them in `localStorage` after sign-out hands them to whoever
+signs in next on that browser. `adoptOwner` enforces the same rule in the other
+direction: a different account signing in gets an empty store, never the
+previous user's CVs.
 
 ### How export works
 
@@ -90,6 +96,17 @@ ratio — a ratio scales with the image and silently passes a deleted border.
 
 CI runs on Vercel.
 
+The e2e suite runs with auth switched **on** and signed **out**, pointed at an
+unroutable host. With no credentials the account link never renders, and a
+header that overflows a phone once it appears would go unnoticed — which is
+exactly what happened the day it was added.
+
+Snapshots are position-sensitive: the proof sheet wraps, so adding or
+reordering a template moves its neighbours to a different row and rounds their
+bottom edge by a pixel. Before updating a snapshot you did not expect to
+change, confirm the template's own files are untouched and that any new
+stylesheet is scoped to its own `.cv-doc--<id>`.
+
 ## Beta
 
 The app is free and fully usable. The header carries a Beta badge, the landing
@@ -104,7 +121,45 @@ cp .env.example .env.local   # then fill in NEXT_PUBLIC_FEEDBACK_EMAIL
 
 Without it the box says so rather than silently discarding what someone wrote.
 
+## Accounts and sync
+
+Optional, and off unless configured. With `NEXT_PUBLIC_SUPABASE_URL` unset the
+app behaves exactly as it did before accounts existed: everything local, no
+sign-in affordances anywhere.
+
+The model is **local-first**. The Zustand store stays the source of truth the
+editor reads and writes, so typing is instant and the app works offline and
+signed out. When a session exists, a sync engine reconciles the store against
+Supabase using last-write-wins on the `updatedAt` the editor already stamps.
+Deletions are not special: they carry a timestamp like any other edit and lose
+to anything newer, which is what makes "deleted on my phone, then kept editing
+on my laptop" behave the way a person expects. Tombstones are why a delete on
+one device is not resurrected by a stale copy on another.
+
+There is no persisted dirty set. An unsynced change already carries a newer
+`updatedAt` than the server's copy, so the next full merge finds it — which is
+why the planner derives everything from timestamps.
+
+- Conflict policy lives in `lib/sync/merge.ts`, is pure, and is where to add a
+  test before changing any of the above.
+- Migrations are in `supabase/migrations/`, applied through the dashboard SQL
+  editor. RLS is enabled in the same migration that creates a table; a Supabase
+  table without it is world-readable with the publishable key.
+- Only the publishable key ever reaches this app. There is no service-role key,
+  and account deletion is a `security definer` function rather than a reason to
+  add one.
+- `NEXT_PUBLIC_AUTH_PROVIDERS` is opt-in and empty by default. Having a
+  Supabase project says nothing about which providers its dashboard has
+  switched on, and a button that always errors is worse than no button.
+- `/api/keep-alive` runs daily on Vercel cron so the free project is never
+  paused for inactivity.
+
+The signed-in half cannot be tested automatically — real OAuth needs a Google
+account and a headful browser. Before trusting sync, work through
+`docs/superpowers/plans/2026-09-08-cvapp-accounts-verification.md`.
+
 ## Documentation
 
 - `docs/superpowers/specs/` — the design spec
-- `docs/superpowers/plans/` — the three implementation plans
+- `docs/superpowers/plans/` — the implementation plans, and the manual
+  verification checklist for accounts

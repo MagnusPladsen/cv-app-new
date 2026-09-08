@@ -17,6 +17,7 @@ import { PreviewPane } from './PreviewPane'
 import { PreviewSheet } from './PreviewSheet'
 import { SectionEditor } from './SectionEditor'
 import { SectionList } from './SectionList'
+import { SectionSettings } from './SectionSettings'
 
 export function EditorSplit({
   document,
@@ -82,7 +83,15 @@ export function EditorSplit({
         />
 
         {activeSection ? (
-          <SectionEditor handlers={handlers} labels={labels} section={activeSection} />
+          <div className="flex flex-col gap-6">
+            <SectionSettings
+              labels={labels}
+              onRename={handlers.onRenameSection}
+              onShapeChange={handlers.onCustomShapeChange}
+              section={activeSection}
+            />
+            <SectionEditor handlers={handlers} labels={labels} section={activeSection} />
+          </div>
         ) : null}
 
         <DesignPanel

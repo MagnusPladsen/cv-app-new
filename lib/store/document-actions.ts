@@ -64,18 +64,20 @@ export function setSectionEnabled(doc: CvDocument, sectionId: string, enabled: b
   if (section) section.enabled = enabled
 }
 
+/**
+ * Stores the heading exactly as typed, blank included.
+ *
+ * Deleting the override when the value goes blank would snap the field back to
+ * the built-in label mid-edit, so a user could never clear it and retype.
+ * `sectionTitle` already treats a blank override as "use the label", so an
+ * empty string is the reset.
+ */
 export function setSectionTitle(doc: CvDocument, sectionId: string, title: string): void {
   const section = findSection(doc, sectionId)
   if (!section) return
 
-  if (section.type === 'custom') {
-    section.title = title
-    return
-  }
-
-  const trimmed = title.trim()
-  if (trimmed) section.titleOverride = trimmed
-  else delete section.titleOverride
+  if (section.type === 'custom') section.title = title
+  else section.titleOverride = title
 }
 
 export function moveSection(doc: CvDocument, from: number, to: number): void {
@@ -110,6 +112,25 @@ export function removeSection(doc: CvDocument, sectionId: string): void {
 export function setSummaryText(doc: CvDocument, sectionId: string, text: string): void {
   const section = findSection(doc, sectionId)
   if (section?.type === 'summary') section.text = text
+}
+
+/**
+ * Switches a custom section between its three shapes, seeding the payload the
+ * new shape needs. Content from the old shape is left in place: switching away
+ * and back should not destroy what was typed.
+ */
+export function setCustomShape(
+  doc: CvDocument,
+  sectionId: string,
+  shape: 'entries' | 'bullets' | 'text',
+): void {
+  const section = findSection(doc, sectionId)
+  if (section?.type !== 'custom') return
+
+  section.shape = shape
+  if (shape === 'entries') section.entries ??= []
+  if (shape === 'bullets') section.bullets ??= []
+  if (shape === 'text') section.text ??= ''
 }
 
 export function setCustomText(doc: CvDocument, sectionId: string, text: string): void {

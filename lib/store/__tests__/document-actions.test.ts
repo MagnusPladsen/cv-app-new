@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import { sectionTitle } from '@/components/cv/sections'
+import { getCvLabels } from '@/lib/cv-labels'
 import { cvDocumentSchema, type CvDocument } from '@/lib/schema/cv'
 import { createEmptyDocument } from '@/lib/schema/defaults'
 import {
@@ -11,6 +13,7 @@ import {
   moveSection,
   removeEntry,
   removeSection,
+  setCustomShape,
   setSectionEnabled,
   setSectionTitle,
   setStringList,
@@ -62,13 +65,30 @@ describe('section mutators', () => {
     expect(findSection(d, id)?.enabled).toBe(false)
   })
 
-  it('sets and clears a title override', () => {
+  it('sets a title override', () => {
     const d = doc()
     const id = sectionIdOf(d, 'experience')
     setSectionTitle(d, id, 'Relevant erfaring')
     expect(findSection(d, id)?.titleOverride).toBe('Relevant erfaring')
+  })
+
+  it('keeps a blank override rather than deleting it', () => {
+    const d = doc()
+    const id = sectionIdOf(d, 'experience')
+    setSectionTitle(d, id, 'Relevant erfaring')
+    setSectionTitle(d, id, '')
+
+    // Deleting it would snap the field back to the built-in label mid-edit,
+    // so the user could never clear it and retype.
+    expect(findSection(d, id)?.titleOverride).toBe('')
+    expect(cvDocumentSchema.safeParse(d).success).toBe(true)
+  })
+
+  it('renders the built-in label again once the override is blank', () => {
+    const d = doc()
+    const id = sectionIdOf(d, 'experience')
     setSectionTitle(d, id, '   ')
-    expect(findSection(d, id)?.titleOverride).toBeUndefined()
+    expect(sectionTitle(findSection(d, id)!, getCvLabels('no'))).toBe('Arbeidserfaring')
   })
 
   it('reorders sections', () => {
@@ -190,5 +210,44 @@ describe('string list mutators', () => {
     setSummaryText(d, id, 'Hei.')
     const section = findSection(d, id)!
     expect('text' in section && section.text).toBe('Hei.')
+  })
+})
+
+describe('setCustomShape', () => {
+  it('switches a custom section to entries and seeds the payload', () => {
+    const d = doc()
+    const id = addCustomSection(d, 'bullets', newId)
+    setCustomShape(d, id, 'entries')
+
+    const section = findSection(d, id)!
+    expect(section).toMatchObject({ shape: 'entries' })
+    expect('entries' in section && section.entries).toEqual([])
+    expect(cvDocumentSchema.safeParse(d).success).toBe(true)
+  })
+
+  it('switches to text', () => {
+    const d = doc()
+    const id = addCustomSection(d, 'bullets', newId)
+    setCustomShape(d, id, 'text')
+    expect(findSection(d, id)).toMatchObject({ shape: 'text', text: '' })
+  })
+
+  it('keeps content when switching away and back', () => {
+    const d = doc()
+    const id = addCustomSection(d, 'bullets', newId)
+    setStringList(d, id, ['En artikkel'])
+
+    setCustomShape(d, id, 'text')
+    setCustomShape(d, id, 'bullets')
+
+    const section = findSection(d, id)!
+    expect('bullets' in section && section.bullets).toEqual(['En artikkel'])
+  })
+
+  it('ignores a built-in section', () => {
+    const d = doc()
+    const id = d.sections.find((section) => section.type === 'experience')!.id
+    setCustomShape(d, id, 'text')
+    expect(findSection(d, id)?.type).toBe('experience')
   })
 })

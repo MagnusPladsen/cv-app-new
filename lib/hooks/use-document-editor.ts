@@ -25,6 +25,7 @@ export type DocumentEditorHandlers = SectionEditorHandlers & {
   onMoveSection: (from: number, to: number) => void
   onAddCustomSection: () => void
   onRemoveSection: (sectionId: string) => void
+  onCustomShapeChange: (sectionId: string, shape: 'entries' | 'bullets' | 'text') => void
   onThemeChange: (patch: Partial<CvTheme>) => void
   onPaperChange: (paper: PaperId) => void
 }
@@ -84,6 +85,9 @@ export function useDocumentEditor(
       },
 
       onRemoveSection: (sectionId) => edit((draft) => actions.removeSection(draft, sectionId)),
+
+      onCustomShapeChange: (sectionId, shape) =>
+        edit((draft) => actions.setCustomShape(draft, sectionId, shape)),
 
       onSummaryChange: (sectionId, text) =>
         edit((draft) => actions.setSummaryText(draft, sectionId, text)),

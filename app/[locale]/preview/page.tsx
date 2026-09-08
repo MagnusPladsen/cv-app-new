@@ -1,9 +1,20 @@
+import type { Metadata } from 'next'
+
 import { CvDocument } from '@/components/cv/CvDocument'
 import { TEMPLATES } from '@/components/cv/templates'
 import { mmToPx, PAPER } from '@/lib/print/paper'
 import { createDemoDocument } from '@/lib/schema/demo'
 
 const SCALE = 0.3
+
+/**
+ * A developer tool, not a product page: it is what the Playwright template
+ * suite screenshots, so it has to exist in a production build. Keep it out of
+ * search results rather than out of the bundle.
+ */
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+}
 
 /**
  * Template proof sheet: every registered template rendering the same realistic

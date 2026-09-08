@@ -63,7 +63,13 @@
     "show": "Vis",
     "hide": "Skjul",
     "moveUp": "Flytt opp",
-    "moveDown": "Flytt ned"
+    "moveDown": "Flytt ned",
+    "renameLabel": "Overskrift på CV-en",
+    "renameHint": "Gjelder bare denne CV-en.",
+    "shapeLabel": "Innhold",
+    "shapeEntries": "Oppføringer med datoer",
+    "shapeBullets": "Punktliste",
+    "shapeText": "Fritekst"
   },
   "forms": {
     "onePerLine": "Én per linje.",

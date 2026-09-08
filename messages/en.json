@@ -63,7 +63,13 @@
     "show": "Show",
     "hide": "Hide",
     "moveUp": "Move up",
-    "moveDown": "Move down"
+    "moveDown": "Move down",
+    "renameLabel": "Heading on the CV",
+    "renameHint": "Applies to this CV only.",
+    "shapeLabel": "Content",
+    "shapeEntries": "Dated entries",
+    "shapeBullets": "Bullet list",
+    "shapeText": "Free text"
   },
   "forms": {
     "onePerLine": "One per line.",

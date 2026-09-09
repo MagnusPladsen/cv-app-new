@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 
+import { callerKey, rateLimit } from '@/lib/security/rate-limit'
+
 import { getServerSupabase } from '@/lib/supabase/server'
 
 /**
@@ -8,6 +10,15 @@ import { getServerSupabase } from '@/lib/supabase/server'
  */
 export async function POST(request: Request) {
   const { origin } = new URL(request.url)
+
+  const limited = rateLimit(callerKey(request, 'delete-account'), { limit: 5, windowMs: 60_000 })
+  if (!limited.ok) {
+    return new NextResponse('Too many requests', {
+      status: 429,
+      headers: { 'Retry-After': String(Math.ceil(limited.retryAfterMs / 1000)) },
+    })
+  }
+
   const supabase = await getServerSupabase()
   if (!supabase) return NextResponse.redirect(`${origin}/`, { status: 303 })
 

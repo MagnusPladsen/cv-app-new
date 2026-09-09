@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 
+import { callerKey, rateLimit } from '@/lib/security/rate-limit'
 import { readSupabaseEnv } from '@/lib/supabase/env'
 
 /**
@@ -15,8 +16,24 @@ export async function GET(request: Request) {
   // Vercel signs cron requests with CRON_SECRET when it is set. Without this
   // check the endpoint is a free anonymous query against the database for
   // anyone who finds the URL.
+  const limited = rateLimit(callerKey(request, 'keep-alive'), { limit: 5, windowMs: 60_000 })
+  if (!limited.ok) {
+    return new NextResponse('Too many requests', {
+      status: 429,
+      headers: { 'Retry-After': String(Math.ceil(limited.retryAfterMs / 1000)) },
+    })
+  }
+
   const secret = process.env.CRON_SECRET
-  if (secret && request.headers.get('authorization') !== `Bearer ${secret}`) {
+  if (!secret) {
+    // Unset is fine locally, where this endpoint is a convenience. In
+    // production it would be an open, unauthenticated trigger for a database
+    // query, so refuse instead: a cron that returns 503 is visible in the
+    // dashboard, whereas a public endpoint is not visible at all.
+    if (process.env.NODE_ENV === 'production') {
+      return new NextResponse('Not configured', { status: 503 })
+    }
+  } else if (request.headers.get('authorization') !== `Bearer ${secret}`) {
     return new NextResponse('Unauthorized', { status: 401 })
   }
 

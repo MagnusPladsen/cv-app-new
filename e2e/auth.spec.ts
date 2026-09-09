@@ -116,3 +116,20 @@ test('a signed-out download offers sign-in, and guest mode always gets the file'
   await download.click()
   await expect(prompt).toBeHidden()
 })
+
+test('the account endpoints refuse a flood', async ({ request }) => {
+  // Per-instance and therefore a speed bump rather than a guarantee, but it
+  // stops the realistic case: a loop against account deletion from one
+  // client. Sign-out is used here because it is the harmless one to hammer.
+  const codes: number[] = []
+  for (let i = 0; i < 14; i += 1) {
+    const response = await request.post('/auth/sign-out', {
+      form: { next: '/no' },
+      maxRedirects: 0,
+    })
+    codes.push(response.status())
+  }
+
+  expect(codes.filter((code) => code === 429).length).toBeGreaterThan(0)
+  expect(codes[0], 'the first request must still work').toBe(303)
+})

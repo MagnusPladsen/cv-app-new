@@ -60,7 +60,7 @@ export const PRIVACY_NO: LegalDocument = {
       id: 'processors',
       heading: 'Hvem som behandler opplysninger for oss',
       body: [
-        'Vi bruker databehandlere til drift og lagring. Hver av dem har en databehandleravtale som følger av vilkårene vi har akseptert.',
+        'Vi bruker databehandlere til drift og lagring. Tabellen under viser hvem de er, hva de gjør, hvor behandlingen skjer, og om det foreligger en databehandleravtale.',
       ],
     },
     {

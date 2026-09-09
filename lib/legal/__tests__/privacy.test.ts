@@ -91,6 +91,31 @@ describe('the privacy policy', () => {
     }
   })
 
+  it('states, per processor, whether an agreement actually covers it', () => {
+    // Not whether the vendor publishes a DPA - whether it applies to us.
+    // Vercel publishes one that covers Enterprise and Pro plans only, so
+    // "they have a DPA" and "we are covered" are different questions, and
+    // the policy must answer the second.
+    for (const processor of PROCESSORS) {
+      expect(processor.dpa.note.no.trim(), `${processor.name} no note`).not.toBe('')
+      expect(processor.dpa.note.en.trim(), `${processor.name} en note`).not.toBe('')
+      expect(processor.dpa.note.no).not.toBe(processor.dpa.note.en)
+    }
+  })
+
+  it('makes no blanket claim that every processor is covered', () => {
+    // The policy said exactly that until Vercel's DPA was actually read.
+    // A false statement in a privacy policy is worse than a missing one.
+    const covered = PROCESSORS.every((processor) => processor.dpa.covered)
+    if (covered) return
+
+    for (const locale of locales) {
+      const section = PRIVACY_POLICY[locale].sections.find((s) => s.id === 'processors')!
+      const text = section.body.join(' ').toLowerCase()
+      expect(text).not.toMatch(/hver av dem har|each is covered/)
+    }
+  })
+
   it('translates the Norwegian processor text, rather than copying the English', () => {
     // A copy would pass the emptiness check above while still showing English
     // to a Norwegian reader.

@@ -13,7 +13,7 @@ export function LegalDocumentView({
 }: {
   document: LegalDocument
   locale: 'no' | 'en'
-  processorHeadings: { name: string; purpose: string; country: string }
+  processorHeadings: { name: string; purpose: string; country: string; dpa: string }
 }) {
   return (
     <article className="flex flex-col gap-8">
@@ -45,7 +45,8 @@ export function LegalDocumentView({
                   <tr className="border-b border-border text-left">
                     <th className="py-2 pr-4 font-semibold">{processorHeadings.name}</th>
                     <th className="py-2 pr-4 font-semibold">{processorHeadings.purpose}</th>
-                    <th className="py-2 font-semibold">{processorHeadings.country}</th>
+                    <th className="py-2 pr-4 font-semibold">{processorHeadings.country}</th>
+                    <th className="py-2 font-semibold">{processorHeadings.dpa}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -55,7 +56,8 @@ export function LegalDocumentView({
                       <td className="py-2 pr-4 text-foreground/80">
                         {processor.purpose[locale]}
                       </td>
-                      <td className="py-2 text-foreground/80">{processor.country[locale]}</td>
+                      <td className="py-2 pr-4 text-foreground/80">{processor.country[locale]}</td>
+                      <td className="py-2 text-foreground/80">{processor.dpa.note[locale]}</td>
                     </tr>
                   ))}
                 </tbody>

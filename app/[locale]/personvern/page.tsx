@@ -29,6 +29,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
           name: t('processorName'),
           purpose: t('processorPurpose'),
           country: t('processorCountry'),
+          dpa: t('processorDpa'),
         }}
       />
     </main>

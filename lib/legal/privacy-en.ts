@@ -57,7 +57,7 @@ export const PRIVACY_EN: LegalDocument = {
       id: 'processors',
       heading: 'Who processes data for us',
       body: [
-        'We use processors for hosting and storage. Each is covered by a data processing agreement incorporated into the terms we have accepted.',
+        'We use processors for hosting and storage. The table below shows who they are, what they do, where the processing happens, and whether a data processing agreement is in place.',
       ],
     },
     {

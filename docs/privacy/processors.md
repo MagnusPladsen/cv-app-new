@@ -7,22 +7,53 @@ contacts a host that is not on it.
 
 ## Data processing agreements
 
-Neither vendor requires a separately signed agreement. Both incorporate their
-DPA into the terms of service already accepted, which satisfies Art. 28's
-requirement that the agreement be in writing.
+Neither vendor requires a separately signed agreement, and archived copies of
+both are in `legal/`. But publishing a DPA is not the same as being covered by
+one, and reading the documents produced a finding.
 
-That does not remove the record-keeping. A DPA incorporated by reference can
-be amended by the vendor, so "we accepted their terms" is not by itself an
-answer to *which* terms applied when. Save a PDF of each as it stands and note
-the date retrieved.
+| Vendor | DPA | Covers us? |
+|---|---|---|
+| Supabase | `legal/SupaBase - Data Processing Addendum.pdf` | **Yes.** Incorporated into the terms already accepted, for all organisations. |
+| Vercel | `legal/Vercel - Data Processing Addendum.pdf` | **No, not on the Hobby plan.** |
 
-| Vendor | DPA | Retrieved | Archived at |
-|---|---|---|---|
-| Supabase | supabase.com/legal/dpa | *to fill in* | *outside the repo* |
-| Vercel | vercel.com/legal/dpa | *to fill in* | *outside the repo* |
+### The Vercel gap
 
-Neither page offers a download. Open it and print to PDF; printing stamps the
-retrieval date, which is the part that matters.
+The document says, in its opening section:
+
+> This Addendum applies to Vercel's Processing of Personal Data as a Processor
+> under the Agreement for Customers who are on **Enterprise and Pro plans**.
+
+CVApp is on Hobby. Two consequences, and the second is the serious one:
+
+1. **No Art. 28 processor agreement with the host.** GDPR requires one before
+   a processor handles personal data on the controller's behalf, and Vercel
+   handles IP addresses and session cookies on every request.
+2. **No Standard Contractual Clauses for the US transfer.** The SCCs live
+   inside the DPA. Functions execute in `iad1` (Washington DC), so without the
+   DPA the transfer has no mechanism at all — it is not a disclosure question,
+   which is what it looked like before the document was read.
+
+**This is a launch blocker.** Options, roughly in order of cost:
+
+- **Vercel Pro.** The DPA then applies, and region selection becomes available
+  — which also lets function execution move to `fra1` and removes the transfer
+  entirely. One change fixes both findings.
+- **Move hosting** to a provider whose free or cheap tier includes a DPA and
+  an EEA region.
+- **Do not launch publicly or charge money** until one of the above.
+
+Worth checking separately: Vercel's Hobby terms restrict that plan to
+non-commercial personal use, which a public CV product may not satisfy
+regardless of the privacy question.
+
+### Keeping the archive honest
+
+A DPA incorporated by reference can be amended by the vendor, so "we accepted
+their terms" is not by itself an answer to *which* terms applied when. Both
+PDFs are committed, so the commit date is the retrieval evidence. Neither
+vendor page offers a download; they were printed to PDF from the web page.
+
+Re-retrieve and re-commit after any plan change.
 
 ## Regions
 

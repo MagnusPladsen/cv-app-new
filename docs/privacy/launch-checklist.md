@@ -10,7 +10,7 @@ than useless.
 |---|---|---|
 | Data inventory written | done | `docs/privacy/data-inventory.md`, enforced by `lib/schema/__tests__/data-inventory.test.ts` |
 | Privacy policy published and linked | done | `/[locale]/personvern`, linked site-wide from `components/chrome/AppFooter.tsx`; reachability tested in `e2e/legal.spec.ts` |
-| DPAs accepted and archived | **operator action** | Both incorporate their DPA into accepted terms, so nothing needs signing. The PDFs still need retrieving and dating — see `docs/privacy/processors.md` |
+| DPAs accepted and archived | **BLOCKED** | Supabase: covered. Vercel: **its DPA applies to Enterprise and Pro plans only**, and CVApp is on Hobby — so there is no Art. 28 agreement with the host and no SCCs for the US transfer. See `docs/privacy/processors.md` |
 | Hosting and database in an EU/EEA region | **partly** | Database: AWS `eu-central-1`, Frankfurt. Functions: `iad1`, Washington DC — a disclosed transfer, not an EEA region. See `docs/privacy/processors.md` |
 | Account deletion that genuinely deletes, with a test | done | `supabase/tests/delete_own_account.sql`; run it and record the result |
 | Data export (JSON) working | done | `lib/privacy/export.ts`, on the account page. Art. 15 (everything held) and Art. 20 (portable CVs) are separate buttons |
@@ -24,16 +24,19 @@ than useless.
 
 ## Operator actions still outstanding
 
-1. **Retrieve and date both DPAs.** `supabase.com/legal/dpa` and
-   `vercel.com/legal/dpa` are web pages, not downloads: open each and print to
-   PDF. Record the dates in `docs/privacy/processors.md`.
-2. **Run the erasure proof** in the Supabase SQL editor and record the result.
-3. **Set `CRON_SECRET`** in the Vercel production environment. Without it
-   `/api/keep-alive` now returns 503 in production rather than running
-   unauthenticated, so the daily cron will fail visibly until it is set.
-4. **Have the privacy policy reviewed** by someone qualified in Norwegian
+1. **Resolve the Vercel DPA gap.** This is the one blocker. Vercel Pro makes
+   the DPA apply *and* allows moving function execution to `fra1`, which
+   removes the US transfer as well. See `docs/privacy/processors.md`.
+2. **Set `CRON_SECRET`** in the Vercel production environment. Without it
+   `/api/keep-alive` returns 503 in production rather than running
+   unauthenticated, so the daily cron fails visibly until it is set — and a
+   paused Supabase project makes every sign-in fail.
+3. **Have the privacy policy reviewed** by someone qualified in Norwegian
    privacy law before charging money. The spec puts this outside what a coding
    agent should settle.
+
+Done: both DPAs archived in `legal/`; the erasure proof run against the live
+database (2026-09-09, no exception raised).
 
 ## Known weaknesses, deliberately accepted
 

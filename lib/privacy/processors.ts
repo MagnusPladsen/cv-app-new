@@ -8,6 +8,12 @@ export type Processor = {
   country: Localised
   /** Hostnames the application contacts, for the drift test. */
   hosts: string[]
+  /**
+   * Whether an Art. 28 data processing agreement actually covers this
+   * processor today - not whether the vendor publishes one. Several publish a
+   * DPA that applies only to paid plans.
+   */
+  dpa: { covered: boolean; note: Localised }
 }
 
 /**
@@ -30,6 +36,13 @@ export const PROCESSORS: readonly Processor[] = [
       en: 'Germany (AWS eu-central-1, Frankfurt)',
     },
     hosts: ['supabase.co', 'supabase.com'],
+    dpa: {
+      covered: true,
+      note: {
+        no: 'Ja — gjelder automatisk gjennom vilkårene.',
+        en: 'Yes — applies automatically through the terms.',
+      },
+    },
   },
   {
     name: 'Vercel',
@@ -45,5 +58,19 @@ export const PROCESSORS: readonly Processor[] = [
     // change. See docs/privacy/processors.md.
     country: { no: 'USA (iad1, Washington DC)', en: 'United States (iad1, Washington DC)' },
     hosts: ['vercel.app', 'vercel.com', 'pladsen.dev'],
+    // Read the document rather than assuming it applies. Vercel's DPA says:
+    // "This Addendum applies to Vercel's Processing of Personal Data as a
+    // Processor under the Agreement for Customers who are on Enterprise and
+    // Pro plans." CVApp is on Hobby, so it does not apply - and the Standard
+    // Contractual Clauses that would cover the US transfer live inside it.
+    // This is a launch blocker, not a disclosure question.
+    // See docs/privacy/processors.md.
+    dpa: {
+      covered: false,
+      note: {
+        no: 'Nei — gjelder ikke på gjeldende abonnement. Under avklaring.',
+        en: 'No — does not apply on the current plan. Being resolved.',
+      },
+    },
   },
 ] as const

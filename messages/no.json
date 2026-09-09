@@ -221,7 +221,8 @@
   "legal": {
     "processorName": "Leverandør",
     "processorPurpose": "Formål",
-    "processorCountry": "Behandlingssted"
+    "processorCountry": "Behandlingssted",
+    "processorDpa": "Databehandleravtale"
   },
   "footer": {
     "tagline": "CVApp — gratis CV-bygger i beta.",

@@ -43,4 +43,9 @@ begin
   raise notice 'OK: erasure removed every row for the deleted user, and only that user';
 end $$;
 
+-- The SQL editor does not surface RAISE NOTICE, so a passing run shows only
+-- "Success. No rows returned" - which is easy to mistake for the script not
+-- having done anything. This returns the verdict as an actual row.
+select 'PASS: erasure removes every row for the deleted user, and only that user' as result;
+
 rollback;

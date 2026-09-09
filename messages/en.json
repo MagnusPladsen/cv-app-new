@@ -221,7 +221,8 @@
   "legal": {
     "processorName": "Provider",
     "processorPurpose": "Purpose",
-    "processorCountry": "Processed in"
+    "processorCountry": "Processed in",
+    "processorDpa": "Processing agreement"
   },
   "footer": {
     "tagline": "CVApp — a free CV builder, in beta.",

@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { NextIntlClientProvider } from 'next-intl'
 import { createRef } from 'react'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 
 import { PreviewPane } from '@/components/editor/PreviewPane'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'

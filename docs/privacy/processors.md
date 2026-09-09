@@ -29,16 +29,32 @@ retrieval date, which is the part that matters.
 | Vendor | Region | Status |
 |---|---|---|
 | Supabase | AWS `eu-central-1`, Frankfurt | Confirmed 2026-09-09. Inside the EEA. |
-| Vercel | Unconfirmed | See below. |
+| Vercel | `iad1`, Washington DC, USA | Confirmed 2026-09-09. **Outside the EEA.** |
 
-**The Vercel region is deliberately recorded as `United States` in
-`lib/privacy/processors.ts` until it is confirmed.** The free tier does not
-allow choosing a function region and defaults to a US one, so the conservative
-assumption is US processing. Narrowing a disclosed transfer later is safe;
-widening one after the fact is not.
+### How the Vercel region was confirmed
 
-To confirm: Vercel → Project → Settings → Functions. If it is an EEA region,
-update `processors.ts` and the policy's transfers section tightens by itself.
+```
+curl -sI https://cv.pladsen.dev/api/keep-alive | grep x-vercel-id
+x-vercel-id: arn1::iad1::b8d2t-...
+```
+
+Two segments: the request entered the edge network at `arn1` (Stockholm) and
+the serverless function executed at `iad1` (Washington DC). It is the second
+that matters — the edge segment only reflects where the visitor is.
+
+**What this means.** CV content and account records stay in Frankfurt. But
+every request's IP address and sign-in cookies are processed in the United
+States, which is a Chapter V transfer. It is lawful under Vercel's Data
+Privacy Framework certification and the Standard Contractual Clauses in its
+DPA, and the privacy policy discloses it in the `transfers` section.
+
+Region selection is a paid feature; the free tier cannot change this. Moving
+function execution to `fra1` would remove the transfer entirely and is worth
+doing if the project ever moves to a paid plan — but it is a disclosure
+question today, not a blocker.
+
+Re-check after any plan change, and after any change to where the project
+deploys.
 
 ## Adding a processor
 

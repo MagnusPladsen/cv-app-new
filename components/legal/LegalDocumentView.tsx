@@ -8,9 +8,11 @@ import { PROCESSORS } from '@/lib/privacy/processors'
  */
 export function LegalDocumentView({
   document,
+  locale,
   processorHeadings,
 }: {
   document: LegalDocument
+  locale: 'no' | 'en'
   processorHeadings: { name: string; purpose: string; country: string }
 }) {
   return (
@@ -50,8 +52,10 @@ export function LegalDocumentView({
                   {PROCESSORS.map((processor) => (
                     <tr className="border-b border-border/60" key={processor.name}>
                       <td className="py-2 pr-4 font-medium">{processor.name}</td>
-                      <td className="py-2 pr-4 text-foreground/80">{processor.purpose}</td>
-                      <td className="py-2 text-foreground/80">{processor.country}</td>
+                      <td className="py-2 pr-4 text-foreground/80">
+                        {processor.purpose[locale]}
+                      </td>
+                      <td className="py-2 text-foreground/80">{processor.country[locale]}</td>
                     </tr>
                   ))}
                 </tbody>

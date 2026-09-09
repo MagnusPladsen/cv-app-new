@@ -27,5 +27,7 @@ lovdata.no.
   `default-src 'self'` rather than using a nonce. A nonce would opt every page
   into dynamic rendering, costing the static optimisation the landing page and
   gallery currently get. Revisit if an inline script is ever needed.
-- **Vercel deployment region** is unconfirmed. The privacy policy cannot claim
-  that no data leaves the EEA until it is.
+- **Vercel functions execute in `iad1` (Washington DC)**, confirmed
+  2026-09-09. CV content stays in Frankfurt; request metadata does not. The
+  policy discloses this. Moving to `fra1` needs a paid plan and would remove
+  the transfer.

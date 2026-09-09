@@ -80,4 +80,22 @@ describe('the privacy policy', () => {
       expect(PRIVACY_POLICY[locale].sections.map((s) => s.id)).toContain('processors')
     }
   })
+
+  it.each(locales)('describes every processor in %s, not just in English', (locale) => {
+    // The table is rendered inside the policy, so an untranslated purpose
+    // means the Norwegian policy is partly in English - which is exactly what
+    // it looked like before this was caught.
+    for (const processor of PROCESSORS) {
+      expect(processor.purpose[locale].trim(), `${processor.name} purpose`).not.toBe('')
+      expect(processor.country[locale].trim(), `${processor.name} country`).not.toBe('')
+    }
+  })
+
+  it('translates the Norwegian processor text, rather than copying the English', () => {
+    // A copy would pass the emptiness check above while still showing English
+    // to a Norwegian reader.
+    for (const processor of PROCESSORS) {
+      expect(processor.purpose.no).not.toBe(processor.purpose.en)
+    }
+  })
 })

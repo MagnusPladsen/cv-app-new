@@ -23,10 +23,18 @@ lovdata.no.
 
 ## Open items
 
-- **Content-Security-Policy `script-src`.** The policy falls back to
-  `default-src 'self'` rather than using a nonce. A nonce would opt every page
-  into dynamic rendering, costing the static optimisation the landing page and
-  gallery currently get. Revisit if an inline script is ever needed.
+- **Content-Security-Policy `script-src` allows `'unsafe-inline'`.** This is
+  the weakest part of the policy and is deliberate, not an oversight. Next's
+  framework bootstrap is an inline script, so `'self'` alone blocks hydration:
+  the page renders and then does nothing. The strict fix is a per-request
+  nonce, which has to be threaded through a proxy that also runs next-intl
+  and refreshes the Supabase session — a half-wired nonce there signs people
+  out at random, so it needs its own change with its own tests rather than
+  being bolted on.
+
+  What still holds meanwhile: `connect-src` limits where an injected script
+  could send anything, and `object-src`, `base-uri`, `form-action`,
+  `frame-ancestors` and `img-src` are unaffected.
 - **Vercel functions execute in `iad1` (Washington DC)**, confirmed
   2026-09-09. CV content stays in Frankfurt; request metadata does not. The
   policy discloses this. Moving to `fra1` needs a paid plan and would remove

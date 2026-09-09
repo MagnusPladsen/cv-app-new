@@ -97,16 +97,11 @@ Three console tasks and one archive. Nothing later depends on them at build
 time, so the rest of the plan can proceed in parallel — but the launch
 checklist is not clear until these are done.
 
-- [ ] **Step 1: Record the Supabase region**
+- [x] **Step 1: Record the Supabase region**
 
-Supabase dashboard → Project Settings → General. Note the exact region. The
-database currently resolves to an AWS Europe IPv6 allocation
-(`2a05:d014:…`), which is consistent with an EEA region, but the dashboard is
-the authoritative record and the ROPA will need the exact value.
-
-If it is *not* an EEA region, stop and raise it: spec §6 puts EEA hosting
-first in the preference order, and moving a project region means recreating
-it, which is far cheaper now than after launch.
+**`eu-central-1` (Frankfurt), confirmed by the operator 2026-09-09.** Inside
+the EEA, so no Chapter V transfer mechanism is needed for the database and
+the privacy policy states that data does not leave the EEA.
 
 - [ ] **Step 2: Accept and archive the DPAs**
 
@@ -124,9 +119,12 @@ privacy policy and Task 7 tests that the list matches what the app talks to.
 
 - [ ] **Step 3: Confirm the Vercel deployment region**
 
-Vercel project → Settings → Functions. If it is not an EEA region, change it.
-Server logs contain IP addresses, which spec §2 correctly classes as personal
-data.
+Still outstanding. Vercel project → Settings → Functions. If it is not an EEA
+region, change it to `fra1` to match the database. Server logs contain IP
+addresses, which spec §2 correctly classes as personal data.
+
+Until this is confirmed, the privacy policy cannot truthfully claim that no
+data leaves the EEA. Task 6 must not be committed with that claim unverified.
 
 - [ ] **Step 4: Write down what you found**
 
@@ -965,9 +963,12 @@ version is referenced from consent records if analytics is ever added.
 
 Content that must be accurate for CVApp specifically, not boilerplate:
 
-- **Controller:** the operator's name, organisation number and email. These
-  are the operator's to supply — leave a clearly marked placeholder and open
-  the PR asking for them, rather than inventing an org.nr.
+- **Controller:** Magnus Pladsen, contact `magnus_pladsen@hotmail.com`
+  (supplied by the operator 2026-09-09). There is no registered company yet,
+  so the controller is a natural person and there is **no organisation
+  number** — say so plainly rather than leaving an empty field, which reads
+  as an omission. Revisit when a company is registered: the controller
+  changes, and so does the policy.
 - **Legal basis:** Art. 6(1)(b) for the CV and the account. No consent is
   collected, because nothing needs it.
 - **Recipients:** Supabase and Vercel, with the regions from Task 0.
@@ -1188,21 +1189,21 @@ export const PROCESSORS: readonly Processor[] = [
   {
     name: 'Supabase',
     purpose: 'Authentication and storage of CVs for signed-in users',
-    country: 'REPLACE WITH THE REGION CONFIRMED IN TASK 0',
+    country: 'Germany (AWS eu-central-1)',
     hosts: ['supabase.co', 'supabase.com'],
   },
   {
     name: 'Vercel',
     purpose: 'Application hosting and delivery; server logs containing IP addresses',
-    country: 'REPLACE WITH THE REGION CONFIRMED IN TASK 0',
+    country: 'CONFIRM IN TASK 0 STEP 3 BEFORE COMMITTING',
     hosts: ['vercel.app', 'vercel.com'],
   },
 ] as const
 ```
 
-The `REPLACE WITH` markers are deliberate: the plan cannot know the answer,
-and a guessed region in a published policy is worse than an obvious blank.
-Task 0 supplies both. Do not commit this task until they are filled in.
+Supabase is settled. The Vercel marker is deliberate: a guessed region in a
+published policy is worse than an obvious blank. Do not commit this task
+until Task 0 Step 3 supplies it.
 
 - [ ] **Step 4: Write the operational document**
 

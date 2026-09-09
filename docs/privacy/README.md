@@ -9,6 +9,9 @@ it does:
 | `data-inventory.md` | `lib/schema/__tests__/data-inventory.test.ts` — every field in the CV schema must appear in the inventory table |
 | `processors.md` | `lib/privacy/__tests__/processors.test.ts` — every external host the app talks to must be listed |
 
+`before-charging-money.md` is the list to work through before CVApp takes
+payment. `launch-checklist.md` is the state of the spec's blocking list.
+
 ## What these are not
 
 They describe what the application actually does, accurately and in detail.

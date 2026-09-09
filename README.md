@@ -158,8 +158,26 @@ The signed-in half cannot be tested automatically — real OAuth needs a Google
 account and a headful browser. Before trusting sync, work through
 `docs/superpowers/plans/2026-09-08-cvapp-accounts-verification.md`.
 
+## Privacy
+
+CVApp handles CVs, which are dense personal data, so the privacy work is code
+and tests wherever it can be rather than documents alone. `docs/privacy/` holds
+the data inventory, the processor list, and the launch checklist with the
+evidence for each item.
+
+Two documents are kept honest by tests rather than by discipline: adding a
+field to the CV schema fails until the inventory describes it, and contacting
+a host not on the processor list fails too. There is no analytics dependency
+by design — with no non-essential storage, no cookie banner is required under
+*ekomloven § 3-15* — and a test fails if one is ever installed.
+
+The privacy policy lives in `lib/legal/` as structured data in both languages,
+so tests can check they say the same things. **It has not been reviewed by a
+lawyer**, and should be before CVApp charges money.
+
 ## Documentation
 
 - `docs/superpowers/specs/` — the design spec
 - `docs/superpowers/plans/` — the implementation plans, and the manual
   verification checklist for accounts
+- `docs/privacy/` — data inventory, processors, and the launch checklist

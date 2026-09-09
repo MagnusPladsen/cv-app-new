@@ -44,6 +44,12 @@ next check meaningless. Tick them off in a PR or a comment, not from memory.
       Expect `[]`, never user A's rows. This is the RLS check and it is the one
       worth doing slowly.
 
+- [ ] **7b. Erasure leaves nothing behind.** Run
+      `supabase/tests/delete_own_account.sql` in the SQL editor. It must print
+      `OK: erasure removed every row…`. This is the Art. 17 evidence: check 8
+      exercises the user-facing flow, this one proves the database keeps its
+      promise, including that the cascade does not reach another user's rows.
+
 - [ ] **8. Account deletion really deletes.** On `/account`, type SLETT and
       delete. The Supabase dashboard shows no user and no `cv_documents` rows
       for them.

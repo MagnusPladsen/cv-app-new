@@ -10,8 +10,8 @@ than useless.
 |---|---|---|
 | Data inventory written | done | `docs/privacy/data-inventory.md`, enforced by `lib/schema/__tests__/data-inventory.test.ts` |
 | Privacy policy published and linked | done | `/[locale]/personvern`, linked site-wide from `components/chrome/AppFooter.tsx`; reachability tested in `e2e/legal.spec.ts` |
-| DPAs accepted and archived | **BLOCKED** | Supabase: covered. Vercel: **its DPA applies to Enterprise and Pro plans only**, and CVApp is on Hobby — so there is no Art. 28 agreement with the host and no SCCs for the US transfer. See `docs/privacy/processors.md` |
-| Hosting and database in an EU/EEA region | **partly** | Database: AWS `eu-central-1`, Frankfurt. Functions: `iad1`, Washington DC — a disclosed transfer, not an EEA region. See `docs/privacy/processors.md` |
+| DPAs accepted and archived | **BLOCKED** | Supabase: covered. Vercel: **its DPA applies to Enterprise and Pro plans only**, and CVApp is on Hobby, so there is no Art. 28 agreement with the host. Now the only remaining transfer-related gap, since the functions moved to Frankfurt. See `docs/privacy/processors.md` |
+| Hosting and database in an EU/EEA region | done | Database: AWS `eu-central-1`, Frankfurt. Functions: `fra1`, Frankfurt, after setting `regions` in `vercel.json`. No personal data leaves the EEA |
 | Account deletion that genuinely deletes, with a test | done | `supabase/tests/delete_own_account.sql`; run it and record the result |
 | Data export (JSON) working | done | `lib/privacy/export.ts`, on the account page. Art. 15 (everything held) and Art. 20 (portable CVs) are separate buttons |
 | Ownership checks on every CV/file endpoint, with tests | done | Row Level Security on `cv_documents`; verified live that an anonymous insert is refused with `42501` |
@@ -35,7 +35,7 @@ itself was positive; these are the corrections it raised.
 | "We hold nothing about you" contradicts the server-log section | Reworded: no CV content is stored, but the host holds IP addresses in server logs |
 | "Immediately and permanently" overstates deletion, given backups | Reworded: immediate from the live systems, backups rotate on the provider's schedule, deleted data is never restored into production |
 | Tombstone rows described as holding "only id and timestamps" | They also carry `user_id`. The policy now says so, and says the row is personal data deleted with the account — which `supabase/tests/delete_own_account.sql` proves |
-| Art. 13(1)(f) requires saying how to obtain the SCCs | Added: available on request from the contact address |
+| Art. 13(1)(f) requires saying how to obtain the SCCs | Moot: no data leaves the EEA any more, so the policy relies on no transfer mechanism and the `transfers` section says exactly that |
 | The claim that CV content is not processed in the US needed verifying | Verified and now test-enforced by `lib/privacy/__tests__/no-server-cv.test.ts`: no Server Actions, no server module imports the CV store, no route handler parses a body, and the only server-rendered CV is the fictional demo document. Sync goes browser → Frankfurt directly |
 | The "nothing is sent to any third party" claim was absolute | Scoped to CV content, which is what CVApp controls |
 
@@ -43,8 +43,8 @@ itself was positive; these are the corrections it raised.
 
 | Finding | Status |
 |---|---|
-| **Vercel Hobby is the blocker** — no Art. 28 DPA, no SCCs, *and* Hobby forbids commercial use, so taking payment breaches both GDPR and Vercel's terms | Operator decision. Pro at $20/month resolves the DPA, the commercial-use restriction, and the region in one move |
-| Move functions to an EEA region | `vercel.json` now requests `fra1`. **Verify after the next deploy**: read the `x-vercel-id` response header on a dynamic route. Its second segment is the function region. If it still reads `iad1`, the plan does not permit the move and the answer is Pro |
+| **Vercel Hobby** — no Art. 28 DPA, and Hobby forbids commercial use, so taking payment breaches both GDPR and Vercel's terms | Operator decision, taken: buy Pro when payment is switched on. The region half of this resolved itself for free — see `docs/privacy/before-charging-money.md` |
+| Move functions to an EEA region | **Done.** Hobby honoured `regions: ["fra1"]` in `vercel.json`, despite the dashboard's region picker being greyed out. Confirmed by `x-vercel-id` reading `arn1::fra1::...` |
 | Vercel's AI-partner data setting | Operator action: Vercel team settings. Service-generated data, not CV content, but the policy makes a firm claim and the setting should match it |
 | No retention rule for inactive accounts (Art. 5(1)(e)) | **Genuinely not implemented.** A warn-then-delete job needs email sending, which CVApp has no capability for. Deliberately not promised in the policy, because a stated rule that no job enforces is worse than an acknowledged gap. Plan 6 |
 | Server-log and backup retention periods stated as "the provider's schedule" | Lawful under Art. 13, which permits criteria rather than periods, but weak. Look up the actual numbers for both plans and put them in |
@@ -57,10 +57,8 @@ itself was positive; these are the corrections it raised.
 1. **Resolve the Vercel DPA gap.** This is the one blocker. Vercel Pro makes
    the DPA apply *and* allows moving function execution to `fra1`, which
    removes the US transfer as well. See `docs/privacy/processors.md`.
-2. **Set `CRON_SECRET`** in the Vercel production environment. Without it
-   `/api/keep-alive` returns 503 in production rather than running
-   unauthenticated, so the daily cron fails visibly until it is set — and a
-   paused Supabase project makes every sign-in fail.
+2. ~~**Set `CRON_SECRET`.**~~ Done 2026-09-09; the endpoint returns 401 to
+   unauthenticated callers.
 3. **Have the privacy policy reviewed** by someone qualified in Norwegian
    privacy law before charging money. The spec puts this outside what a coding
    agent should settle.
@@ -73,8 +71,8 @@ database (2026-09-09, no exception raised).
 - **`script-src 'unsafe-inline'`** in the CSP. See `docs/privacy/README.md`.
 - **Rate limiting is per-instance**, so it is a speed bump rather than a
   guarantee.
-- **Function execution in the US.** Disclosed; removing it needs a paid
-  Vercel plan.
+- ~~**Function execution in the US.**~~ Resolved: `regions` in `vercel.json`
+  moved the functions to Frankfurt on the free plan.
 
 ## Deferred to the post-launch tier
 

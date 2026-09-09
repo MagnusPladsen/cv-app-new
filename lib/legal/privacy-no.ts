@@ -8,7 +8,7 @@ import type { LegalDocument } from './types'
  */
 export const PRIVACY_NO: LegalDocument = {
   title: 'Personvernerklæring',
-  lastUpdated: '2026-09-10',
+  lastUpdated: '2026-09-09',
   intro: [
     'CVApp er et verktøy for å lage din egen CV. Denne erklæringen forklarer hvilke opplysninger vi behandler, hvorfor, hvor lenge, og hva du kan kreve.',
     'Kort fortalt: du kan bruke CVApp uten konto. Da ligger CV-ene dine bare i nettleseren din, og vi lagrer ikke noe av innholdet. Driftsleverandøren vår har likevel IP-adressen din i tjenerloggene, slik enhver nettside har. Logger du inn, lagres CV-ene også på kontoen din slik at de følger deg mellom enheter.',
@@ -68,9 +68,9 @@ export const PRIVACY_NO: LegalDocument = {
       id: 'transfers',
       heading: 'Overføring ut av EØS',
       body: [
-        'CV-ene og kontoopplysningene dine lagres i Frankfurt i Tyskland, altså innenfor EØS.',
-        'Selve nettstedet driftes av Vercel, og forespørsler behandles i USA. Det omfatter tekniske opplysninger som IP-adresse og innloggingsinformasjonskapsler. CV-innholdet ditt går aldri gjennom en av våre servere: det ligger i nettleseren din og synkroniseres direkte til databasen i Frankfurt.',
-        'Overføringen bygger på EUs standardavtalevilkår, med leverandørens sertifisering under EU-US Data Privacy Framework som et supplement. Du kan få kopi av standardavtalevilkårene ved å kontakte oss på adressen over.',
+        'Vi overfører ingen personopplysninger ut av EØS.',
+        'CV-ene og kontoopplysningene dine lagres i Frankfurt i Tyskland. Nettstedet driftes av Vercel, og forespørslene dine behandles også i Frankfurt.',
+        'CV-innholdet ditt går uansett aldri gjennom en av våre servere: det ligger i nettleseren din og synkroniseres direkte til databasen.',
       ],
     },
     {

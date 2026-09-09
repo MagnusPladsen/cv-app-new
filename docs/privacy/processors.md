@@ -60,29 +60,31 @@ Re-retrieve and re-commit after any plan change.
 | Vendor | Region | Status |
 |---|---|---|
 | Supabase | AWS `eu-central-1`, Frankfurt | Confirmed 2026-09-09. Inside the EEA. |
-| Vercel | `iad1`, Washington DC, USA | Confirmed 2026-09-09. **Outside the EEA.** |
+| Vercel | `fra1`, Frankfurt | Confirmed 2026-09-09. Inside the EEA. |
 
-### How the Vercel region was confirmed
+**No personal data leaves the EEA.**
+
+### How to check the region
 
 ```
 curl -sI https://cv.pladsen.dev/api/keep-alive | grep x-vercel-id
-x-vercel-id: arn1::iad1::b8d2t-...
+x-vercel-id: arn1::fra1::sdqlr-...
 ```
 
-Two segments: the request entered the edge network at `arn1` (Stockholm) and
-the serverless function executed at `iad1` (Washington DC). It is the second
-that matters — the edge segment only reflects where the visitor is.
+Two segments. The first is the edge PoP the request entered through, which
+only reflects where the visitor is. The second is where the serverless
+function executed, and that is the one that matters.
 
-**What this means.** CV content and account records stay in Frankfurt. But
-every request's IP address and sign-in cookies are processed in the United
-States, which is a Chapter V transfer. It is lawful under Vercel's Data
-Privacy Framework certification and the Standard Contractual Clauses in its
-DPA, and the privacy policy discloses it in the `transfers` section.
+### It was `iad1` until 2026-09-09
 
-Region selection is a paid feature; the free tier cannot change this. Moving
-function execution to `fra1` would remove the transfer entirely and is worth
-doing if the project ever moves to a paid plan — but it is a disclosure
-question today, not a blocker.
+Vercel functions defaulted to Washington DC, which made every request's IP
+address and session cookies a Chapter V transfer. The dashboard's region
+picker is greyed out on the Hobby plan, so this looked like it needed a paid
+upgrade.
+
+It did not. Setting `regions: ["fra1"]` in `vercel.json` moved it, and Hobby
+honoured it. That is worth knowing: the greyed-out picker was not the whole
+story, and the fix cost nothing.
 
 Re-check after any plan change, and after any change to where the project
 deploys.

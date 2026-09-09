@@ -1,28 +1,59 @@
 # Before charging money
 
-Everything that must be done before CVApp takes payment. Nothing here blocks
-the free beta except where marked **now**.
+Everything that must be done before CVApp takes payment.
 
 Pick this up with: *"work through docs/privacy/before-charging-money.md"*.
+
+---
+
+## Read this first: one item is a gap today
+
+Most of this list only bites when money changes hands. **One does not.**
+
+| | Gap today | Only at payment |
+|---|---|---|
+| **Vercel has no Art. 28 DPA with us** | **yes** | — |
+| ~~No SCCs for the US transfer~~ | resolved 2026-09-09 — functions moved to `fra1`, so no transfer remains | — |
+| Hobby forbids commercial use | — | yes |
+| No org.nr in the policy | — | yes |
+| Invoice retention, Stripe as recipient | — | yes |
+| Contact address on a personal inbox | weak, not unlawful | — |
+| No inactive-account deletion | **yes** (Art. 5(1)(e)) | — |
+
+**Why the DPA is a gap now:** Art. 28 applies whenever a processor handles
+personal data on the controller's behalf. Vercel handles IP addresses and
+session cookies on every request, whether or not anyone is paying. The
+commercial-use restriction is the part that waits for payment; the processor
+agreement is not.
+
+**The decision on record (2026-09-09):** buy Vercel Pro when payment is
+switched on. That is a deliberate, informed acceptance of the gap during the
+free beta, not an oversight — small user numbers, no revenue, and the fix is
+one purchase away. It is written down here so that nobody later concludes the
+gap began at launch.
+
+**If the beta grows,** revisit sooner: the argument for accepting it is
+proportionality, and proportionality changes with the number of people whose
+IP addresses are involved.
+
+---
 
 ## 1. Vercel Pro — $20/month
 
 Decided: buy it when payment is switched on. It resolves three things at once.
 
 - **Art. 28 data processing agreement.** Vercel's DPA applies to Enterprise and
-  Pro plans only. On Hobby there is no processor agreement with the host.
-  *(This one is a gap **now**, not only when charging: Art. 28 applies whenever
-  a processor handles personal data, and Vercel handles IP addresses and
-  session cookies on every request.)*
-- **Standard Contractual Clauses.** They live inside that DPA, so without it
-  the US transfer has no mechanism.
+  Pro plans only. On Hobby there is no processor agreement with the host. See
+  the callout above: this one is already a gap.
+- ~~**Standard Contractual Clauses.**~~ No longer relevant: the functions run
+  in Frankfurt, so there is no transfer needing a mechanism.
 - **Commercial use.** Hobby is limited to non-commercial personal use; taking
   payment on it breaches Vercel's own terms.
 
-After upgrading: set the function region to `fra1`, then change the Vercel row
-in `lib/privacy/processors.ts` to `covered: true` with Germany as the country,
-and simplify the policy's `transfers` section — the transfer disappears
-entirely.
+The region is already sorted: `regions: ["fra1"]` in `vercel.json` works on
+Hobby, even though the dashboard's picker is greyed out. After upgrading, the
+only change is the Vercel row in `lib/privacy/processors.ts` — set
+`covered: true` and reword the note.
 
 ## 2. Privacy contact on a domain you own
 

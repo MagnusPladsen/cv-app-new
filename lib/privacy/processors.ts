@@ -50,13 +50,13 @@ export const PROCESSORS: readonly Processor[] = [
       no: 'Drift og levering av nettstedet; tjenerlogger med IP-adresser',
       en: 'Application hosting and delivery; server logs containing IP addresses',
     },
-    // Confirmed 2026-09-09: x-vercel-id on a dynamic route reads
-    // `arn1::iad1::...` - entered at the Stockholm edge, executed in
-    // Washington DC. So this is a real Chapter V transfer, disclosed in the
-    // policy's transfers section and covered by Vercel's DPF certification
-    // and SCCs. Region selection is a paid feature; revisit on any plan
-    // change. See docs/privacy/processors.md.
-    country: { no: 'USA (iad1, Washington DC)', en: 'United States (iad1, Washington DC)' },
+    // Was iad1 (Washington DC). Setting `regions: ["fra1"]` in vercel.json
+    // moved it, and the Hobby plan honoured it - which the dashboard's
+    // greyed-out region picker had suggested it would not. Confirmed
+    // 2026-09-09: x-vercel-id on a dynamic route reads `arn1::fra1::...`,
+    // meaning entered at the Stockholm edge, executed in Frankfurt.
+    // No Chapter V transfer remains. Re-check after any plan change.
+    country: { no: 'Tyskland (fra1, Frankfurt)', en: 'Germany (fra1, Frankfurt)' },
     hosts: ['vercel.app', 'vercel.com', 'pladsen.dev'],
     // Read the document rather than assuming it applies. Vercel's DPA says:
     // "This Addendum applies to Vercel's Processing of Personal Data as a

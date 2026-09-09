@@ -5,7 +5,7 @@ import type { LegalDocument } from './types'
  *  policies, and only one of them can be the one you are relying on. */
 export const PRIVACY_EN: LegalDocument = {
   title: 'Privacy policy',
-  lastUpdated: '2026-09-10',
+  lastUpdated: '2026-09-09',
   intro: [
     'CVApp is a tool for building your own CV. This policy explains what we process, why, for how long, and what you can require of us.',
     'In short: you can use CVApp without an account. Your CVs then live only in your browser and we store none of their content. Our hosting provider still holds your IP address in its server logs, as any website’s does. If you sign in, your CVs are also saved to your account so they follow you between devices.',
@@ -65,9 +65,9 @@ export const PRIVACY_EN: LegalDocument = {
       id: 'transfers',
       heading: 'Transfers outside the EEA',
       body: [
-        'Your CVs and account details are stored in Frankfurt, Germany, which is inside the EEA.',
-        'The site itself is hosted by Vercel, and requests are processed in the United States. That covers technical data such as IP addresses and sign-in cookies. Your CV content never passes through one of our servers: it lives in your browser and syncs directly to the database in Frankfurt.',
-        'The transfer relies on the EU Standard Contractual Clauses, with the provider’s certification under the EU-US Data Privacy Framework as a supplement. You can obtain a copy of the Standard Contractual Clauses by contacting us at the address above.',
+        'We transfer no personal data outside the EEA.',
+        'Your CVs and account details are stored in Frankfurt, Germany. The site is hosted by Vercel, and your requests are processed in Frankfurt too.',
+        'Your CV content never passes through one of our servers in any case: it lives in your browser and syncs directly to the database.',
       ],
     },
     {

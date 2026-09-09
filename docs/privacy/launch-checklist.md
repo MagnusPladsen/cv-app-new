@@ -22,6 +22,36 @@ than useless.
 | Signed, expiring URLs for uploaded files | n/a | No file storage. Photos are inline data URIs inside the document |
 | EXIF stripping on image uploads | done | A side effect of the Canvas re-encode in `lib/image/compress.ts`, asserted in its test so an optimisation cannot undo it |
 
+## From the legal review, 2026-09-10
+
+A Norwegian privacy review of the published policy. Its verdict on the policy
+itself was positive; these are the corrections it raised.
+
+### Fixed in code
+
+| Finding | What changed |
+|---|---|
+| No Art. 9 basis for special categories — contract does not cover them | The policy now states that special-category data typed into a free-text field is stored on the explicit consent given by entering it (Art. 9(2)(a)), withdrawable by editing or deleting the CV |
+| "We hold nothing about you" contradicts the server-log section | Reworded: no CV content is stored, but the host holds IP addresses in server logs |
+| "Immediately and permanently" overstates deletion, given backups | Reworded: immediate from the live systems, backups rotate on the provider's schedule, deleted data is never restored into production |
+| Tombstone rows described as holding "only id and timestamps" | They also carry `user_id`. The policy now says so, and says the row is personal data deleted with the account — which `supabase/tests/delete_own_account.sql` proves |
+| Art. 13(1)(f) requires saying how to obtain the SCCs | Added: available on request from the contact address |
+| The claim that CV content is not processed in the US needed verifying | Verified and now test-enforced by `lib/privacy/__tests__/no-server-cv.test.ts`: no Server Actions, no server module imports the CV store, no route handler parses a body, and the only server-rendered CV is the fictional demo document. Sync goes browser → Frankfurt directly |
+| The "nothing is sent to any third party" claim was absolute | Scoped to CV content, which is what CVApp controls |
+
+### Still outstanding, and why
+
+| Finding | Status |
+|---|---|
+| **Vercel Hobby is the blocker** — no Art. 28 DPA, no SCCs, *and* Hobby forbids commercial use, so taking payment breaches both GDPR and Vercel's terms | Operator decision. Pro at $20/month resolves the DPA, the commercial-use restriction, and the region in one move |
+| Move functions to an EEA region | `vercel.json` now requests `fra1`. **Verify after the next deploy**: read the `x-vercel-id` response header on a dynamic route. Its second segment is the function region. If it still reads `iad1`, the plan does not permit the move and the answer is Pro |
+| Vercel's AI-partner data setting | Operator action: Vercel team settings. Service-generated data, not CV content, but the policy makes a firm claim and the setting should match it |
+| No retention rule for inactive accounts (Art. 5(1)(e)) | **Genuinely not implemented.** A warn-then-delete job needs email sending, which CVApp has no capability for. Deliberately not promised in the policy, because a stated rule that no job enforces is worse than an acknowledged gap. Plan 6 |
+| Server-log and backup retention periods stated as "the provider's schedule" | Lawful under Art. 13, which permits criteria rather than periods, but weak. Look up the actual numbers for both plans and put them in |
+| Contact address is a personal hotmail account | Operator action. Access and deletion requests carry a one-month statutory deadline and should not land in a personal inbox. `personvern@` on a domain you own |
+| Organisation number and address once an ENK is registered | Required by ehandelsloven and angrerettloven once you charge. Update the `controller` section at the same time |
+| Payment not yet covered | When Stripe is added: it is an independent controller for card data, not a processor; invoices carry a five-year retention under bokføringsloven. Must ship with the payment feature, not after |
+
 ## Operator actions still outstanding
 
 1. **Resolve the Vercel DPA gap.** This is the one blocker. Vercel Pro makes

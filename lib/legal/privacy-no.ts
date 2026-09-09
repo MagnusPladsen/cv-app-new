@@ -8,10 +8,10 @@ import type { LegalDocument } from './types'
  */
 export const PRIVACY_NO: LegalDocument = {
   title: 'Personvernerklæring',
-  lastUpdated: '2026-09-09',
+  lastUpdated: '2026-09-10',
   intro: [
     'CVApp er et verktøy for å lage din egen CV. Denne erklæringen forklarer hvilke opplysninger vi behandler, hvorfor, hvor lenge, og hva du kan kreve.',
-    'Kort fortalt: du kan bruke CVApp uten konto. Da ligger CV-ene dine bare i nettleseren din, og vi har ingenting om deg. Logger du inn, lagres CV-ene også på kontoen din slik at de følger deg mellom enheter.',
+    'Kort fortalt: du kan bruke CVApp uten konto. Da ligger CV-ene dine bare i nettleseren din, og vi lagrer ikke noe av innholdet. Driftsleverandøren vår har likevel IP-adressen din i tjenerloggene, slik enhver nettside har. Logger du inn, lagres CV-ene også på kontoen din slik at de følger deg mellom enheter.',
   ],
   sections: [
     {
@@ -46,6 +46,7 @@ export const PRIVACY_NO: LegalDocument = {
       body: [
         'CVApp har ingen felt for helse, religion, etnisitet, politisk oppfatning eller fagforeningsmedlemskap, og spør aldri om noe av det.',
         'Du kan likevel skrive hva du vil i fritekstfeltene, som sammendrag, beskrivelser og egendefinerte seksjoner. Det du skriver der er ditt valg. Vi anbefaler at du ikke oppgir opplysninger om helse, religion, etnisitet, politisk oppfatning eller fagforeningsmedlemskap med mindre det er nødvendig for stillingen du søker på.',
+        'Velger du likevel å oppgi slike opplysninger, lagres de på grunnlag av det uttrykkelige samtykket du gir ved å skrive dem inn, jf. personvernforordningen artikkel 9 nr. 2 bokstav a. Avtale er ikke et gyldig grunnlag for særlige kategorier av personopplysninger. Du kan når som helst trekke samtykket tilbake ved å redigere eller slette CV-en, og da er opplysningene borte.',
       ],
     },
     {
@@ -68,7 +69,8 @@ export const PRIVACY_NO: LegalDocument = {
       heading: 'Overføring ut av EØS',
       body: [
         'CV-ene og kontoopplysningene dine lagres i Frankfurt i Tyskland, altså innenfor EØS.',
-        'Selve nettstedet driftes av Vercel. Forespørsler kan behandles utenfor EØS, og da omfatter det tekniske opplysninger som IP-adresse og innloggingsinformasjonskapsler, ikke CV-innhold. Slik behandling skjer under EUs standardavtalevilkår og leverandørens sertifisering under EU-US Data Privacy Framework.',
+        'Selve nettstedet driftes av Vercel, og forespørsler behandles i USA. Det omfatter tekniske opplysninger som IP-adresse og innloggingsinformasjonskapsler. CV-innholdet ditt går aldri gjennom en av våre servere: det ligger i nettleseren din og synkroniseres direkte til databasen i Frankfurt.',
+        'Overføringen bygger på EUs standardavtalevilkår, med leverandørens sertifisering under EU-US Data Privacy Framework som et supplement. Du kan få kopi av standardavtalevilkårene ved å kontakte oss på adressen over.',
       ],
     },
     {
@@ -76,9 +78,9 @@ export const PRIVACY_NO: LegalDocument = {
       heading: 'Hvor lenge vi lagrer',
       body: [
         'CV-er i nettleseren din ligger der til du sletter dem, tømmer nettleserdata eller logger ut.',
-        'CV-er på kontoen din ligger der til du sletter CV-en eller kontoen. En slettet CV etterlater en tom rad med bare id og tidspunkt, slik at slettingen også slår gjennom på andre enheter du bruker.',
-        'Sletter du kontoen, slettes kontoen og alle CV-ene på den umiddelbart og for godt.',
-        'Tjenerlogger hos driftsleverandøren slettes etter leverandørens egne rutiner.',
+        'CV-er på kontoen din ligger der til du sletter CV-en eller kontoen. En slettet CV etterlater en rad uten innhold, med id, tidspunkt og hvilken konto den tilhørte, slik at slettingen også slår gjennom på andre enheter du bruker. Raden er fortsatt en personopplysning knyttet til deg, og den slettes sammen med kontoen.',
+        'Sletter du kontoen, slettes kontoen og alle CV-ene på den umiddelbart fra driftssystemene. Sikkerhetskopier hos databaseleverandøren roteres ut etter leverandørens rutiner, og slettede opplysninger gjenopprettes aldri til drift.',
+        'Tjenerlogger hos driftsleverandøren slettes etter leverandørens rutiner.',
       ],
     },
     {
@@ -114,7 +116,7 @@ export const PRIVACY_NO: LegalDocument = {
       heading: 'Automatiserte avgjørelser og kunstig intelligens',
       body: [
         'CVApp tar ingen automatiserte avgjørelser om deg, og driver ingen profilering.',
-        'CVApp bruker ikke kunstig intelligens. Ingenting av det du skriver sendes til en språkmodell eller til noen annen tredjepart for behandling.',
+        'CVApp bruker ikke kunstig intelligens. Ingenting av det du skriver i CV-en sendes til en språkmodell, og vi sender ikke CV-innhold til noen tredjepart for behandling.',
       ],
     },
     {

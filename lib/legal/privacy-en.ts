@@ -5,10 +5,10 @@ import type { LegalDocument } from './types'
  *  policies, and only one of them can be the one you are relying on. */
 export const PRIVACY_EN: LegalDocument = {
   title: 'Privacy policy',
-  lastUpdated: '2026-09-09',
+  lastUpdated: '2026-09-10',
   intro: [
     'CVApp is a tool for building your own CV. This policy explains what we process, why, for how long, and what you can require of us.',
-    'In short: you can use CVApp without an account. Your CVs then live only in your browser and we hold nothing about you. If you sign in, your CVs are also saved to your account so they follow you between devices.',
+    'In short: you can use CVApp without an account. Your CVs then live only in your browser and we store none of their content. Our hosting provider still holds your IP address in its server logs, as any website’s does. If you sign in, your CVs are also saved to your account so they follow you between devices.',
   ],
   sections: [
     {
@@ -43,6 +43,7 @@ export const PRIVACY_EN: LegalDocument = {
       body: [
         'CVApp has no field for health, religion, ethnicity, political opinions or trade union membership, and never asks for any of them.',
         'You can still write whatever you like in free-text fields such as the summary, descriptions and custom sections. What you put there is your choice. We recommend not including information about health, religion, ethnicity, political opinions or trade union membership unless it is necessary for the role you are applying for.',
+        'If you do choose to include such information, it is stored on the basis of the explicit consent you give by entering it, under GDPR Article 9(2)(a). Contract is not a valid basis for special categories of personal data. You can withdraw that consent at any time by editing or deleting the CV, and the information is then gone.',
       ],
     },
     {
@@ -65,7 +66,8 @@ export const PRIVACY_EN: LegalDocument = {
       heading: 'Transfers outside the EEA',
       body: [
         'Your CVs and account details are stored in Frankfurt, Germany, which is inside the EEA.',
-        'The site itself is hosted by Vercel. Requests may be processed outside the EEA, which covers technical data such as IP addresses and sign-in cookies, not CV content. Any such processing takes place under the EU Standard Contractual Clauses and the provider’s certification under the EU-US Data Privacy Framework.',
+        'The site itself is hosted by Vercel, and requests are processed in the United States. That covers technical data such as IP addresses and sign-in cookies. Your CV content never passes through one of our servers: it lives in your browser and syncs directly to the database in Frankfurt.',
+        'The transfer relies on the EU Standard Contractual Clauses, with the provider’s certification under the EU-US Data Privacy Framework as a supplement. You can obtain a copy of the Standard Contractual Clauses by contacting us at the address above.',
       ],
     },
     {
@@ -73,9 +75,9 @@ export const PRIVACY_EN: LegalDocument = {
       heading: 'How long we keep it',
       body: [
         'CVs in your browser stay there until you delete them, clear your browser data, or sign out.',
-        'CVs on your account stay until you delete the CV or the account. A deleted CV leaves an empty row holding only its id and timestamps, so the deletion also reaches the other devices you use.',
-        'If you delete your account, the account and every CV on it are deleted immediately and permanently.',
-        'Server logs held by the hosting provider are deleted according to that provider’s own schedule.',
+        'CVs on your account stay until you delete the CV or the account. A deleted CV leaves a row with no content, holding its id, timestamps and which account it belonged to, so the deletion also reaches the other devices you use. That row is still personal data about you, and it is deleted along with the account.',
+        'If you delete your account, the account and every CV on it are deleted immediately from the live systems. Backups held by the database provider rotate out on that provider’s schedule, and deleted data is never restored into production.',
+        'Server logs held by the hosting provider are deleted on that provider’s schedule.',
       ],
     },
     {
@@ -111,7 +113,7 @@ export const PRIVACY_EN: LegalDocument = {
       heading: 'Automated decisions and artificial intelligence',
       body: [
         'CVApp makes no automated decisions about you and does no profiling.',
-        'CVApp uses no artificial intelligence. Nothing you write is sent to a language model or to any other third party for processing.',
+        'CVApp uses no artificial intelligence. Nothing you write in your CV is sent to a language model, and we do not send CV content to any third party for processing.',
       ],
     },
     {

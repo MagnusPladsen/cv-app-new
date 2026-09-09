@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 
 import { SessionProvider } from '@/components/auth/SessionProvider'
+import { AppFooter } from '@/components/chrome/AppFooter'
 import { AppHeader } from '@/components/chrome/AppHeader'
 import { ALL_TEMPLATE_STYLESHEETS } from '@/components/cv/templates'
 import { routing } from '@/i18n/routing'
@@ -50,6 +51,7 @@ export default async function LocaleLayout({
           <SessionProvider>
             <AppHeader />
             {children}
+            <AppFooter />
           </SessionProvider>
         </NextIntlClientProvider>
       </body>

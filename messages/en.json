@@ -217,5 +217,14 @@
     "claimed": "{count, plural, =1 {# CV} other {# CVs}} saved to your account.",
     "downloadEverything": "Download everything about me",
     "downloadEverythingHint": "Everything CVApp holds about you, as JSON: your account, every CV, and your settings."
+  },
+  "legal": {
+    "processorName": "Provider",
+    "processorPurpose": "Purpose",
+    "processorCountry": "Processed in"
+  },
+  "footer": {
+    "tagline": "CVApp — a free CV builder, in beta.",
+    "privacy": "Privacy"
   }
 }

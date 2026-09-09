@@ -213,6 +213,8 @@
     "deleteWarning": "This permanently deletes your account and every CV on it. Download your CVs first if you want to keep them.",
     "deleteConfirm": "Type DELETE to confirm",
     "deleteConfirmWord": "DELETE",
-    "claimed": "{count, plural, =1 {# CV} other {# CVs}} saved to your account."
+    "claimed": "{count, plural, =1 {# CV} other {# CVs}} saved to your account.",
+    "downloadEverything": "Download everything about me",
+    "downloadEverythingHint": "Everything CVApp holds about you, as JSON: your account, every CV, and your settings."
   }
 }

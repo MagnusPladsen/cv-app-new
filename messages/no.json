@@ -213,6 +213,8 @@
     "deleteWarning": "Dette sletter kontoen og alle CV-ene på den, for godt. Last ned CV-ene dine først hvis du vil beholde dem.",
     "deleteConfirm": "Skriv SLETT for å bekrefte",
     "deleteConfirmWord": "SLETT",
-    "claimed": "{count, plural, =1 {# CV} other {# CV-er}} ble lagret på kontoen din."
+    "claimed": "{count, plural, =1 {# CV} other {# CV-er}} ble lagret på kontoen din.",
+    "downloadEverything": "Last ned alle data om meg",
+    "downloadEverythingHint": "Alt CVApp har om deg, som JSON: kontoen din, alle CV-ene og innstillingene dine."
   }
 }

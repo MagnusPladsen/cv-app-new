@@ -112,10 +112,17 @@ Two processors handle personal data today:
 | Supabase | Auth and CV storage | The region from Step 1 |
 | Vercel | Hosting, edge delivery, server logs | Check the deployment region |
 
-Accept each vendor's standard DPA (both publish one; neither needs drafting)
-and save the PDFs outside the repo — they contain account identifiers and do
-not belong in git. Record the date accepted; Task 6 lists both vendors in the
-privacy policy and Task 7 tests that the list matches what the app talks to.
+**Neither vendor needs a signature.** Both incorporate their DPA into the
+terms of service already accepted — Supabase states this explicitly ("all
+organizations get its protections automatically. No separate signed DPA is
+needed"), and Vercel does the same on Hobby. Art. 28 requires the agreement to
+exist in writing, not to be separately executed, so this is satisfied.
+
+What is left is the record-keeping, and it is not optional: save a copy of
+each DPA as it stands today, with the date retrieved. A DPA incorporated by
+reference can be amended by the vendor, so "we accepted their terms" is not
+by itself an answer to which terms applied when. Task 7 records both in
+`docs/privacy/processors.md`.
 
 - [ ] **Step 3: Confirm the Vercel deployment region**
 

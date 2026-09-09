@@ -4,17 +4,21 @@ import { Download } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
+import { useSessionUser } from '@/components/auth/SessionProvider'
 import { DESKTOP_QUERY, useMediaQuery } from '@/lib/hooks/use-media-query'
 import { buildPrintTitle } from '@/lib/print/build-print-html'
 import { printCvNode } from '@/lib/print/print-cv'
 import { templateStylesheet } from '@/lib/print/stylesheets'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { readFlag, writeFlag, type FlagStorage } from '@/lib/storage/flag'
+import { enabledProviders } from '@/lib/supabase/env'
 import { ExportFeedback } from './ExportFeedback'
 import { ExportHint } from './ExportHint'
+import { ExportSignInPrompt } from './ExportSignInPrompt'
 
 export const EXPORT_HINT_KEY = 'cvapp:export-hint-seen:v1'
 export const BETA_NOTICE_KEY = 'cvapp:beta-notice-seen:v1'
+export const GUEST_EXPORT_KEY = 'cvapp:guest-export:v1'
 
 export function ExportButton({
   document,
@@ -30,8 +34,10 @@ export function ExportButton({
 }) {
   const t = useTranslations('editor')
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
+  const user = useSessionUser()
   const [busy, setBusy] = useState(false)
   const [hintOpen, setHintOpen] = useState(false)
+  const [signInOpen, setSignInOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
 
   async function runExport() {
@@ -61,13 +67,34 @@ export function ExportButton({
     }
   }
 
-  function handleClick() {
+  function proceed() {
     // On a phone the print path surfaces as the share sheet, so explain it once.
     if (!isDesktop && !readFlag(EXPORT_HINT_KEY, storage)) {
       setHintOpen(true)
       return
     }
     void runExport()
+  }
+
+  function handleClick() {
+    // Only ask when signing in is actually on offer and would change
+    // something. A prompt with no provider behind it is a dead end, and
+    // asking a signed-in user to sign in is nonsense.
+    const askable =
+      !user && enabledProviders().length > 0 && !readFlag(GUEST_EXPORT_KEY, storage)
+    if (askable) {
+      setSignInOpen(true)
+      return
+    }
+    proceed()
+  }
+
+  function handleGuest() {
+    // Remembered, so the choice is asked once rather than nagged on every
+    // download.
+    writeFlag(GUEST_EXPORT_KEY, storage)
+    setSignInOpen(false)
+    proceed()
   }
 
   function handleContinue() {
@@ -87,6 +114,13 @@ export function ExportButton({
         <Download aria-hidden="true" className="size-4" />
         {t('export')}
       </button>
+
+      <ExportSignInPrompt
+        next={typeof window === 'undefined' ? '/' : window.location.pathname}
+        onCancel={() => setSignInOpen(false)}
+        onGuest={handleGuest}
+        open={signInOpen}
+      />
 
       <ExportHint
         onCancel={() => setHintOpen(false)}

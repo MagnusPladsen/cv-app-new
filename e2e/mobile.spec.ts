@@ -119,3 +119,40 @@ test('the header fits a phone with the account link showing', async ({ page }) =
   await expect(page.getByRole('link', { name: 'Logg inn' })).toBeVisible()
   expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1)
 })
+
+test('the editor offers exactly one download button', async ({ page }) => {
+  // The toolbar button used to render at every width, so on a phone it sat
+  // above a second, identical one in the fixed bottom bar: two controls with
+  // the same accessible name, and two places to look for the same thing.
+  await page.goto('/no/templates')
+  await templateCard(page, 'oslo').click()
+  await page.waitForURL(/\/no\/cv\/.+/)
+
+  await expect(page.getByRole('button', { name: 'Last ned PDF' })).toHaveCount(1)
+})
+
+test('a dialog opened from the bottom bar is laid out against the viewport', async ({ page }) => {
+  // The bar uses backdrop-blur, which makes it the containing block for any
+  // `position: fixed` descendant. A dialog rendered inside it was laid out
+  // against a 64px-tall bar, putting its buttons below the bottom of the
+  // screen. Every dialog is portalled to <body> for exactly this reason.
+  //
+  // Deliberately a tablet width. The bottom bar exists below lg (1024px), but
+  // below sm (640px) the overlay uses items-end, which pins the dialog to the
+  // bottom of that 64px box and lands it on screen by luck. Only between the
+  // two does items-center centre it inside the bar and push it off. Testing
+  // this at phone width passes with the bug present.
+  await page.setViewportSize({ width: 900, height: 800 })
+  await page.goto('/no/templates')
+  await templateCard(page, 'oslo').click()
+  await page.waitForURL(/\/no\/cv\/.+/)
+
+  await page.getByRole('button', { name: 'Last ned PDF' }).click()
+  const dialog = page.getByRole('dialog').first()
+  await expect(dialog).toBeVisible()
+
+  const box = (await dialog.boundingBox())!
+  const height = page.viewportSize()!.height
+  expect(box.y).toBeGreaterThanOrEqual(0)
+  expect(box.y + box.height).toBeLessThanOrEqual(height)
+})

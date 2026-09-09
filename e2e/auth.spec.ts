@@ -80,3 +80,39 @@ test('the failure reason cannot lay out lines of its own on the page', async ({ 
   const shown = await page.locator('main p').last().innerText()
   expect(shown.length).toBeLessThan(200)
 })
+
+test('a signed-out download offers sign-in, and guest mode always gets the file', async ({
+  page,
+}) => {
+  // The export suite builds the print HTML directly and never touches the
+  // button, so without this the gate between a user and their download has no
+  // end-to-end coverage at all.
+  await page.addInitScript(() => {
+    // Headless Chromium blocks on a real print dialog. The gate is what is
+    // under test here; the print pipeline has its own suite.
+    window.print = () => {}
+  })
+
+  await page.goto('/no/templates')
+  await page.locator('button:has(.cv-doc--oslo)').click()
+  await page.waitForURL(/\/no\/cv\/.+/)
+
+  const download = page.getByRole('button', { name: 'Last ned PDF' })
+  // Named, because the beta notice that follows a download is a dialog too.
+  const prompt = page.getByRole('dialog', { name: 'Logg inn for å lagre CV-en' })
+
+  await download.click()
+  await expect(prompt).toBeVisible()
+  await expect(prompt.getByText(/lagres bare i denne nettleseren/)).toBeVisible()
+
+  await prompt.getByRole('button', { name: 'Fortsett som gjest' }).click()
+  await expect(prompt).toBeHidden()
+
+  // The beta notice appears after the file, and its backdrop covers the page.
+  await page.getByRole('button', { name: 'Lukk' }).click()
+
+  // Asked once, then remembered: nagging on every download would be worse
+  // than never asking.
+  await download.click()
+  await expect(prompt).toBeHidden()
+})

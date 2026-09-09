@@ -45,7 +45,11 @@
     "exportHintContinue": "Fortsett",
     "exportHintCancel": "Avbryt",
     "pageBreak": "Sideskift",
-    "pageNumber": "Side {page}"
+    "pageNumber": "Side {page}",
+    "exportSignInTitle": "Logg inn for å lagre CV-en",
+    "exportSignInBody": "Logger du inn, lagres CV-en på kontoen din og følger deg mellom mobil og PC.",
+    "exportGuest": "Fortsett som gjest",
+    "exportGuestWarning": "Som gjest laster du ned CV-en som vanlig, men den lagres bare i denne nettleseren. Den følger deg ikke til andre enheter, og forsvinner hvis du tømmer nettleserdata."
   },
   "personalia": {
     "title": "Personalia",

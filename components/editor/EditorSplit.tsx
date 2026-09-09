@@ -61,7 +61,10 @@ export function EditorSplit({
             onRedo={() => redo()}
             onUndo={() => undo()}
           />
-          <ExportButton document={document} getNode={getNode} />
+          {/* Desktop only. On a phone the download lives in the fixed bottom
+              bar below, and rendering both put two controls with the same
+              accessible name on one screen. */}
+          {isDesktop ? <ExportButton document={document} getNode={getNode} /> : null}
         </div>
 
         <TemplateStrip

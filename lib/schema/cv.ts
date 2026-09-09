@@ -178,7 +178,6 @@ export const personaliaSchema = z.object({
   phone: z.string(),
   city: z.string(),
   country: z.string(),
-  birthDate: z.string().optional(),
   photo: z.object({ dataUrl: z.string() }).optional(),
   showPhoto: z.boolean(),
   links: z.array(linkSchema),

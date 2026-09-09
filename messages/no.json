@@ -228,5 +228,11 @@
     "tagline": "CVApp — gratis CV-bygger i beta.",
     "privacy": "Personvern",
     "terms": "Vilkår"
+  },
+  "notFound": {
+    "title": "Fant ikke siden",
+    "body": "Siden finnes ikke, eller den har flyttet. CV-ene dine ligger trygt der de var.",
+    "home": "Til forsiden",
+    "myCvs": "Mine CV-er"
   }
 }

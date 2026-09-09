@@ -228,5 +228,11 @@
     "tagline": "CVApp — a free CV builder, in beta.",
     "privacy": "Privacy",
     "terms": "Terms"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This page does not exist, or it has moved. Your CVs are safe where they were.",
+    "home": "Go to the front page",
+    "myCvs": "My CVs"
   }
 }

@@ -77,3 +77,30 @@ test('the editor still works under the CSP', async ({ page }) => {
   await page.getByLabel(/Fornavn/).first().fill('Testperson')
   await expect(page.locator('[data-cv-preview] .cv-doc')).toContainText('Testperson')
 })
+
+test('a 404 renders under the CSP, with no violation', async ({ page }) => {
+  // Next's built-in not-found page carries an inline <style> block, which
+  // style-src 'self' blocks: the page rendered unstyled and logged a
+  // violation, and nothing in the suite ever visited a 404 to notice. The
+  // app supplies its own not-found page instead of loosening the policy.
+  // Note for anyone checking this by hand: `bun run dev` reports violations on
+  // every page, because the dev server injects inline styles for hot reload.
+  // This suite runs a production build, which is the one that matters.
+  const violations: string[] = []
+  page.on('console', (message) => {
+    if (/Content Security Policy/i.test(message.text())) violations.push(message.text())
+  })
+
+  const response = await page.goto('/no/this-page-does-not-exist')
+  expect(response?.status()).toBe(404)
+
+  await expect(page.getByRole('heading', { name: 'Fant ikke siden' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Til forsiden' })).toBeVisible()
+  expect(violations, `CSP violations on the 404:\n${violations.join('\n')}`).toEqual([])
+})
+
+test('the 404 keeps the site chrome, so it is not a dead end', async ({ page }) => {
+  await page.goto('/no/this-page-does-not-exist')
+  await expect(page.getByRole('banner')).toBeVisible()
+  await expect(page.getByRole('contentinfo')).toBeVisible()
+})

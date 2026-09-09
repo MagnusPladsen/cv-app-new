@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { TEMPLATES } from '@/components/cv/templates'
 import { LandingTemplates } from '@/components/gallery/LandingTemplates'
+import { HeroTemplates } from '@/components/landing/HeroTemplates'
 import { Link } from '@/i18n/navigation'
 
 export default async function HomePage() {
@@ -10,7 +11,11 @@ export default async function HomePage() {
 
   return (
     <main className="mx-auto flex max-w-7xl flex-col gap-16 px-4 py-12 sm:px-6 sm:py-20">
-      <section className="flex flex-col gap-7">
+      {/* Copy and fan side by side from lg, stacked below it. The fan is
+          decorative, so it comes second in the DOM: a screen reader and a
+          phone both get the headline and the call to action first. */}
+      <section className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-12">
+        <div className="flex flex-col gap-7">
         <p className="text-sm font-semibold tracking-widest text-brand-strong uppercase">
           {t('landing.lead')}
         </p>
@@ -39,6 +44,9 @@ export default async function HomePage() {
             {t('nav.myCvs')}
           </Link>
         </div>
+        </div>
+
+        <HeroTemplates />
       </section>
 
       <section className="flex items-start gap-3 rounded-2xl border border-brand/25 bg-brand-soft/50 p-5">

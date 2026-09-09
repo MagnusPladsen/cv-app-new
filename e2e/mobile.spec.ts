@@ -156,3 +156,26 @@ test('a dialog opened from the bottom bar is laid out against the viewport', asy
   expect(box.y).toBeGreaterThanOrEqual(0)
   expect(box.y + box.height).toBeLessThanOrEqual(height)
 })
+
+test('no header link wraps onto a second line', async ({ page }) => {
+  // Overflow was already asserted, and wrapping produces none - so the header
+  // passed every check while "Mine CV-er" sat on two lines on a phone.
+  await page.goto('/no/cv')
+  await page.evaluate(() => document.fonts.ready)
+
+  const wrapped = await page.evaluate(() => {
+    const nav = document.querySelector('header nav')!
+    return [...nav.querySelectorAll('a')]
+      .filter((link) => link.offsetParent !== null)
+      .filter((link) => {
+        const lineHeight = parseFloat(getComputedStyle(link).lineHeight)
+        const padding =
+          parseFloat(getComputedStyle(link).paddingTop) +
+          parseFloat(getComputedStyle(link).paddingBottom)
+        return link.offsetHeight > lineHeight + padding + 2
+      })
+      .map((link) => link.textContent?.trim())
+  })
+
+  expect(wrapped, `header links wrapping: ${wrapped.join(', ')}`).toEqual([])
+})

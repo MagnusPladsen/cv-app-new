@@ -16,7 +16,7 @@ export function AccountMenu() {
   if (!isSupabaseConfigured()) return null
 
   const className =
-    'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition hover:bg-brand-soft hover:text-brand-strong'
+    'inline-flex items-center gap-1.5 rounded-full px-2 py-1.5 text-sm font-medium whitespace-nowrap transition hover:bg-brand-soft hover:text-brand-strong sm:px-3'
 
   // On phones the label is dropped and carried by aria-label instead: the
   // header row cannot fit it, and an unlabelled icon with no accessible name

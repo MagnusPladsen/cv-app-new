@@ -28,6 +28,10 @@ export function ReferencesForm({
       entryIds={entries.map((entry) => entry.id)}
       // The empty state prints a line on the CV, which is otherwise invisible here.
       hint={t('onRequestHint')}
+      // A referee is a person who never visited CVApp and agreed to nothing.
+      // CVApp never contacts them; this notice is the other half of that
+      // position.
+      notice={t('consentNotice')}
       onAddEntry={onAddEntry}
       onRemoveEntry={onRemoveEntry}
       renderEntry={(entryId) => {

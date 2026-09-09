@@ -118,7 +118,8 @@
     "organisation": "Arbeidsgiver",
     "email": "E-post",
     "phone": "Telefon",
-    "onRequestHint": "Uten referanser her skriver CV-en «Referanser oppgis ved forespørsel»."
+    "onRequestHint": "Uten referanser her skriver CV-en «Referanser oppgis ved forespørsel».",
+    "consentNotice": "Spør referansen først. Du er ansvarlig for å ha lov til å dele kontaktopplysningene deres. CVApp kontakter dem aldri."
   },
   "photo": {
     "label": "Bilde",

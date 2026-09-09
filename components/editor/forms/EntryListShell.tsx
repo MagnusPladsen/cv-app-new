@@ -8,6 +8,7 @@ import type { ReactNode } from 'react'
 export function EntryListShell({
   title,
   hint,
+  notice,
   entryIds,
   sectionId,
   onAddEntry,
@@ -16,6 +17,12 @@ export function EntryListShell({
 }: {
   title: string
   hint?: string
+  /**
+   * A privacy obligation, styled apart from `hint`. The references section
+   * uses it to say the user needs their referee's permission, and burying
+   * that inside a formatting tip would be the wrong emphasis.
+   */
+  notice?: string
   entryIds: string[]
   sectionId: string
   onAddEntry: (sectionId: string) => void
@@ -28,6 +35,11 @@ export function EntryListShell({
     <section className="flex flex-col gap-4">
       <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">{title}</h2>
       {hint ? <p className="text-xs text-muted-foreground">{hint}</p> : null}
+      {notice ? (
+        <p className="rounded-lg border border-border bg-muted/50 px-3 py-2 text-xs text-foreground/80">
+          {notice}
+        </p>
+      ) : null}
 
       <div className="flex flex-col gap-4">
         {entryIds.map((entryId) => (

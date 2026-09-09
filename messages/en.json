@@ -118,7 +118,8 @@
     "organisation": "Organisation",
     "email": "Email",
     "phone": "Phone",
-    "onRequestHint": "With no referees listed, the CV prints \"References available on request\"."
+    "onRequestHint": "With no referees listed, the CV prints \"References available on request\".",
+    "consentNotice": "Ask your referee first. You are responsible for having their permission to share their contact details. CVApp never contacts them."
   },
   "photo": {
     "label": "Photo",

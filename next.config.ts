@@ -13,6 +13,24 @@ const nextConfig: NextConfig = {
    * iframe that inherits whatever the page is given.
    */
   async headers() {
+    // React uses eval() in development to reconstruct server-side error stacks
+    // in the browser. Without this the dev console reports "eval() is not
+    // supported in this environment" and error traces are degraded. Production
+    // needs none of it, and must not have it: 'unsafe-eval' is one of the
+    // things a CSP exists to forbid.
+    const isDev = process.env.NODE_ENV === 'development'
+    const script = isDev
+      ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
+      : "script-src 'self' 'unsafe-inline'"
+
+    // Hot reload injects inline <style> blocks, which the production policy
+    // forbids. Left strict in development the console fills with expected
+    // violations, and a console full of expected noise is how a real one gets
+    // missed. Production keeps the tight pair.
+    const style = isDev
+      ? ["style-src 'self' 'unsafe-inline'"]
+      : ["style-src 'self'", "style-src-attr 'unsafe-inline'"]
+
     return [
       {
         source: '/:path*',
@@ -47,7 +65,7 @@ const nextConfig: NextConfig = {
               // What still holds without it: connect-src limits where an
               // injected script could send anything, and object-src,
               // base-uri, form-action and frame-ancestors are unaffected.
-              "script-src 'self' 'unsafe-inline'",
+              script,
               "base-uri 'self'",
               "form-action 'self'",
               "frame-ancestors 'none'",
@@ -70,8 +88,7 @@ const nextConfig: NextConfig = {
               // style-src-attr, e2e/csp.spec.ts fails with "the accent token
               // was stripped" - every CV loses its colour, fonts and page
               // geometry, on screen and in the exported PDF.
-              "style-src 'self'",
-              "style-src-attr 'unsafe-inline'",
+              ...style,
               'upgrade-insecure-requests',
             ].join('; '),
           },

@@ -49,7 +49,8 @@
     "exportSignInTitle": "Sign in to save your CV",
     "exportSignInBody": "Sign in and your CV is saved to your account, following you between your phone and your computer.",
     "exportGuest": "Continue as guest",
-    "exportGuestWarning": "As a guest you download the CV as normal, but it is only saved in this browser. It will not follow you to another device, and it is lost if you clear your browser data."
+    "exportGuestWarning": "As a guest you download the CV as normal, but it is only saved in this browser. It will not follow you to another device, and it is lost if you clear your browser data.",
+    "previewEmpty": "The preview fills in as you type."
   },
   "personalia": {
     "title": "Personal details",

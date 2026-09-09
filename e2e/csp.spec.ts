@@ -22,6 +22,20 @@ test('the CSP is set', async ({ request }) => {
   expect(csp).toContain("frame-ancestors 'none'")
 })
 
+test('production never ships the development relaxations', async ({ request }) => {
+  // Development allows unsafe-eval, because React uses eval() there to rebuild
+  // error stacks, and inline <style> blocks, because hot reload injects them.
+  // A build leaking either into production would undo most of what the policy
+  // is for, and both are one environment check away from doing so.
+  const csp = (await request.get('/no')).headers()['content-security-policy']!
+
+  expect(csp).not.toContain('unsafe-eval')
+  expect(csp).toContain("style-src 'self'; style-src-attr 'unsafe-inline'")
+  expect(csp, 'style-src must not allow inline blocks in production').not.toMatch(
+    /style-src 'self' 'unsafe-inline'/,
+  )
+})
+
 test('the CSP does not strip the CV of its styling', async ({ page }) => {
   const violations: string[] = []
   page.on('console', (message) => {

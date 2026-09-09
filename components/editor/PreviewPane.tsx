@@ -7,8 +7,19 @@ import { CvDocument } from '@/components/cv/CvDocument'
 import { documentMarginMm } from '@/components/cv/margin'
 import { contentHeightMm } from '@/lib/print/measure'
 import { PAPER, countPages, mmToPx } from '@/lib/print/paper'
-import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
+import type { CvDocument as CvDocumentData, Section } from '@/lib/schema/cv'
 import { PageGuides } from './PageGuides'
+
+/** Whether a section would print anything at all. */
+function sectionHasContent(section: Section): boolean {
+  if (!section.enabled) return false
+  if ('text' in section && section.text?.trim()) return true
+  if ('entries' in section && (section.entries?.length ?? 0) > 0) return true
+  if ('items' in section && (section.items?.length ?? 0) > 0) return true
+  if ('bullets' in section && (section.bullets?.length ?? 0) > 0) return true
+  if ('classes' in section && (section.classes?.length ?? 0) > 0) return true
+  return false
+}
 
 /**
  * Renders the CV at its true paper width and scales it down to fit the pane.
@@ -69,6 +80,15 @@ export function PreviewPane({
   const pages = countPages(contentMm, document.paper, marginMm)
   const renderedHeightPx = Math.max(pageHeightPx, docHeightPx)
 
+  // A brand-new CV renders a blank sheet, which is correct but reads as
+  // broken: the first thing a user sees of the product's main feature is an
+  // empty white rectangle. The hint says the preview is live rather than
+  // stuck. It sits outside [data-cv-preview] so the export never clones it.
+  const isEmpty =
+    document.personalia.firstName.trim() === '' &&
+    document.personalia.lastName.trim() === '' &&
+    document.sections.every((section) => !sectionHasContent(section))
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex justify-end">
@@ -78,7 +98,10 @@ export function PreviewPane({
       </div>
 
       <div className="w-full overflow-auto rounded-md bg-sand-deep p-4" ref={frameRef}>
-        <div style={{ height: renderedHeightPx * scale, width: pageWidthPx * scale }}>
+        <div
+          className="relative"
+          style={{ height: renderedHeightPx * scale, width: pageWidthPx * scale }}
+        >
           <div
             className="relative origin-top-left shadow-[0_10px_40px_-12px_rgb(0_0_0/0.25)]"
             /* The export clones the .cv-doc inside this element. Thumbnails
@@ -91,6 +114,12 @@ export function PreviewPane({
             <CvDocument document={document} />
             <PageGuides contentHeightMm={contentMm} marginMm={marginMm} paper={document.paper} />
           </div>
+
+          {isEmpty ? (
+            <p className="pointer-events-none absolute inset-x-0 top-1/3 text-center text-sm text-muted-foreground">
+              {t('previewEmpty')}
+            </p>
+          ) : null}
         </div>
       </div>
     </div>

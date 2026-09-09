@@ -235,5 +235,9 @@
     "body": "Siden finnes ikke, eller den har flyttet. CV-ene dine ligger trygt der de var.",
     "home": "Til forsiden",
     "myCvs": "Mine CV-er"
+  },
+  "meta": {
+    "title": "CVApp — lag en CV du er stolt av",
+    "description": "Gratis CV-bygger med fjorten maler, ekte PDF og ingen vannmerke. Fungerer uten konto."
   }
 }

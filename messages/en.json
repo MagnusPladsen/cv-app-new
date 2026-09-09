@@ -235,5 +235,9 @@
     "body": "This page does not exist, or it has moved. Your CVs are safe where they were.",
     "home": "Go to the front page",
     "myCvs": "My CVs"
+  },
+  "meta": {
+    "title": "CVApp — build a CV you are proud of",
+    "description": "A free CV builder with fourteen templates, a real PDF and no watermark. Works without an account."
   }
 }

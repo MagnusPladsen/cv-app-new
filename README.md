@@ -158,6 +158,25 @@ The signed-in half cannot be tested automatically — real OAuth needs a Google
 account and a headful browser. Before trusting sync, work through
 `docs/superpowers/plans/2026-09-08-cvapp-accounts-verification.md`.
 
+## Sharing and discovery
+
+`app/opengraph-image.png` is the link-preview card. It is rendered from the
+app's own markup by a headless browser rather than at runtime, because
+next/font serves its faces from relative URLs: a document with no base URL
+falls back to a serif, silently. 
+
+Regenerate it with `bun scripts/generate-og-image.mjs` while `bun run dev` is
+running.
+
+It is referenced explicitly in `generateMetadata` rather than left to the file
+convention. Pages live under a dynamic `[locale]` segment, and the convention
+emits a URL with the unprovided param filled in as `/-/` — which works, but is
+a strange address to hand a crawler.
+
+`app/robots.ts` and `app/sitemap.ts` cover crawling. Note that Cloudflare sits
+in front of production and injects its own content-signals `robots.txt`, which
+currently shadows ours.
+
 ## Privacy
 
 CVApp handles CVs, which are dense personal data, so the privacy work is code

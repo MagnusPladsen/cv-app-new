@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 
@@ -10,15 +11,59 @@ import { AppHeader } from '@/components/chrome/AppHeader'
 import { ALL_TEMPLATE_STYLESHEETS } from '@/components/cv/templates'
 import { routing } from '@/i18n/routing'
 import { CV_STYLESHEETS } from '@/lib/print/stylesheets'
+import { siteUrl } from '@/lib/site'
 import '../globals.css'
 
 // shadcn's globals.css maps Tailwind's font-sans to --font-sans, so the
 // next/font variable must use that exact name or body text falls back to serif.
 const geistSans = Geist({ variable: '--font-sans', subsets: ['latin'] })
 
-export const metadata: Metadata = {
-  title: 'CVApp',
-  description: 'Free CV builder. No watermark, no paywall.',
+/**
+ * Per-locale metadata. Sharing a link previously produced a bare URL with no
+ * title, description or image, because the app declared none of the Open
+ * Graph tags. `app/opengraph-image.png` is picked up by file convention.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'meta' })
+  const url = `${siteUrl()}/${locale}`
+
+  return {
+    metadataBase: new URL(siteUrl()),
+    title: t('title'),
+    description: t('description'),
+    alternates: {
+      canonical: url,
+      languages: Object.fromEntries(
+        routing.locales.map((other) => [other, `${siteUrl()}/${other}`]),
+      ),
+    },
+    openGraph: {
+      type: 'website',
+      siteName: 'CVApp',
+      title: t('title'),
+      description: t('description'),
+      url,
+      locale: locale === 'no' ? 'nb_NO' : 'en_GB',
+      // Referenced explicitly rather than left to the file convention. The
+      // pages live under a dynamic [locale] segment, and the convention
+      // generates a URL with the unprovided param filled in as "/-/" - which
+      // works, but is a strange address to hand a crawler. The file sits in
+      // the root segment so this path is stable, and metadataBase makes it
+      // absolute.
+      images: [{ url: '/opengraph-image.png', width: 1200, height: 630, alt: 'CVApp' }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: t('title'),
+      description: t('description'),
+      images: ['/opengraph-image.png'],
+    },
+  }
 }
 
 export function generateStaticParams() {

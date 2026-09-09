@@ -23,6 +23,10 @@ describe('the processor list', () => {
       'developer.mozilla.org',
       'react.dev',
       'openapi.vercel.sh',
+      // An XML namespace identifier on every <svg>, never fetched. Listed
+      // here rather than by loosening the pattern, so a real request to
+      // w3.org would still have to be justified.
+      'www.w3.org',
     ]
 
     // Sample CV content, not network calls: the demo document contains a

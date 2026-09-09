@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from 'next-intl'
 
 import { AccountMenu } from '@/components/auth/AccountMenu'
+import { Logo } from '@/components/chrome/Logo'
 import { BetaBadge } from '@/components/chrome/BetaBadge'
 import { Link, usePathname } from '@/i18n/navigation'
 import { routing } from '@/i18n/routing'
@@ -17,7 +18,11 @@ export function AppHeader() {
     <header className="sticky top-0 z-30 border-b border-border/70 bg-sand/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-2">
-          <Link className="text-lg font-extrabold tracking-tight text-brand" href="/">
+          <Link
+            className="inline-flex items-center gap-2 rounded text-lg font-extrabold tracking-tight text-brand transition hover:text-brand-strong focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+            href="/"
+          >
+            <Logo className="size-7 shrink-0" />
             CVApp
           </Link>
           <BetaBadge />

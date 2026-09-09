@@ -76,4 +76,20 @@ describe('compressImage', () => {
     const notAnImage = new File([], 'a.pdf', { type: 'application/pdf' })
     await expect(compressImage(notAnImage, deps)).rejects.toThrow('not an image')
   })
+
+  it('never returns the original file, which is what strips EXIF', async () => {
+    // The EXIF stripping is a side effect of re-encoding: the output is
+    // always a fresh Canvas encode, so GPS coordinates in a phone photo never
+    // reach storage or an exported CV. A future fast path that returned the
+    // input untouched when it is already small enough would silently undo
+    // that, so the guarantee is asserted rather than left to luck.
+    const { canvas, deps } = fakes(100, 100)
+    const original = new File(['ORIGINAL-BYTES-WITH-EXIF'], 'photo.jpg', { type: 'image/jpeg' })
+
+    const result = await compressImage(original, deps)
+
+    expect(result).toBe('data:image/jpeg;base64,COMPRESSED')
+    expect(result).not.toContain('ORIGINAL-BYTES-WITH-EXIF')
+    expect(canvas.toDataURL).toHaveBeenCalledWith('image/jpeg', expect.any(Number))
+  })
 })

@@ -72,7 +72,14 @@ export function createSyncEngine({
         // with a newer updatedAt than the server's copy, so the next full
         // merge picks it up on its own. That is the whole reason the planner
         // derives everything from timestamps.
-        console.warn('[sync] failed, will retry', error)
+        // The message only, never the error object: a rejected Supabase
+        // call carries the request it failed on, and that request body is
+        // the CV. Printing it would put CV content into the browser console
+        // and, on the server, into logs held outside the EEA.
+        console.warn(
+          '[sync] failed, will retry:',
+          error instanceof Error ? error.message : 'unknown error',
+        )
         if (!stopped) onStatus?.(isOffline() ? 'offline' : 'error')
       })
       .finally(() => {

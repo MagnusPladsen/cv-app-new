@@ -179,3 +179,32 @@ test('no header link wraps onto a second line', async ({ page }) => {
 
   expect(wrapped, `header links wrapping: ${wrapped.join(', ')}`).toEqual([])
 })
+
+test('the hero sheets scale to their cards rather than overflowing them', async ({ page }) => {
+  // The CV inside each sheet is scaled with 100cqw. Putting the rotation on
+  // the query container made that unreliable - correct in Chromium, roughly
+  // double size elsewhere, cropping every sheet. The rotation now sits on a
+  // wrapper, and this asserts the content actually fits.
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await page.goto('/no')
+  await page.evaluate(() => document.fonts.ready)
+
+  const sheets = await page.evaluate(() =>
+    [...document.querySelectorAll('main section:first-of-type .cv-doc')].map((doc) => {
+      const scaled = doc.parentElement as HTMLElement
+      const card = scaled.parentElement as HTMLElement
+      const matrix = new DOMMatrix(getComputedStyle(scaled).transform)
+      return {
+        cardWidth: card.clientWidth,
+        contentWidth: Math.round(scaled.offsetWidth * matrix.a),
+      }
+    }),
+  )
+
+  expect(sheets.length).toBeGreaterThan(0)
+  for (const sheet of sheets) {
+    expect(sheet.contentWidth, 'a hero sheet renders wider than its card').toBeLessThanOrEqual(
+      sheet.cardWidth + 1,
+    )
+  }
+})

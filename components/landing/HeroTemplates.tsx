@@ -42,19 +42,23 @@ export function HeroTemplates() {
         const { left, top, rotate } = LAYOUT[index]!
 
         return (
+          // The rotation is on this wrapper, never on the query container
+          // itself. A transform on the container makes `100cqw` unreliable -
+          // it resolved correctly in Chromium and rendered the sheets at
+          // roughly double size elsewhere, cropping every one. Keeping the
+          // container untransformed is what makes the scale dependable.
           <div
-            className="absolute overflow-hidden rounded-md bg-white shadow-[0_26px_60px_-26px_rgb(15_35_45/0.45)]"
+            className="absolute"
             key={id}
-            style={{
-              left,
-              top,
-              width: '58%',
-              aspectRatio: `${PAGE_WIDTH} / ${PAGE_HEIGHT}`,
-              containerType: 'inline-size',
-              transform: `rotate(${rotate}deg)`,
-              zIndex: index,
-            }}
+            style={{ left, top, width: '58%', transform: `rotate(${rotate}deg)`, zIndex: index }}
           >
+            <div
+              className="relative w-full overflow-hidden rounded-md bg-white shadow-[0_26px_60px_-26px_rgb(15_35_45/0.45)]"
+              style={{
+                aspectRatio: `${PAGE_WIDTH} / ${PAGE_HEIGHT}`,
+                containerType: 'inline-size',
+              }}
+            >
             <span
               className="absolute top-0 left-0 origin-top-left"
               style={{
@@ -76,6 +80,7 @@ export function HeroTemplates() {
                 }}
               />
             </span>
+            </div>
           </div>
         )
       })}

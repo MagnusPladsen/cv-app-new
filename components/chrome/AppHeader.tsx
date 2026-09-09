@@ -19,17 +19,13 @@ export function AppHeader() {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-6">
         <div className="flex items-center gap-2">
           <Link
-            className="inline-flex items-center gap-2 rounded text-lg font-extrabold tracking-tight text-brand transition hover:text-brand-strong focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+            className="inline-flex items-center gap-1.5 rounded text-base font-extrabold tracking-tight text-brand transition hover:text-brand-strong focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none sm:gap-2 sm:text-lg"
             href="/"
           >
             <Logo className="size-7 shrink-0" />
             CVApp
           </Link>
-          {/* Hidden on phones: the header cannot fit it beside the nav, and
-              beta status is stated on the landing page and in the footer. */}
-          <span className="hidden sm:inline-flex">
-            <BetaBadge />
-          </span>
+          <BetaBadge />
         </div>
 
         <nav className="flex items-center gap-0.5 text-sm sm:gap-1">
@@ -51,13 +47,17 @@ export function AppHeader() {
           </Link>
           <AccountMenu />
 
+          {/* On a phone only the other language is shown: rendering both
+              spends width on a link that does nothing, and that width is what
+              the beta badge needs. From sm both appear, with the current one
+              marked. */}
           <span aria-label={t('switchLocale')} className="ml-1 flex items-center gap-0.5 sm:ml-2">
             {routing.locales.map((candidate) => (
               <Link
                 aria-current={candidate === locale ? 'true' : undefined}
                 className={`rounded-full px-2 py-1 text-xs font-semibold uppercase transition sm:px-2.5 ${
                   candidate === locale
-                    ? 'bg-brand text-brand-ink'
+                    ? 'hidden bg-brand text-brand-ink sm:inline-block'
                     : 'text-muted-foreground hover:bg-brand-soft hover:text-brand-strong'
                 }`}
                 href={pathname}

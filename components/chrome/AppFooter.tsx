@@ -21,6 +21,12 @@ export async function AppFooter() {
           >
             {t('privacy')}
           </Link>
+          <Link
+            className="rounded transition hover:text-brand-strong hover:underline focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+            href="/vilkar"
+          >
+            {t('terms')}
+          </Link>
         </nav>
       </div>
     </footer>

@@ -226,6 +226,7 @@
   },
   "footer": {
     "tagline": "CVApp — a free CV builder, in beta.",
-    "privacy": "Privacy"
+    "privacy": "Privacy",
+    "terms": "Terms"
   }
 }

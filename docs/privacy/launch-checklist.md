@@ -10,6 +10,7 @@ than useless.
 |---|---|---|
 | Data inventory written | done | `docs/privacy/data-inventory.md`, enforced by `lib/schema/__tests__/data-inventory.test.ts` |
 | Privacy policy published and linked | done | `/[locale]/personvern`, linked site-wide from `components/chrome/AppFooter.tsx`; reachability tested in `e2e/legal.spec.ts` |
+| Terms of use, as a separate document | done | `/[locale]/vilkar`. A test asserts the terms do not restate the policy - the spec requires two documents, not one with a privacy section |
 | DPAs accepted and archived | **BLOCKED** | Supabase: covered. Vercel: **its DPA applies to Enterprise and Pro plans only**, and CVApp is on Hobby, so there is no Art. 28 agreement with the host. Now the only remaining transfer-related gap, since the functions moved to Frankfurt. See `docs/privacy/processors.md` |
 | Hosting and database in an EU/EEA region | done | Database: AWS `eu-central-1`, Frankfurt. Functions: `fra1`, Frankfurt, after setting `regions` in `vercel.json`. No personal data leaves the EEA |
 | Account deletion that genuinely deletes, with a test | done | `supabase/tests/delete_own_account.sql`; run it and record the result |

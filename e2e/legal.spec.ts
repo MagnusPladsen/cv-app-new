@@ -36,6 +36,21 @@ for (const locale of ['no', 'en'] as const) {
   })
 }
 
+for (const locale of ['no', 'en'] as const) {
+  test(`the terms are reachable and separate from the policy in ${locale}`, async ({ page }) => {
+    await page.goto(`/${locale}`)
+    await page
+      .getByRole('contentinfo')
+      .getByRole('link', { name: /Vilkår|Terms/ })
+      .click()
+
+    await expect(page).toHaveURL(new RegExp(`/${locale}/vilkar`))
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+    // Separate documents, per the spec: the terms must not be the policy.
+    await expect(page.getByText(/Datatilsynet/)).toHaveCount(0)
+  })
+}
+
 test('the policy fits a phone, table and all', async ({ page }) => {
   // The processor table is the widest thing on the page and the most likely
   // to push the layout out.

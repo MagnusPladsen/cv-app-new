@@ -123,5 +123,7 @@ These must ship **with** the payment feature, not after it:
 - **Vercel AI-partner data sharing** — off, in Team Settings. It covers
   service-generated data rather than CV content, but the policy makes a firm
   claim and the setting should match it.
-- **Terms of service** — a separate document from the privacy policy. Not
-  written yet.
+- **Terms of service** — written, at `/[locale]/vilkar`. Review it alongside
+  the privacy policy: it promises little rather than disclaiming much, because
+  Norwegian consumer law limits what can be disclaimed, but the wording is
+  still a lawyer's call.

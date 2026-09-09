@@ -226,6 +226,7 @@
   },
   "footer": {
     "tagline": "CVApp — gratis CV-bygger i beta.",
-    "privacy": "Personvern"
+    "privacy": "Personvern",
+    "terms": "Vilkår"
   }
 }

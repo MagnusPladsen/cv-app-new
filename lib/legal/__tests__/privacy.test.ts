@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { PRIVACY_POLICY } from '@/lib/legal'
+import { PRIVACY_POLICY, TERMS } from '@/lib/legal'
 import { PROCESSORS } from '@/lib/privacy/processors'
 
 const locales = ['no', 'en'] as const
@@ -122,5 +122,37 @@ describe('the privacy policy', () => {
     for (const processor of PROCESSORS) {
       expect(processor.purpose.no).not.toBe(processor.purpose.en)
     }
+  })
+})
+
+describe('the terms of use', () => {
+  it('say the same things in both languages', () => {
+    expect(TERMS.no.sections.map((s) => s.id)).toEqual(TERMS.en.sections.map((s) => s.id))
+    expect(TERMS.no.lastUpdated).toBe(TERMS.en.lastUpdated)
+  })
+
+  it.each(locales)('has no empty section in %s', (locale) => {
+    for (const section of TERMS[locale].sections) {
+      expect(section.heading.trim(), `${section.id} has no heading`).not.toBe('')
+      expect(section.body.length, `${section.id} has no body`).toBeGreaterThan(0)
+    }
+  })
+
+  it.each(locales)('keeps privacy terms out of the terms of use in %s', (locale) => {
+    // The GDPR spec is explicit: a separate document, and privacy terms must
+    // not be buried inside the terms of service. This checks the terms point
+    // at the policy rather than restating it.
+    const text = TERMS[locale].sections.flatMap((s) => s.body).join(' ')
+    const intro = TERMS[locale].intro.join(' ')
+
+    expect(intro.toLowerCase()).toMatch(/personvernerkl|privacy policy/)
+    expect(text, 'the terms should not restate a legal basis').not.toMatch(/artikkel 6|Article 6/)
+  })
+
+  it.each(locales)('does not disclaim more than Norwegian law allows in %s', (locale) => {
+    // Consumer rights cannot be contracted away here, and a term claiming
+    // otherwise is void as well as misleading.
+    const text = TERMS[locale].sections.flatMap((s) => s.body).join(' ').toLowerCase()
+    expect(text).toMatch(/forbrukerlovgivningen|consumer protection law/)
   })
 })

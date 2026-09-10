@@ -37,6 +37,8 @@ export function EditorSplit({
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
   const [sheetOpen, setSheetOpen] = useState(false)
 
+  const sectionFormRef = useRef<HTMLDivElement | null>(null)
+
   // Opening a CV is the baseline. Without this the history still holds the
   // step that created the document, so the first Angre on a new CV deletes it
   // and the editor bounces to the dashboard - which reads as the button being
@@ -44,6 +46,15 @@ export function EditorSplit({
   useEffect(() => {
     useDocuments.temporal.getState().clear()
   }, [document.id])
+
+  // Only when the choice changes, and never on first render: landing in the
+  // editor should not jump the page past the fields above.
+  const previousSectionId = useRef(activeSectionId)
+  useEffect(() => {
+    if (previousSectionId.current === activeSectionId) return
+    previousSectionId.current = activeSectionId
+    sectionFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [activeSectionId])
 
   const undo = useDocumentsTemporal((state) => state.undo)
   const redo = useDocumentsTemporal((state) => state.redo)
@@ -87,17 +98,6 @@ export function EditorSplit({
           theme={document.theme}
         />
 
-        <SectionList
-          activeSectionId={activeSectionId}
-          labels={labels}
-          onAddCustom={handlers.onAddCustomSection}
-          onMove={handlers.onMoveSection}
-          onRemove={handlers.onRemoveSection}
-          onSelect={onSelectSection}
-          onToggle={handlers.onToggleSection}
-          sections={document.sections}
-        />
-
         <PhotoField
           onChange={(dataUrl) => handlers.onPersonaliaChange({ photo: { dataUrl } })}
           onRemove={() => handlers.onPersonaliaChange({ photo: undefined })}
@@ -111,8 +111,25 @@ export function EditorSplit({
           onChange={handlers.onPersonaliaChange}
         />
 
+        <SectionList
+          activeSectionId={activeSectionId}
+          labels={labels}
+          onAddCustom={handlers.onAddCustomSection}
+          onMove={handlers.onMoveSection}
+          onRemove={handlers.onRemoveSection}
+          onSelect={onSelectSection}
+          onToggle={handlers.onToggleSection}
+          sections={document.sections}
+        />
+
+
+
         {activeSection ? (
-          <div className="flex flex-col gap-6">
+          // Anchored and scrolled to on selection. Even directly beneath the
+          // list the form can sit below the fold on a laptop, and a click that
+          // appears to do nothing reads as a broken button - which is exactly
+          // how the section forms came to look missing.
+          <div className="flex flex-col gap-6 scroll-mt-24" ref={sectionFormRef}>
             <SectionSettings
               labels={labels}
               onRename={handlers.onRenameSection}

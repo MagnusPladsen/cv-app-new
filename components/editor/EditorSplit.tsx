@@ -16,6 +16,7 @@ import { PersonaliaForm } from './PersonaliaForm'
 import { PhotoField } from './PhotoField'
 import { PreviewPane } from './PreviewPane'
 import { PreviewSheet } from './PreviewSheet'
+import { SaveState } from './SaveState'
 import { SectionEditor } from './SectionEditor'
 import { SectionList } from './SectionList'
 import { SectionSettings } from './SectionSettings'
@@ -83,7 +84,10 @@ export function EditorSplit({
           {/* Desktop only. On a phone the download lives in the fixed bottom
               bar below, and rendering both put two controls with the same
               accessible name on one screen. */}
-          {isDesktop ? <ExportButton document={document} getNode={getNode} /> : null}
+          <div className="flex items-center gap-3">
+            <SaveState documentId={document.id} />
+            {isDesktop ? <ExportButton document={document} getNode={getNode} /> : null}
+          </div>
         </div>
 
         <TemplateStrip

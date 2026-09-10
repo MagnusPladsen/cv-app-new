@@ -245,7 +245,9 @@
     "errorWeak": "The password must be at least 8 characters.",
     "errorRate": "Too many attempts. Wait a moment and try again.",
     "errorGeneric": "Something went wrong. Please try again.",
-    "working": "One moment …"
+    "working": "One moment …",
+    "saveSignedOut": "Sign in to save",
+    "saveHintLocal": "This CV lives in your browser. Sign in and it follows you — everything you have made comes with it."
   },
   "legal": {
     "processorName": "Provider",

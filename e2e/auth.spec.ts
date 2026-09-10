@@ -170,3 +170,23 @@ test('the new-password page renders for someone arriving from the email link', a
   await expect(page.getByRole('heading', { name: 'Velg et nytt passord' })).toBeVisible()
   await expect(page.getByLabel('Passord')).toBeVisible()
 })
+
+test('a signed-out editor offers to save, and comes back to the same CV', async ({ page }) => {
+  await page.goto('/no/templates')
+  await page.locator('button:has(.cv-doc--oslo)').click()
+  await page.waitForURL(/\/no\/cv\/(.+)/)
+  const id = page.url().split('/cv/')[1]!
+
+  await page.getByLabel(/Fornavn/).first().fill('Testperson')
+
+  const save = page.getByRole('link', { name: 'Logg inn for å lagre' })
+  await expect(save).toBeVisible()
+
+  await save.click()
+  await expect(page).toHaveURL(new RegExp(`/no/login\\?next=.*${id}`))
+
+  // The CV is still there behind the login page - signing in claims it rather
+  // than starting from nothing.
+  await page.goto(`/no/cv/${id}`)
+  await expect(page.getByLabel(/Fornavn/).first()).toHaveValue('Testperson')
+})

@@ -245,7 +245,9 @@
     "errorWeak": "Passordet må være minst 8 tegn.",
     "errorRate": "For mange forsøk. Vent litt og prøv igjen.",
     "errorGeneric": "Noe gikk galt. Prøv igjen.",
-    "working": "Vent litt …"
+    "working": "Vent litt …",
+    "saveSignedOut": "Logg inn for å lagre",
+    "saveHintLocal": "CV-en ligger i denne nettleseren. Logg inn, så følger den deg – og alt du har laget nå blir med."
   },
   "legal": {
     "processorName": "Leverandør",

@@ -7,7 +7,7 @@
 }
 
 .cv-doc--studio .cv-header__name {
-  font-size: calc(36pt * var(--cv-scale));
+  font-size: calc(36pt * var(--cv-scale) * var(--cv-name-scale, 1));
   line-height: 0.95;
   letter-spacing: -0.04em;
 }

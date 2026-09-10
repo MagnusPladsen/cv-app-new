@@ -9,7 +9,7 @@
 }
 
 .cv-doc--ramme .cv-header__name {
-  font-size: calc(24pt * var(--cv-scale));
+  font-size: calc(24pt * var(--cv-scale) * var(--cv-name-scale, 1));
 }
 
 .cv-doc--ramme .cv-header__title {

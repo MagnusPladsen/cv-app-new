@@ -20,6 +20,9 @@
   /* Explicit, never inherited: a host element such as a <button> centres its
      text by default, which silently wrecks the whole document. */
   text-align: left;
+  /* Overridden per document by PersonaliaHeader: a long name shrinks before
+     it is allowed to wrap. */
+  --cv-name-scale: 1;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
@@ -57,7 +60,7 @@
 
 .cv-header__name {
   font-family: var(--cv-font-head);
-  font-size: calc(23pt * var(--cv-scale));
+  font-size: calc(23pt * var(--cv-scale) * var(--cv-name-scale, 1));
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.015em;
@@ -297,7 +300,10 @@
 }
 
 .cv-shell--full .cv-shell__aside {
-  width: calc(62mm * var(--cv-scale));
+  /* 66mm, not 62: at the narrower width a two-part Norwegian name and a long
+     email both crowded the column, and the sidebar is where this template
+     puts everything that identifies you. */
+  width: calc(66mm * var(--cv-scale));
   padding: var(--cv-margin) calc(var(--cv-margin) * 0.72);
   background: var(--cv-accent);
   color: var(--cv-accent-ink);

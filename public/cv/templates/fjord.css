@@ -3,7 +3,11 @@
    narrative runs down the white main column. */
 
 .cv-doc--fjord .cv-shell__aside .cv-header__name {
-  font-size: calc(21pt * var(--cv-scale));
+  /* 17pt, measured rather than chosen: at 21 even "Ola Nordmann" broke across
+     two lines in this template's sidebar, and the name is the one thing on a
+     CV that should not wrap first. A genuinely long name still wraps, which is
+     the right compromise once shrinking has done its part. */
+  font-size: calc(17pt * var(--cv-scale) * var(--cv-name-scale, 1));
   font-weight: 600;
   letter-spacing: 0;
   line-height: 1.15;

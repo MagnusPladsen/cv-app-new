@@ -12,7 +12,7 @@
 }
 
 .cv-doc--kompakt .cv-header__name {
-  font-size: calc(20pt * var(--cv-scale));
+  font-size: calc(20pt * var(--cv-scale) * var(--cv-name-scale, 1));
   font-weight: 700;
 }
 

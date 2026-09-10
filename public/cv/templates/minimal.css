@@ -7,7 +7,7 @@
 }
 
 .cv-doc--minimal .cv-header__name {
-  font-size: calc(22pt * var(--cv-scale));
+  font-size: calc(22pt * var(--cv-scale) * var(--cv-name-scale, 1));
   font-weight: 600;
   letter-spacing: 0.01em;
 }

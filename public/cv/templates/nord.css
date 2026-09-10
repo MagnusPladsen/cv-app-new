@@ -8,7 +8,7 @@
 }
 
 .cv-doc--nord .cv-header__name {
-  font-size: calc(26pt * var(--cv-scale));
+  font-size: calc(26pt * var(--cv-scale) * var(--cv-name-scale, 1));
   font-weight: 700;
   color: var(--cv-accent);
   letter-spacing: -0.005em;

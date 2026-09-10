@@ -3,7 +3,7 @@
    markup stays the same as every other template. */
 
 .cv-doc--tidslinje .cv-header__name {
-  font-size: calc(25pt * var(--cv-scale));
+  font-size: calc(25pt * var(--cv-scale) * var(--cv-name-scale, 1));
   letter-spacing: -0.015em;
 }
 

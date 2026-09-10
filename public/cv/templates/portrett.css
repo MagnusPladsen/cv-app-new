@@ -19,7 +19,7 @@
 .cv-doc--portrett .cv-header__name {
   /* Sized so a long Norwegian double-barrelled name still sets on one line
      beside the portrait. */
-  font-size: calc(23pt * var(--cv-scale));
+  font-size: calc(23pt * var(--cv-scale) * var(--cv-name-scale, 1));
   line-height: 1.12;
 }
 

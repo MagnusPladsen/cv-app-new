@@ -1,6 +1,13 @@
 import type { Personalia } from '@/lib/schema/cv'
 
-export function PersonaliaHeader({ personalia }: { personalia: Personalia }) {
+export function PersonaliaHeader({
+  personalia,
+  decorative = false,
+}: {
+  personalia: Personalia
+  /** True in a thumbnail, where this CV is an illustration of a template. */
+  decorative?: boolean
+}) {
   const fullName = [personalia.firstName, personalia.lastName].filter(Boolean).join(' ')
   const place = [personalia.city, personalia.country].filter(Boolean).join(', ')
   const contact = [personalia.email, personalia.phone, place].filter(Boolean).join(' · ')
@@ -9,7 +16,18 @@ export function PersonaliaHeader({ personalia }: { personalia: Personalia }) {
   return (
     <header className="cv-header">
       <div className="cv-header__body">
-        {fullName ? <h1 className="cv-header__name">{fullName}</h1> : null}
+        {/* An <h1> in the real document, where the CV *is* the page and the
+            name is its title. A <p> in a thumbnail: search engines ignore
+            aria-hidden, so fourteen template cards otherwise put fourteen
+            <h1>Ingrid Bjørnstad Halvorsen</h1> on the templates page and
+            invite a crawler to decide the page is about her. */}
+        {fullName ? (
+          decorative ? (
+            <p className="cv-header__name">{fullName}</p>
+          ) : (
+            <h1 className="cv-header__name">{fullName}</h1>
+          )
+        ) : null}
         {personalia.title ? <p className="cv-header__title">{personalia.title}</p> : null}
         {contact ? <p className="cv-header__contact">{contact}</p> : null}
         {personalia.links.length > 0 ? (

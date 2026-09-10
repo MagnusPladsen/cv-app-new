@@ -27,9 +27,16 @@ const SHELLS: Record<ShellId, typeof SingleColumn> = {
 export function CvDocument({
   document,
   className,
+  decorative = false,
 }: {
   document: CvDocumentData
   className?: string
+  /**
+   * True when this CV illustrates a template rather than being the page's
+   * own content. It downgrades the name from <h1> to <p>; see
+   * PersonaliaHeader.
+   */
+  decorative?: boolean
 }) {
   const template = getTemplate(document.theme.templateId)
   const tokens = buildThemeTokens(document.theme, template.tokens)
@@ -70,7 +77,7 @@ export function CvDocument({
       lang={document.language}
     >
       <Shell
-        header={<PersonaliaHeader personalia={document.personalia} />}
+        header={<PersonaliaHeader decorative={decorative} personalia={document.personalia} />}
         sections={sections}
         sidebar={sidebar}
       />

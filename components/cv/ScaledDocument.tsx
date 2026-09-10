@@ -68,7 +68,8 @@ export function ScaledDocument({
             : `scale(${measured})`,
       }}
     >
-      <CvDocument document={doc} />
+      {/* Always decorative: this component exists only for thumbnails. */}
+      <CvDocument decorative document={doc} />
     </span>
   )
 }

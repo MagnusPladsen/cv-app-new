@@ -106,3 +106,27 @@ test('the measured scale takes over from the CSS one', async ({ page }) => {
 
   expect(transform).toMatch(/scale\(\d*\.?\d+\)/)
 })
+
+test('an indexable page has exactly one h1', async ({ page }) => {
+  // Every rendered CV names the person in an <h1>, which is right when the CV
+  // is the document. In a thumbnail it is not: aria-hidden keeps it from
+  // screen readers, but search engines ignore aria-hidden, so the templates
+  // page offered a crawler fourteen <h1>Ingrid Bjørnstad Halvorsen</h1> and
+  // an invitation to decide the page is about her.
+  for (const path of ['/no', '/no/templates', '/no/personvern', '/no/vilkar']) {
+    await page.goto(path)
+    const headings = await page.locator('h1').allTextContents()
+    expect(headings, `${path} has ${headings.length} h1 elements`).toHaveLength(1)
+  }
+})
+
+test('the editor preview keeps the name as a real heading', async ({ page }) => {
+  // The other half of the same rule: in the document being edited, the name
+  // is the title of the page and must stay an h1.
+  await page.goto('/no/templates')
+  await page.locator('button:has(.cv-doc--oslo)').click()
+  await page.waitForURL(/\/no\/cv\/.+/)
+  await page.getByLabel(/Fornavn/).first().fill('Ola')
+
+  await expect(page.locator('[data-cv-preview] h1.cv-header__name')).toHaveCount(1)
+})

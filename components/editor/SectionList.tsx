@@ -16,7 +16,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { ChevronDown, ChevronUp, GripVertical, Plus, X } from 'lucide-react'
+import { ChevronDown, ChevronUp, GripVertical, Pencil, Plus, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 import { sectionTitle } from '@/components/cv/sections'
@@ -89,15 +89,29 @@ function SectionRow({
         type="checkbox"
       />
 
+      {/* The row's own name is the way into that section's form, and nothing
+          said so: the checkbox and the arrows read as the whole control, so
+          the forms for work history, education, skills and languages looked
+          absent rather than one click away. The pencil appears on hover and
+          focus, and the label is always in the accessible name. */}
       <button
         aria-current={isActive ? 'true' : undefined}
-        className={`flex-1 truncate text-left text-sm ${
+        aria-label={`${t('edit')}: ${title}`}
+        className={`group/edit flex flex-1 items-center gap-2 truncate rounded-lg px-1.5 py-1 text-left text-sm transition ${
           section.enabled ? 'text-foreground' : 'text-muted-foreground/70'
-        }`}
+        } ${isActive ? 'font-semibold text-brand-strong' : 'hover:bg-brand-soft/70'}`}
         onClick={() => onSelect(section.id)}
         type="button"
       >
-        {title}
+        <span className="flex-1 truncate">{title}</span>
+        <Pencil
+          aria-hidden="true"
+          className={`size-3.5 shrink-0 transition ${
+            isActive
+              ? 'text-brand'
+              : 'text-muted-foreground opacity-0 group-hover/edit:opacity-100 group-focus-visible/edit:opacity-100'
+          }`}
+        />
       </button>
 
       <button
@@ -165,6 +179,7 @@ export function SectionList({
       <h2 className="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
         {t('title')}
       </h2>
+      <p className="-mt-1 text-xs text-muted-foreground">{t('sectionsHint')}</p>
 
       <DndContext
         collisionDetection={closestCenter}

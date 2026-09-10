@@ -129,7 +129,10 @@ describe('SectionList', () => {
     const p = props()
     wrap(<SectionList {...p} />)
     const active = screen.getByText('Om meg').closest('li')!
-    expect(within(active).getByRole('button', { name: 'Om meg' })).toHaveAttribute(
+    // The name is now "Rediger: Om meg" - the row opens that section's form,
+    // and saying so is the whole point of the change. It still contains the
+    // visible label, which is what label-in-name requires.
+    expect(within(active).getByRole('button', { name: 'Rediger: Om meg' })).toHaveAttribute(
       'aria-current',
       'true',
     )

@@ -1,5 +1,6 @@
 'use client'
 
+import { ChevronDown, SlidersHorizontal } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
 import { getTemplate } from '@/components/cv/templates'
@@ -35,12 +36,20 @@ export function DesignPanel({
   const lowContrast = contrastRatio(theme.accent, '#ffffff') < MIN_ACCENT_CONTRAST
 
   return (
-    <details className="rounded-2xl border border-border px-4 py-3">
-      <summary className="cursor-pointer list-none text-sm font-semibold tracking-wide text-muted-foreground uppercase transition hover:text-brand-strong">
-        {t('colours')}
+    <details className="group rounded-xl border border-border bg-card">
+      {/* Styled as a button, not a heading. As plain uppercase label text
+          nobody read it as something to click, so the colour and typeface
+          controls were effectively hidden. */}
+      <summary className="flex cursor-pointer list-none items-center gap-2.5 rounded-xl px-4 py-3 text-sm font-semibold transition hover:bg-brand-soft/60 hover:text-brand-strong focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none">
+        <SlidersHorizontal aria-hidden="true" className="size-4 shrink-0 text-brand" />
+        <span className="flex-1">{t('colours')}</span>
+        <ChevronDown
+          aria-hidden="true"
+          className="size-4 shrink-0 text-muted-foreground transition group-open:rotate-180"
+        />
       </summary>
 
-      <div className="mt-4 flex flex-col gap-4">
+      <div className="flex flex-col gap-4 px-4 pt-1 pb-4">
         <ColourPicker
           customLabel={t('custom')}
           label={t('accent')}

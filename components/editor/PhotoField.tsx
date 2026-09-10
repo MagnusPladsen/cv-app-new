@@ -62,7 +62,7 @@ export function PhotoField({
 
         <div className="flex flex-col gap-2">
           <label
-            className="cursor-pointer rounded-full border border-border bg-card px-4 py-1.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+            className="inline-flex w-fit cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
             htmlFor={inputId}
           >
             <ImagePlus aria-hidden="true" className="size-4" />
@@ -78,7 +78,7 @@ export function PhotoField({
 
           {photo?.dataUrl ? (
             <button
-              className="text-left rounded text-sm font-medium text-muted-foreground underline-offset-2 transition hover:text-brand-strong hover:underline focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+              className="inline-flex w-fit items-center gap-1.5 rounded text-left text-sm font-medium text-muted-foreground underline-offset-2 transition hover:text-brand-strong hover:underline focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
               onClick={onRemove}
               type="button"
             >

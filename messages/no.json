@@ -76,7 +76,9 @@
     "shapeLabel": "Innhold",
     "shapeEntries": "Oppføringer med datoer",
     "shapeBullets": "Punktliste",
-    "shapeText": "Fritekst"
+    "shapeText": "Fritekst",
+    "edit": "Rediger",
+    "sectionsHint": "Trykk på en seksjon for å fylle den ut."
   },
   "forms": {
     "onePerLine": "Én per linje.",

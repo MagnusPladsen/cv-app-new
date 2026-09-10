@@ -163,4 +163,13 @@
   html {
     @apply font-sans;
   }
+  /* Tailwind v4's Preflight follows the browser default here, which is
+     `default` - so every button in the app looked unclickable. v3 set pointer
+     for you. Scoped to enabled controls so `disabled:cursor-not-allowed`
+     still wins where it is set. */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  label[for] {
+    cursor: pointer;
+  }
 }

@@ -2,10 +2,10 @@
 
 import { Eye } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { getCvLabels } from '@/lib/cv-labels'
-import { useDocumentsTemporal } from '@/lib/store/documents'
+import { useDocuments, useDocumentsTemporal } from '@/lib/store/documents'
 import type { DocumentEditorHandlers } from '@/lib/hooks/use-document-editor'
 import { DESKTOP_QUERY, useMediaQuery } from '@/lib/hooks/use-media-query'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
@@ -36,6 +36,14 @@ export function EditorSplit({
   const previewRef = useRef<HTMLDivElement | null>(null)
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
   const [sheetOpen, setSheetOpen] = useState(false)
+
+  // Opening a CV is the baseline. Without this the history still holds the
+  // step that created the document, so the first Angre on a new CV deletes it
+  // and the editor bounces to the dashboard - which reads as the button being
+  // broken rather than as undo working.
+  useEffect(() => {
+    useDocuments.temporal.getState().clear()
+  }, [document.id])
 
   const undo = useDocumentsTemporal((state) => state.undo)
   const redo = useDocumentsTemporal((state) => state.redo)
@@ -70,6 +78,13 @@ export function EditorSplit({
         <TemplateStrip
           document={document}
           onSelect={(templateId) => handlers.onThemeChange({ templateId })}
+        />
+
+        <DesignPanel
+          onPaperChange={handlers.onPaperChange}
+          onThemeChange={handlers.onThemeChange}
+          paper={document.paper}
+          theme={document.theme}
         />
 
         <SectionList
@@ -108,12 +123,6 @@ export function EditorSplit({
           </div>
         ) : null}
 
-        <DesignPanel
-          onPaperChange={handlers.onPaperChange}
-          onThemeChange={handlers.onThemeChange}
-          paper={document.paper}
-          theme={document.theme}
-        />
       </div>
 
       {/* Exactly one preview is mounted at a time. A CSS-hidden second copy

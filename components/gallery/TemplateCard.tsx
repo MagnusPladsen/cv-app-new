@@ -50,7 +50,7 @@ export function TemplateCard({
         <ScaledDocument document={preview} />
 
         <span className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent p-3 opacity-0 transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100">
-          <span className="rounded-full bg-brand px-4 py-2 text-xs font-bold text-brand-ink shadow-lg">
+          <span className="rounded-full bg-brand px-4 py-2 text-xs font-bold text-brand-ink shadow-lg transition duration-200 group-hover:scale-105 group-hover:bg-brand-strong group-hover:shadow-xl">
             {t('choose')}
           </span>
         </span>

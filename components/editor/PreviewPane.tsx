@@ -116,9 +116,15 @@ export function PreviewPane({
           </div>
 
           {isEmpty ? (
-            <p className="pointer-events-none absolute inset-x-0 top-1/3 text-center text-sm text-muted-foreground">
-              {t('previewEmpty')}
-            </p>
+            // On its own chip rather than bare text on the sheet: a template
+            // with a dark header or a full-height colour column swallowed it
+            // completely, so the one thing explaining the blank page was the
+            // thing you could not read.
+            <div className="pointer-events-none absolute inset-x-0 top-1/3 flex justify-center px-6">
+              <p className="rounded-full bg-foreground/80 px-4 py-2 text-center text-sm font-medium text-background shadow-lg backdrop-blur-sm">
+                {t('previewEmpty')}
+              </p>
+            </div>
           ) : null}
         </div>
       </div>

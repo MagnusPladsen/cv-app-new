@@ -76,7 +76,9 @@
     "shapeLabel": "Content",
     "shapeEntries": "Dated entries",
     "shapeBullets": "Bullet list",
-    "shapeText": "Free text"
+    "shapeText": "Free text",
+    "edit": "Edit",
+    "sectionsHint": "Tap a section to fill it in."
   },
   "forms": {
     "onePerLine": "One per line.",

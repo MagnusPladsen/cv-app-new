@@ -64,8 +64,11 @@ export function HeroTemplates() {
               style={{
                 width: PAGE_WIDTH,
                 height: PAGE_HEIGHT,
-                // length / length yields a unitless number, which scale() needs.
-                transform: `scale(calc(100cqw / ${PAGE_WIDTH}px))`,
+                // tan(atan2(a, b)) is a/b as a plain number. The obvious
+                // calc(a / b) is CSS Values 4 and Firefox does not support
+                // it: the declaration is dropped, no scale is applied, and
+                // the CV renders at full size inside its card.
+                transform: `scale(tan(atan2(100cqw, ${PAGE_WIDTH}px)))`,
               }}
             >
               <CvDocument

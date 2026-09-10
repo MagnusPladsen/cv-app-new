@@ -54,8 +54,11 @@ export function TemplateCard({
           style={{
             width: pageWidth,
             height: pageHeight,
-            // length / length yields a unitless number, which is what scale() needs.
-            transform: `scale(calc(100cqw / ${pageWidth}px))`,
+            // tan(atan2(a, b)) is a/b as a plain number. The obvious
+            // calc(a / b) is CSS Values 4 and Firefox does not support it:
+            // the declaration is dropped, no scale is applied, and the CV
+            // renders at full size inside a thumbnail-sized box.
+            transform: `scale(tan(atan2(100cqw, ${pageWidth}px)))`,
           }}
         >
           <CvDocument document={preview} />

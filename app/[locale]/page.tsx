@@ -49,7 +49,7 @@ export default async function HomePage() {
         <HeroTemplates />
       </section>
 
-      <section className="flex items-start gap-3 rounded-2xl border border-brand/25 bg-brand-soft/50 p-5">
+      <section className="flex items-start gap-3 rounded-xl border border-brand/25 bg-brand-soft/50 p-5">
         <Sparkles aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-brand" />
         <div className="flex flex-col gap-1">
           <h2 className="text-sm font-bold text-brand-strong">{t('beta.bannerTitle')}</h2>
@@ -60,7 +60,7 @@ export default async function HomePage() {
       <section className="grid gap-6 sm:grid-cols-3">
         {(['point1', 'point2', 'point3'] as const).map((point) => (
           <div
-            className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-6"
+            className="flex flex-col gap-2 rounded-xl border border-border bg-card p-6"
             key={point}
           >
             <h2 className="text-base font-bold text-brand-strong">

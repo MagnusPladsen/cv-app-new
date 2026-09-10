@@ -165,7 +165,9 @@
     "filterProfessional": "Professional",
     "filterCreative": "Creative",
     "filterOneColumn": "One column",
-    "empty": "No templates in this category."
+    "empty": "No templates in this category.",
+    "moreLabel": "Show {count} more templates",
+    "allTemplates": "All templates"
   },
   "landing": {
     "lead": "Free in beta. No watermark.",

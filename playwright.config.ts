@@ -32,7 +32,23 @@ export default defineConfig({
     },
   },
 
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    // Firefox and WebKit run the cross-browser smoke spec only. The visual
+    // suite stays Chromium-only, so this buys engine coverage without three
+    // sets of snapshots to keep in step. Both engines have already caught a
+    // bug Chromium could not see - see e2e/cross-browser.spec.ts.
+    {
+      name: 'firefox',
+      testMatch: /cross-browser\.spec\.ts/,
+      use: { ...devices['Desktop Firefox'] },
+    },
+    {
+      name: 'webkit',
+      testMatch: /cross-browser\.spec\.ts/,
+      use: { ...devices['Desktop Safari'] },
+    },
+  ],
 
   webServer: {
     // Production build: dev-mode HMR overlays and timing make snapshots flaky.

@@ -89,8 +89,22 @@ const nextConfig: NextConfig = {
               // was stripped" - every CV loses its colour, fonts and page
               // geometry, on screen and in the exported PDF.
               ...style,
-              'upgrade-insecure-requests',
-            ].join('; '),
+              // upgrade-insecure-requests is deliberately absent.
+              //
+              // It rewrites every http:// subresource to https://, and WebKit
+              // applies that on any http origin - including localhost and a
+              // production build served over http, where nothing answers on
+              // TLS. Every stylesheet then fails and Safari renders the site
+              // with no CSS at all. Chromium and Firefox exempt localhost,
+              // which is why it went unnoticed until someone opened Safari.
+              //
+              // It also buys nothing here: every subresource is same-origin
+              // and relative, so on the real https site they are already
+              // https. Strict-Transport-Security above is the stronger
+              // control and does the actual job.
+            ]
+              .filter(Boolean)
+              .join('; '),
           },
         ],
       },

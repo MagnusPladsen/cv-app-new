@@ -165,7 +165,9 @@
     "filterProfessional": "Profesjonell",
     "filterCreative": "Kreativ",
     "filterOneColumn": "Én kolonne",
-    "empty": "Ingen maler i denne kategorien."
+    "empty": "Ingen maler i denne kategorien.",
+    "moreLabel": "Vis {count} maler til",
+    "allTemplates": "Alle maler"
   },
   "landing": {
     "lead": "Gratis i beta. Uten vannmerke.",

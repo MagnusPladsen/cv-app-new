@@ -67,14 +67,14 @@
   /* An ambient wash of the brand colour, anchored to the viewport so it does
      not tile or repeat down a long editor page.
 
-     Two sources, not one: a single corner glow left the other ninety per cent
-     of the screen flat off-white, which read as unfinished rather than
-     restrained. The second, warmer source anchors the opposite corner so the
-     page has a direction to it. */
+     One from each corner: teal on the diagonal, warm amber on the other, so
+     no part of the screen is left flat off-white. A single source lit one
+     corner and left the rest looking unfinished rather than restrained. */
   --page-glow:
-    radial-gradient(1100px 700px at 8% -12%, rgba(15, 118, 110, 0.22), transparent 62%),
-    radial-gradient(900px 620px at 100% 8%, rgba(180, 83, 9, 0.10), transparent 60%),
-    radial-gradient(1000px 800px at 50% 118%, rgba(15, 118, 110, 0.12), transparent 62%);
+    radial-gradient(760px 640px at 0% 0%, rgba(15, 118, 110, 0.26), transparent 68%),
+    radial-gradient(700px 600px at 100% 0%, rgba(180, 83, 9, 0.14), transparent 66%),
+    radial-gradient(740px 620px at 0% 100%, rgba(180, 83, 9, 0.11), transparent 66%),
+    radial-gradient(800px 660px at 100% 100%, rgba(15, 118, 110, 0.20), transparent 68%);
 
   --background: var(--sand);
   --foreground: #1c2422;
@@ -121,9 +121,10 @@
   --sand: #14171a;
   --sand-deep: #1c2126;
   --page-glow:
-    radial-gradient(1100px 700px at 8% -12%, rgba(45, 212, 191, 0.16), transparent 62%),
-    radial-gradient(900px 620px at 100% 8%, rgba(251, 191, 36, 0.07), transparent 60%),
-    radial-gradient(1000px 800px at 50% 118%, rgba(45, 212, 191, 0.09), transparent 62%);
+    radial-gradient(760px 640px at 0% 0%, rgba(45, 212, 191, 0.18), transparent 68%),
+    radial-gradient(700px 600px at 100% 0%, rgba(251, 191, 36, 0.10), transparent 66%),
+    radial-gradient(740px 620px at 0% 100%, rgba(251, 191, 36, 0.08), transparent 66%),
+    radial-gradient(800px 660px at 100% 100%, rgba(45, 212, 191, 0.14), transparent 68%);
 
   --background: var(--sand);
   --foreground: #eef2f1;

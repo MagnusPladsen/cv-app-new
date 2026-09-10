@@ -65,12 +65,16 @@
   --sand: #faf7f2;
   --sand-deep: #f3ede4;
   /* An ambient wash of the brand colour, anchored to the viewport so it does
-     not tile or repeat down a long editor page. */
-  --page-glow: radial-gradient(
-    900px 520px at 12% -8%,
-    rgba(15, 118, 110, 0.14),
-    transparent 60%
-  );
+     not tile or repeat down a long editor page.
+
+     Two sources, not one: a single corner glow left the other ninety per cent
+     of the screen flat off-white, which read as unfinished rather than
+     restrained. The second, warmer source anchors the opposite corner so the
+     page has a direction to it. */
+  --page-glow:
+    radial-gradient(1100px 700px at 8% -12%, rgba(15, 118, 110, 0.22), transparent 62%),
+    radial-gradient(900px 620px at 100% 8%, rgba(180, 83, 9, 0.10), transparent 60%),
+    radial-gradient(1000px 800px at 50% 118%, rgba(15, 118, 110, 0.12), transparent 62%);
 
   --background: var(--sand);
   --foreground: #1c2422;
@@ -116,11 +120,10 @@
   --brand-ink: #04211e;
   --sand: #14171a;
   --sand-deep: #1c2126;
-  --page-glow: radial-gradient(
-    900px 520px at 12% -8%,
-    rgba(45, 212, 191, 0.10),
-    transparent 60%
-  );
+  --page-glow:
+    radial-gradient(1100px 700px at 8% -12%, rgba(45, 212, 191, 0.16), transparent 62%),
+    radial-gradient(900px 620px at 100% 8%, rgba(251, 191, 36, 0.07), transparent 60%),
+    radial-gradient(1000px 800px at 50% 118%, rgba(45, 212, 191, 0.09), transparent 62%);
 
   --background: var(--sand);
   --foreground: #eef2f1;

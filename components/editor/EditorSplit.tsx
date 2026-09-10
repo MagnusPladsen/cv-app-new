@@ -4,6 +4,7 @@ import { Eye } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 
+import { seedSection } from '@/lib/editor/seed-section'
 import { getCvLabels } from '@/lib/cv-labels'
 import { useDocuments, useDocumentsTemporal } from '@/lib/store/documents'
 import type { DocumentEditorHandlers } from '@/lib/hooks/use-document-editor'
@@ -71,6 +72,16 @@ export function EditorSplit({
 
   const labels = getCvLabels(document.language)
   const activeSection = document.sections.find((section) => section.id === activeSectionId)
+
+  // Opening a section should give you somewhere to write. Keyed on the id so
+  // it runs once per section, and only ever adds to one that is empty.
+  const seededRef = useRef<string | undefined>(undefined)
+  useEffect(() => {
+    if (!activeSection || seededRef.current === activeSection.id) return
+    seededRef.current = activeSection.id
+    seedSection(activeSection, handlers)
+  }, [activeSection, handlers])
+
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">

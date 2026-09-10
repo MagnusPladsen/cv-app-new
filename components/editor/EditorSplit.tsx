@@ -48,12 +48,15 @@ export function EditorSplit({
     useDocuments.temporal.getState().clear()
   }, [document.id])
 
-  // Only when the choice changes, and never on first render: landing in the
-  // editor should not jump the page past the fields above.
-  const previousSectionId = useRef(activeSectionId)
+  // Only on a real choice. activeSectionId starts undefined while the store
+  // hydrates and then settles on the first section, and treating that as a
+  // selection scrolled the page on load - past the save and undo controls,
+  // which is how they came to look missing.
+  const previousSectionId = useRef<string | undefined>(undefined)
   useEffect(() => {
-    if (previousSectionId.current === activeSectionId) return
+    const previous = previousSectionId.current
     previousSectionId.current = activeSectionId
+    if (previous === undefined || previous === activeSectionId) return
     sectionFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [activeSectionId])
 
@@ -74,20 +77,25 @@ export function EditorSplit({
       {/* min-w-0: a grid item defaults to min-width:auto, so the scrollable
           template strip would otherwise stretch the whole column past the screen. */}
       <div className="flex min-w-0 flex-col gap-8">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col gap-3">
+          {/* Two rows: what happens to the CV on top, how to step back below.
+              Undo and redo are secondary to saving and downloading, and
+              sharing a line with them read as one undifferentiated bar.
+
+              The download is desktop only; on a phone it lives in the fixed
+              bottom bar, and rendering both put two controls with the same
+              accessible name on one screen. */}
+          <div className="flex flex-wrap items-center gap-3">
+            <SaveState documentId={document.id} />
+            {isDesktop ? <ExportButton document={document} getNode={getNode} /> : null}
+          </div>
+
           <HistoryControls
             canRedo={canRedo}
             canUndo={canUndo}
             onRedo={() => redo()}
             onUndo={() => undo()}
           />
-          {/* Desktop only. On a phone the download lives in the fixed bottom
-              bar below, and rendering both put two controls with the same
-              accessible name on one screen. */}
-          <div className="flex items-center gap-3">
-            <SaveState documentId={document.id} />
-            {isDesktop ? <ExportButton document={document} getNode={getNode} /> : null}
-          </div>
         </div>
 
         <TemplateStrip

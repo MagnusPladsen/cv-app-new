@@ -81,11 +81,18 @@ function SectionRow({
         <GripVertical aria-hidden="true" className="size-4" />
       </button>
 
+      {/* Ticking a section is how people expect to say "I want this on my CV",
+          and they then expect somewhere to write. Switching one on therefore
+          opens it as well - otherwise a section could be enabled, visible in
+          the list, and still look like it had no form anywhere. */}
       <input
         aria-label={section.enabled ? t('hide') : t('show')}
         checked={section.enabled}
         className="size-4 shrink-0 accent-brand"
-        onChange={(event) => onToggle(section.id, event.target.checked)}
+        onChange={(event) => {
+          onToggle(section.id, event.target.checked)
+          if (event.target.checked) onSelect(section.id)
+        }}
         type="checkbox"
       />
 

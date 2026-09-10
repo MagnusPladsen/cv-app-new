@@ -138,3 +138,35 @@ describe('SectionList', () => {
     )
   })
 })
+
+describe('switching a section on', () => {
+  it('opens it, because that is what a person expects next', async () => {
+    // Ticking a section says "I want this on my CV", and the next thing
+    // wanted is somewhere to write. Without this a section could be enabled,
+    // sitting in the list, and still appear to have no form anywhere - which
+    // is exactly how the sections came to look unfillable.
+    const onSelect = vi.fn()
+    const onToggle = vi.fn()
+    wrap(<SectionList {...props({ onSelect, onToggle })} />)
+
+    const off = screen.getAllByRole('checkbox').find((box) => !(box as HTMLInputElement).checked)!
+    await userEvent.click(off)
+
+    expect(onToggle).toHaveBeenCalledWith(expect.any(String), true)
+    expect(onSelect).toHaveBeenCalledWith(expect.any(String))
+  })
+
+  it('does not open a section being switched off', async () => {
+    // Hiding a section is not a request to edit it.
+    const onSelect = vi.fn()
+    const onToggle = vi.fn()
+    wrap(<SectionList {...props({ onSelect, onToggle })} />)
+
+    const on = screen.getAllByRole('checkbox').find((box) => (box as HTMLInputElement).checked)!
+    await userEvent.click(on)
+
+    expect(onToggle).toHaveBeenCalledWith(expect.any(String), false)
+    expect(onSelect).not.toHaveBeenCalled()
+  })
+})
+

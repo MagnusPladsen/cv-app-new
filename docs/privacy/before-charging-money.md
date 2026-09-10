@@ -110,7 +110,19 @@ These must ship **with** the payment feature, not after it:
 - **No card data on our servers.** Use Stripe's hosted checkout or Elements so
   card numbers never reach the application.
 
-## 7. Legal review
+## 7. A real email sender
+
+Supabase's built-in sender is rate-limited to a handful of messages an hour and
+is not meant for production. Everything that sends email depends on it:
+
+- Account confirmation on sign-up.
+- Password reset.
+- The inactive-account warning in section 5, which cannot be built without it.
+
+Configure SMTP under Authentication → Emails, with a sending domain you own.
+The same domain gives you the `personvern@` address section 2 needs.
+
+## 8. Legal review
 
 - Have the privacy policy and terms reviewed by someone qualified in Norwegian
   privacy law.

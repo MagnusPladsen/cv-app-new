@@ -11,7 +11,7 @@ import { printCvNode } from '@/lib/print/print-cv'
 import { templateStylesheet } from '@/lib/print/stylesheets'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { readFlag, writeFlag, type FlagStorage } from '@/lib/storage/flag'
-import { enabledProviders } from '@/lib/supabase/env'
+import { isSupabaseConfigured } from '@/lib/supabase/env'
 import { ExportFeedback } from './ExportFeedback'
 import { ExportHint } from './ExportHint'
 import { ExportSignInPrompt } from './ExportSignInPrompt'
@@ -78,10 +78,10 @@ export function ExportButton({
 
   function handleClick() {
     // Only ask when signing in is actually on offer and would change
-    // something. A prompt with no provider behind it is a dead end, and
-    // asking a signed-in user to sign in is nonsense.
-    const askable =
-      !user && enabledProviders().length > 0 && !readFlag(GUEST_EXPORT_KEY, storage)
+    // something. Gated on Supabase being configured rather than on an OAuth
+    // provider existing: email and password is a sign-in path with no
+    // provider behind it. Asking a signed-in user to sign in is nonsense.
+    const askable = !user && isSupabaseConfigured() && !readFlag(GUEST_EXPORT_KEY, storage)
     if (askable) {
       setSignInOpen(true)
       return

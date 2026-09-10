@@ -10,6 +10,16 @@ sync works**.
 Run these against the live Supabase project, in order: a failure makes the
 next check meaningless. Tick them off in a PR or a comment, not from memory.
 
+- [ ] **0. Sign up and confirm.** On `/no/login`, create an account with a real
+      address. You should see "Sjekk e-posten din", then a confirmation email.
+      Open the link: it lands on `/auth/callback` and signs you in.
+
+      **Supabase's built-in email sender is rate-limited to a handful of
+      messages an hour.** Hitting it shows "For mange forsøk" rather than a
+      confirmation, and it is the most likely reason a test signup fails. For
+      anything beyond occasional testing, configure a real SMTP sender in
+      Authentication → Emails.
+
 - [ ] **1. Sign-in claims local work.** Signed out, create two CVs. Sign in
       with Google. The banner names two CVs; the Supabase table editor shows
       two `cv_documents` rows with your `user_id`.

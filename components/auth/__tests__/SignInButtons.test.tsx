@@ -44,10 +44,13 @@ describe('SignInButtons', () => {
     expect(screen.queryByRole('button', { name: /Apple/ })).not.toBeInTheDocument()
   })
 
-  it('explains itself rather than rendering nothing when auth is off', () => {
+  it('renders nothing when no provider is configured', () => {
+    // It used to say sign-in was switched off. That stopped being true when
+    // email and password arrived: that form is the way in, and OAuth is an
+    // extra shown only when one is actually configured.
     providers.value = []
-    renderButtons()
-    expect(screen.getByText(messages.auth.unavailable)).toBeInTheDocument()
+    const { container } = renderButtons()
+    expect(container).toBeEmptyDOMElement()
   })
 
   it('sends the user back where they started after the round trip', async () => {

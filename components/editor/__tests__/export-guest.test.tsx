@@ -15,12 +15,15 @@ import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { createEmptyDocument } from '@/lib/schema/defaults'
 import messages from '@/messages/no.json'
 
-const providers = vi.hoisted(() => ({ value: ['google'] as string[] }))
+const configured = vi.hoisted(() => ({ value: true }))
 const sessionUser = vi.hoisted(() => ({ value: null as { id: string; email: string } | null }))
 
 vi.mock('@/lib/supabase/env', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@/lib/supabase/env')>()),
-  enabledProviders: () => providers.value,
+  // The prompt is gated on Supabase being configured, not on an OAuth
+  // provider: email and password is a sign-in path with no provider behind it.
+  isSupabaseConfigured: () => configured.value,
+  enabledProviders: () => [],
 }))
 
 vi.mock('@/components/auth/SessionProvider', () => ({
@@ -71,7 +74,7 @@ function setup(storage = memory({ [BETA_NOTICE_KEY]: '1', [EXPORT_HINT_KEY]: '1'
 }
 
 beforeEach(() => {
-  providers.value = ['google']
+  configured.value = true
   sessionUser.value = null
 })
 
@@ -129,8 +132,8 @@ describe('guest mode at export', () => {
     expect(print).toHaveBeenCalledTimes(1)
   })
 
-  it('never asks when no provider is configured, which would be a dead end', async () => {
-    providers.value = []
+  it('never asks when Supabase is unconfigured, which would be a dead end', async () => {
+    configured.value = false
     const { print } = setup()
 
     await userEvent.click(exportButton())

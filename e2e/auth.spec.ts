@@ -34,7 +34,11 @@ test('the sign-in page offers exactly the configured providers', async ({ page }
   await expect(page.getByRole('heading', { name: 'Logg inn på CVApp' })).toBeVisible()
   await expect(page.getByRole('button', { name: /Google/ })).toBeVisible()
   await expect(page.getByRole('button', { name: /Apple/ })).toBeVisible()
-  await expect(page.locator('main button')).toHaveCount(2)
+
+  // Counted by the "Fortsett med" prefix rather than every button on the page:
+  // the email form contributes its own, and this test is about which
+  // providers are offered.
+  await expect(page.getByRole('button', { name: /^Fortsett med/ })).toHaveCount(2)
 })
 
 test('the account page offers sign-in when nobody is signed in', async ({ page }) => {
@@ -132,4 +136,37 @@ test('the account endpoints refuse a flood', async ({ request }) => {
 
   expect(codes.filter((code) => code === 429).length).toBeGreaterThan(0)
   expect(codes[0], 'the first request must still work').toBe(303)
+})
+
+test('the login page leads with email and password', async ({ page }) => {
+  // "Just regular Supabase": email and password is the way in, and the OAuth
+  // buttons are additive - rendered only when a provider is configured.
+  await page.goto('/no/login')
+
+  await expect(page.getByLabel('E-post')).toBeVisible()
+  await expect(page.getByLabel('Passord')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Logg inn', exact: true })).toBeVisible()
+})
+
+test('the form switches to sign-up without leaving the page', async ({ page }) => {
+  await page.goto('/no/login')
+  await page.getByRole('button', { name: /Opprett konto/ }).click()
+
+  await expect(page.getByRole('button', { name: 'Opprett konto', exact: true })).toBeVisible()
+  await expect(page.getByText('Minst 8 tegn.')).toBeVisible()
+  await expect(page).toHaveURL(/\/no\/login/)
+})
+
+test('a forgotten password has a route out', async ({ page }) => {
+  await page.goto('/no/login')
+  await page.getByRole('link', { name: 'Glemt passord?' }).click()
+
+  await expect(page).toHaveURL(/\/no\/glemt-passord/)
+  await expect(page.getByRole('heading', { name: 'Velg nytt passord' })).toBeVisible()
+})
+
+test('the new-password page renders for someone arriving from the email link', async ({ page }) => {
+  await page.goto('/no/nytt-passord')
+  await expect(page.getByRole('heading', { name: 'Velg et nytt passord' })).toBeVisible()
+  await expect(page.getByLabel('Passord')).toBeVisible()
 })

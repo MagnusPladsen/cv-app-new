@@ -13,9 +13,10 @@ export function SignInButtons({ next = '/' }: { next?: string }) {
   const [pending, setPending] = useState<OAuthProvider | null>(null)
   const providers = enabledProviders()
 
-  if (providers.length === 0) {
-    return <p className="text-sm text-muted-foreground">{t('unavailable')}</p>
-  }
+  // Nothing to show when no provider is configured. This used to explain that
+  // sign-in was switched off, which stopped being true once email and password
+  // arrived - that form is the way in, and OAuth is an extra.
+  if (providers.length === 0) return null
 
   async function signIn(provider: OAuthProvider) {
     const supabase = getBrowserSupabase()
@@ -29,7 +30,7 @@ export function SignInButtons({ next = '/' }: { next?: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 border-t border-border pt-4">
       {providers.map((provider) => (
         <button
           className="inline-flex items-center justify-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:shadow-md focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none disabled:opacity-60"

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 
-import { CvDocument } from '@/components/cv/CvDocument'
+import { ScaledDocument } from '@/components/cv/ScaledDocument'
 import type { Template } from '@/components/cv/types'
 import { mmToPx, PAPER } from '@/lib/print/paper'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
@@ -46,23 +46,8 @@ export function TemplateCard({
         type="button"
       >
         {/* Decorative: the button is labelled, so a screen reader is not read
-            an entire CV for every card. Scaled by container width so the card
-            can size itself responsively. */}
-        <span
-          aria-hidden="true"
-          className="absolute top-0 left-0 origin-top-left"
-          style={{
-            width: pageWidth,
-            height: pageHeight,
-            // tan(atan2(a, b)) is a/b as a plain number. The obvious
-            // calc(a / b) is CSS Values 4 and Firefox does not support it:
-            // the declaration is dropped, no scale is applied, and the CV
-            // renders at full size inside a thumbnail-sized box.
-            transform: `scale(tan(atan2(100cqw, ${pageWidth}px)))`,
-          }}
-        >
-          <CvDocument document={preview} />
-        </span>
+            an entire CV for every card. */}
+        <ScaledDocument document={preview} />
 
         <span className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent p-3 opacity-0 transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100">
           <span className="rounded-full bg-brand px-4 py-2 text-xs font-bold text-brand-ink shadow-lg">

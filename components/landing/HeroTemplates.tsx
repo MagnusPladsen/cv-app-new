@@ -1,4 +1,4 @@
-import { CvDocument } from '@/components/cv/CvDocument'
+import { ScaledDocument } from '@/components/cv/ScaledDocument'
 import { getTemplate } from '@/components/cv/templates'
 import { PAPER, mmToPx } from '@/lib/print/paper'
 import { createDemoDocument } from '@/lib/schema/demo'
@@ -59,19 +59,7 @@ export function HeroTemplates() {
                 containerType: 'inline-size',
               }}
             >
-            <span
-              className="absolute top-0 left-0 origin-top-left"
-              style={{
-                width: PAGE_WIDTH,
-                height: PAGE_HEIGHT,
-                // tan(atan2(a, b)) is a/b as a plain number. The obvious
-                // calc(a / b) is CSS Values 4 and Firefox does not support
-                // it: the declaration is dropped, no scale is applied, and
-                // the CV renders at full size inside its card.
-                transform: `scale(tan(atan2(100cqw, ${PAGE_WIDTH}px)))`,
-              }}
-            >
-              <CvDocument
+              <ScaledDocument
                 document={{
                   ...demo,
                   theme: {
@@ -82,7 +70,6 @@ export function HeroTemplates() {
                   },
                 }}
               />
-            </span>
             </div>
           </div>
         )

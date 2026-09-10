@@ -89,3 +89,20 @@ test('no translation key renders raw', async ({ page }) => {
     expect(suspects, `${path} renders raw keys: ${suspects.join(', ')}`).toEqual([])
   }
 })
+
+test('the measured scale takes over from the CSS one', async ({ page }) => {
+  // The CSS fallback uses tan(atan2(...)), which not every engine supports -
+  // a Firefox-based browser rendered full-size A4 pages inside thumbnails
+  // even after that was added. ScaledDocument measures instead and overrides
+  // it, and measuring cannot be unsupported. If this ever reads as a CSS
+  // function rather than a number, the measurement stopped running and the
+  // app is back to depending on engine support.
+  await page.goto('/no/templates')
+  await page.evaluate(() => document.fonts.ready)
+
+  const transform = await page.locator('li button span[aria-hidden]').first().evaluate(
+    (node) => node.getAttribute('style')?.match(/transform:[^;]*/)?.[0] ?? '',
+  )
+
+  expect(transform).toMatch(/scale\(\d*\.?\d+\)/)
+})

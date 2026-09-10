@@ -64,17 +64,20 @@
   --brand-ink: #ffffff;
   --sand: #faf7f2;
   --sand-deep: #f3ede4;
-  /* An ambient wash of the brand colour, anchored to the viewport so it does
-     not tile or repeat down a long editor page.
+  /* Two things: a wash and a texture.
 
-     One from each corner: teal on the diagonal, warm amber on the other, so
-     no part of the screen is left flat off-white. A single source lit one
-     corner and left the rest looking unfinished rather than restrained. */
+     The wash spans the whole top edge and fades downward - warm on the left,
+     teal on the right, meeting in the middle - and is fixed to the viewport
+     so it does not repeat down a long editor page.
+
+     The texture is a fine dot grid at about five per cent, which scrolls with
+     the page. Fixed, it would slide under the content and read as a bug; the
+     point is a surface, not an effect. */
   --page-glow:
-    radial-gradient(760px 640px at 0% 0%, rgba(15, 118, 110, 0.26), transparent 68%),
-    radial-gradient(700px 600px at 100% 0%, rgba(180, 83, 9, 0.14), transparent 66%),
-    radial-gradient(740px 620px at 0% 100%, rgba(180, 83, 9, 0.11), transparent 66%),
-    radial-gradient(800px 660px at 100% 100%, rgba(15, 118, 110, 0.20), transparent 68%);
+    radial-gradient(150% 420px at 20% 0%, rgba(180, 83, 9, 0.16), transparent 70%),
+    radial-gradient(150% 480px at 80% 0%, rgba(15, 118, 110, 0.26), transparent 72%);
+  --page-pattern: radial-gradient(circle, rgba(15, 118, 110, 0.055) 1px, transparent 1px);
+  --page-pattern-size: 22px 22px;
 
   --background: var(--sand);
   --foreground: #1c2422;
@@ -121,10 +124,10 @@
   --sand: #14171a;
   --sand-deep: #1c2126;
   --page-glow:
-    radial-gradient(760px 640px at 0% 0%, rgba(45, 212, 191, 0.18), transparent 68%),
-    radial-gradient(700px 600px at 100% 0%, rgba(251, 191, 36, 0.10), transparent 66%),
-    radial-gradient(740px 620px at 0% 100%, rgba(251, 191, 36, 0.08), transparent 66%),
-    radial-gradient(800px 660px at 100% 100%, rgba(45, 212, 191, 0.14), transparent 68%);
+    radial-gradient(150% 420px at 20% 0%, rgba(251, 191, 36, 0.10), transparent 70%),
+    radial-gradient(150% 480px at 80% 0%, rgba(45, 212, 191, 0.18), transparent 72%);
+  --page-pattern: radial-gradient(circle, rgba(45, 212, 191, 0.06) 1px, transparent 1px);
+  --page-pattern-size: 22px 22px;
 
   --background: var(--sand);
   --foreground: #eef2f1;
@@ -160,9 +163,12 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: var(--page-glow);
-    background-repeat: no-repeat;
-    background-attachment: fixed;
+    /* Texture first so it sits above the wash; the lists that follow line up
+       with these three layers in order. */
+    background-image: var(--page-pattern), var(--page-glow);
+    background-size: var(--page-pattern-size), auto, auto;
+    background-repeat: repeat, no-repeat, no-repeat;
+    background-attachment: scroll, fixed, fixed;
   }
   html {
     @apply font-sans;

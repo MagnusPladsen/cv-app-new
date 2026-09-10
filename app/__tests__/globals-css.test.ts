@@ -14,15 +14,20 @@ describe('app palette', () => {
     expect(css).toContain('--sand: #faf7f2')
   })
 
-  it('paints the ambient page glow on the body', () => {
+  it('paints the ambient page glow and its texture on the body', () => {
     expect(css).toContain('--page-glow')
-    expect(css).toContain('background-image: var(--page-glow)')
+    expect(css).toContain('--page-pattern')
+    expect(css).toContain('background-image: var(--page-pattern), var(--page-glow)')
   })
 
-  it('anchors the glow to the viewport so it never tiles down a long page', () => {
-    expect(css).toContain('background-repeat: no-repeat')
-    expect(css).toContain('background-attachment: fixed')
+  it('anchors the glow to the viewport but lets the texture scroll', () => {
+    // A fixed texture slides under the content and reads as a rendering
+    // fault; a repeating glow tiles down a long editor page. The lists line
+    // up with the three background layers in order.
+    expect(css).toContain('background-repeat: repeat, no-repeat, no-repeat')
+    expect(css).toContain('background-attachment: scroll, fixed, fixed')
   })
+
 
   it('gives dark mode its own glow, since the light one would be wrong there', () => {
     const dark = css.slice(css.indexOf('.dark {'))

@@ -130,3 +130,37 @@ test('the editor preview keeps the name as a real heading', async ({ page }) => 
 
   await expect(page.locator('[data-cv-preview] h1.cv-header__name')).toHaveCount(1)
 })
+
+test('the background layers line up', async ({ page }) => {
+  // background-image, -size, -repeat and -attachment are positional lists.
+  // A layer added to one and not the others silently shifts every value after
+  // it, and --page-glow expands to two layers, so this can only be counted
+  // once the browser has resolved it.
+  await page.goto('/no')
+
+  const layers = await page.evaluate(() => {
+    const style = getComputedStyle(document.body)
+    // Depth-aware: rgba() and gradient stops are full of commas, so a plain
+    // split counts nine layers where there are three.
+    const count = (value: string) => {
+      let depth = 0
+      let layers = 1
+      for (const character of value) {
+        if (character === '(') depth += 1
+        else if (character === ')') depth -= 1
+        else if (character === ',' && depth === 0) layers += 1
+      }
+      return layers
+    }
+    return {
+      image: count(style.backgroundImage),
+      size: count(style.backgroundSize),
+      repeat: count(style.backgroundRepeat),
+      attachment: count(style.backgroundAttachment),
+    }
+  })
+
+  const counts = Object.values(layers)
+  expect(new Set(counts).size, `layer counts differ: ${JSON.stringify(layers)}`).toBe(1)
+  expect(layers.image, 'expected a texture plus two wash layers').toBe(3)
+})

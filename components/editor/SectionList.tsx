@@ -18,6 +18,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import { ChevronDown, ChevronUp, GripVertical, Pencil, Plus, X } from 'lucide-react'
 import { useTranslations } from 'next-intl'
+import { useState } from 'react'
 
 import { sectionTitle } from '@/components/cv/sections'
 import type { CvLabels } from '@/lib/cv-labels'
@@ -32,6 +33,7 @@ type SectionListProps = {
   onMove: (from: number, to: number) => void
   onAddCustom: () => void
   onRemove: (sectionId: string) => void
+  onRename: (sectionId: string, title: string) => void
 }
 
 const iconButtonClass =
@@ -47,6 +49,7 @@ function SectionRow({
   onToggle,
   onMove,
   onRemove,
+  onRename,
 }: {
   section: Section
   title: string
@@ -57,8 +60,10 @@ function SectionRow({
   onToggle: SectionListProps['onToggle']
   onMove: SectionListProps['onMove']
   onRemove: SectionListProps['onRemove']
+  onRename: SectionListProps['onRename']
 }) {
   const t = useTranslations('sections')
+  const [renaming, setRenaming] = useState(false)
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: section.id,
   })
@@ -96,30 +101,48 @@ function SectionRow({
         type="checkbox"
       />
 
-      {/* The row's own name is the way into that section's form, and nothing
-          said so: the checkbox and the arrows read as the whole control, so
-          the forms for work history, education, skills and languages looked
-          absent rather than one click away. The pencil appears on hover and
-          focus, and the label is always in the accessible name. */}
-      <button
-        aria-current={isActive ? 'true' : undefined}
-        aria-label={`${t('edit')}: ${title}`}
-        className={`group/edit flex flex-1 items-center gap-2 truncate rounded-lg px-1.5 py-1 text-left text-sm transition ${
-          section.enabled ? 'text-foreground' : 'text-muted-foreground/70'
-        } ${isActive ? 'font-semibold text-brand-strong' : 'hover:bg-brand-soft/70'}`}
-        onClick={() => onSelect(section.id)}
-        type="button"
-      >
-        <span className="flex-1 truncate">{title}</span>
-        <Pencil
-          aria-hidden="true"
-          className={`size-3.5 shrink-0 transition ${
-            isActive
-              ? 'text-brand'
-              : 'text-muted-foreground opacity-0 group-hover/edit:opacity-100 group-focus-visible/edit:opacity-100'
-          }`}
+      {renaming ? (
+        // Renaming lives here rather than in a card above the section's form:
+        // with every section on screen at once, a full-width "Overskrift på
+        // CV-en" box between each one buried the forms it was meant to label.
+        <input
+          aria-label={`${t('rename')}: ${title}`}
+          autoFocus
+          className="flex-1 rounded-lg border border-brand bg-card px-2 py-1 text-sm focus-visible:outline-none"
+          onBlur={() => setRenaming(false)}
+          onChange={(event) => onRename(section.id, event.target.value)}
+          onKeyDown={(event) => {
+            // Enter and Escape both finish. Escape does not revert: the
+            // heading is stored as you type, and silently undoing it would be
+            // the surprise.
+            if (event.key === 'Enter' || event.key === 'Escape') setRenaming(false)
+          }}
+          value={title}
         />
-      </button>
+      ) : (
+        <>
+          <button
+            aria-current={isActive ? 'true' : undefined}
+            aria-label={`${t('edit')}: ${title}`}
+            className={`flex-1 truncate rounded-lg px-1.5 py-1 text-left text-sm transition ${
+              section.enabled ? 'text-foreground' : 'text-muted-foreground/70'
+            } ${isActive ? 'font-semibold text-brand-strong' : 'hover:bg-brand-soft/70'}`}
+            onClick={() => onSelect(section.id)}
+            type="button"
+          >
+            {title}
+          </button>
+
+          <button
+            aria-label={`${t('rename')}: ${title}`}
+            className={iconButtonClass}
+            onClick={() => setRenaming(true)}
+            type="button"
+          >
+            <Pencil aria-hidden="true" className="size-4" />
+          </button>
+        </>
+      )}
 
       <button
         aria-label={t('moveUp')}
@@ -163,6 +186,7 @@ export function SectionList({
   onMove,
   onAddCustom,
   onRemove,
+  onRename,
 }: SectionListProps) {
   const t = useTranslations('sections')
 
@@ -206,6 +230,7 @@ export function SectionList({
                 key={section.id}
                 onMove={onMove}
                 onRemove={onRemove}
+                onRename={onRename}
                 onSelect={onSelect}
                 onToggle={onToggle}
                 section={section}

@@ -32,6 +32,7 @@ function props(overrides: Record<string, unknown> = {}) {
     onMove: vi.fn(),
     onAddCustom: vi.fn(),
     onRemove: vi.fn(),
+    onRename: vi.fn(),
     ...overrides,
   }
 }
@@ -167,6 +168,42 @@ describe('switching a section on', () => {
 
     expect(onToggle).toHaveBeenCalledWith(expect.any(String), false)
     expect(onSelect).not.toHaveBeenCalled()
+  })
+})
+
+describe('renaming from the list', () => {
+  it('turns the row into a field, so the heading is edited where the section is chosen', async () => {
+    const onRename = vi.fn()
+    wrap(<SectionList {...props({ onRename })} />)
+
+    await userEvent.click(screen.getAllByRole('button', { name: /^Gi nytt navn:/ })[0]!)
+
+    const field = screen.getByRole('textbox')
+    await userEvent.type(field, 'X')
+    expect(onRename).toHaveBeenCalledWith(expect.any(String), expect.stringContaining('X'))
+  })
+
+  it('finishes on Enter', async () => {
+    wrap(<SectionList {...props()} />)
+    await userEvent.click(screen.getAllByRole('button', { name: /^Gi nytt navn:/ })[0]!)
+
+    expect(screen.getByRole('textbox')).toBeInTheDocument()
+    await userEvent.keyboard('{Enter}')
+    expect(screen.queryByRole('textbox')).toBeNull()
+  })
+
+  it('keeps what was typed when Escape closes the field', async () => {
+    // The heading is stored as you type, so reverting on Escape would undo an
+    // edit the CV has already shown.
+    const onRename = vi.fn()
+    wrap(<SectionList {...props({ onRename })} />)
+    await userEvent.click(screen.getAllByRole('button', { name: /^Gi nytt navn:/ })[0]!)
+
+    await userEvent.type(screen.getByRole('textbox'), 'Y')
+    await userEvent.keyboard('{Escape}')
+
+    expect(onRename).toHaveBeenCalled()
+    expect(screen.queryByRole('textbox')).toBeNull()
   })
 })
 

@@ -79,7 +79,8 @@
     "shapeBullets": "Bullet list",
     "shapeText": "Free text",
     "edit": "Edit",
-    "sectionsHint": "Tap a section to fill it in."
+    "sectionsHint": "Tick what you want to include. Tap a name to jump to it, or the pencil to rename the section.",
+    "rename": "Rename"
   },
   "forms": {
     "onePerLine": "One per line.",

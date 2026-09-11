@@ -1,11 +1,10 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { NextIntlClientProvider } from 'next-intl'
-import { useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { describe, expect, it, vi } from 'vitest'
 
 import { SectionSettings } from '@/components/editor/SectionSettings'
-import { getCvLabels } from '@/lib/cv-labels'
 import type { Section } from '@/lib/schema/cv'
 import messages from '@/messages/no.json'
 
@@ -27,83 +26,30 @@ const custom: Section = {
   bullets: [],
 }
 
-function draw(section: Section) {
-  const onRename = vi.fn()
-  const onShapeChange = vi.fn()
-  wrap(
-    <SectionSettings
-      labels={getCvLabels('no')}
-      onRename={onRename}
-      onShapeChange={onShapeChange}
-      section={section}
-    />,
-  )
-  return { onRename, onShapeChange }
-}
-
 describe('SectionSettings', () => {
-  it('shows the localized heading for a built-in section', () => {
-    draw(experience)
-    expect(screen.getByLabelText('Overskrift på CV-en')).toHaveValue('Arbeidserfaring')
+  it('offers the shape picker only for a custom section', () => {
+    // Every other section's shape is fixed by its type, so the control would
+    // be noise on all thirteen of them.
+    wrap(<SectionSettings onShapeChange={vi.fn()} section={experience} />)
+    expect(screen.queryByLabelText(messages.sections.shapeLabel)).toBeNull()
   })
 
-  it('shows an existing override rather than the label', () => {
-    draw({ ...experience, titleOverride: 'Relevant erfaring' })
-    expect(screen.getByLabelText('Overskrift på CV-en')).toHaveValue('Relevant erfaring')
-  })
+  it('lets a custom section change shape', async () => {
+    const onShapeChange = vi.fn()
+    wrap(<SectionSettings onShapeChange={onShapeChange} section={custom} />)
 
-  it('reports a rename', async () => {
-    const { onRename } = draw(experience)
-    await userEvent.type(screen.getByLabelText('Overskrift på CV-en'), 'X')
-    expect(onRename).toHaveBeenCalledWith('s1', 'ArbeidserfaringX')
-  })
-
-  it('says the rename affects only this CV', () => {
-    draw(experience)
-    expect(screen.getByText('Gjelder bare denne CV-en.')).toBeInTheDocument()
-  })
-
-  it('offers no shape picker for a built-in section', () => {
-    draw(experience)
-    expect(screen.queryByLabelText('Innhold')).toBeNull()
-  })
-
-  it('offers all three shapes for a custom section', async () => {
-    const { onShapeChange } = draw(custom)
-    const select = screen.getByLabelText('Innhold')
-    expect(select).toHaveValue('bullets')
-
-    await userEvent.selectOptions(select, 'Oppføringer med datoer')
-    expect(onShapeChange).toHaveBeenCalledWith('s2', 'entries')
-  })
-
-  it('uses the custom section title as its heading', () => {
-    draw(custom)
-    expect(screen.getByLabelText('Overskrift på CV-en')).toHaveValue('Publikasjoner')
-  })
-})
-
-describe('renaming end to end', () => {
-  /** A stateful host, because the field is controlled. */
-  function Live() {
-    const [section, setSection] = useState<Section>(experience)
-    return (
-      <SectionSettings
-        labels={getCvLabels('no')}
-        onRename={(_id, title) => setSection((s) => ({ ...s, titleOverride: title }))}
-        onShapeChange={vi.fn()}
-        section={section}
-      />
+    await userEvent.selectOptions(
+      screen.getByLabelText(messages.sections.shapeLabel),
+      messages.sections.shapeText,
     )
-  }
+    expect(onShapeChange).toHaveBeenCalledWith('s2', 'text')
+  })
 
-  it('lets a user replace the heading entirely', async () => {
-    wrap(<Live />)
-    const field = screen.getByLabelText('Overskrift på CV-en')
-
-    await userEvent.clear(field)
-    await userEvent.type(field, 'Erfaring')
-
-    expect(field).toHaveValue('Erfaring')
+  it('no longer carries the rename field', () => {
+    // It moved to the section list. With every section on screen at once, a
+    // full-width "Overskrift på CV-en" card between each one buried the forms
+    // it was meant to label.
+    wrap(<SectionSettings onShapeChange={vi.fn()} section={custom} />)
+    expect(screen.queryByLabelText(messages.sections.renameLabel)).toBeNull()
   })
 })

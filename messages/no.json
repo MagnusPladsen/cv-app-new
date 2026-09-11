@@ -79,7 +79,8 @@
     "shapeBullets": "Punktliste",
     "shapeText": "Fritekst",
     "edit": "Rediger",
-    "sectionsHint": "Trykk på en seksjon for å fylle den ut."
+    "sectionsHint": "Huk av det du vil ha med. Trykk på navnet for å hoppe dit, eller på blyanten for å gi seksjonen et nytt navn.",
+    "rename": "Gi nytt navn"
   },
   "forms": {
     "onePerLine": "Én per linje.",

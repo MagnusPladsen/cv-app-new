@@ -144,6 +144,7 @@ export function EditorSplit({
           onAddCustom={handlers.onAddCustomSection}
           onMove={handlers.onMoveSection}
           onRemove={handlers.onRemoveSection}
+          onRename={handlers.onRenameSection}
           onSelect={onSelectSection}
           onToggle={handlers.onToggleSection}
           sections={document.sections}
@@ -158,17 +159,15 @@ export function EditorSplit({
             hold one section at a time. Clicking a row in the list now scrolls
             to that form rather than swapping which one exists. */}
         {enabledSections.map((section) => (
+          // Each section sits on its own card with room around it, so where
+          // one ends and the next begins is obvious when they are all on
+          // screen together.
           <div
-            className="flex scroll-mt-24 flex-col gap-6"
+            className="flex scroll-mt-24 flex-col gap-4 rounded-xl border border-border/70 bg-card/40 p-4 sm:p-5"
             id={sectionFormId(section.id)}
             key={section.id}
           >
-            <SectionSettings
-              labels={labels}
-              onRename={handlers.onRenameSection}
-              onShapeChange={handlers.onCustomShapeChange}
-              section={section}
-            />
+            <SectionSettings onShapeChange={handlers.onCustomShapeChange} section={section} />
             <SectionEditor handlers={handlers} labels={labels} section={section} />
           </div>
         ))}

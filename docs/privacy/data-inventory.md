@@ -18,11 +18,12 @@ therefore no organisation number), `magnus_pladsen@hotmail.com`.
 |---|---|---|
 | The browser's `localStorage` | Every CV, for signed-out and signed-in users alike | Until the user deletes the CV, clears browser data, or signs out |
 | Supabase `cv_documents` (AWS `eu-central-1`, Germany) | A copy of each CV, for signed-in users | Until the user deletes the CV or the account. A deleted row is kept as a tombstone holding only its id and timestamps, so other devices learn about the deletion; the payload is blanked at deletion time |
-| Supabase `auth.users` (same region) | Email, OAuth provider id, timestamps | Until account deletion |
+| Supabase `auth.users` (same region) | Email, a bcrypt password hash, timestamps | Until account deletion |
 | Vercel server logs | IP address, user agent, request path | Per the hosting provider's own retention. No CV content is logged |
 
-No data is transferred outside the EEA by the database. The hosting region is
-still to be confirmed — see `docs/privacy/README.md`.
+No data is transferred outside the EEA. The database is in AWS `eu-central-1`
+and function execution is pinned to `fra1` by `regions` in `vercel.json`, both
+Frankfurt — see `docs/privacy/processors.md`.
 
 ## CV document fields
 

@@ -19,7 +19,7 @@ than useless.
 | No card data touching the servers | n/a | No payment provider integrated |
 | PII scrubbing in the error tracker | n/a | There is no error tracker. `lib/privacy/__tests__/no-tracking.test.ts` fails if one is added |
 | Cookieless analytics, or a compliant consent banner | done | No analytics at all, so no banner is required under *ekomloven § 3-15*. Test-enforced |
-| Passwords hashed; rate limiting on auth | done | No passwords exist — OAuth only. Rate limiting in `lib/security/rate-limit.ts` |
+| Passwords hashed; rate limiting on auth | done | Sign-in is email and password. Supabase GoTrue stores a bcrypt hash and CVApp never sees the plaintext — it goes straight to `signInWithPassword`. Minimum length enforced in `lib/auth/errors.ts`; rate limiting in `lib/security/rate-limit.ts` |
 | Signed, expiring URLs for uploaded files | n/a | No file storage. Photos are inline data URIs inside the document |
 | EXIF stripping on image uploads | done | A side effect of the Canvas re-encode in `lib/image/compress.ts`, asserted in its test so an optimisation cannot undo it |
 

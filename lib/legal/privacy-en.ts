@@ -5,7 +5,7 @@ import type { LegalDocument } from './types'
  *  policies, and only one of them can be the one you are relying on. */
 export const PRIVACY_EN: LegalDocument = {
   title: 'Privacy policy',
-  lastUpdated: '2026-09-09',
+  lastUpdated: '2026-09-11',
   intro: [
     'CVApp is a tool for building your own CV. This policy explains what we process, why, for how long, and what you can require of us.',
     'In short: you can use CVApp without an account. Your CVs then live only in your browser and we store none of their content. Our hosting provider still holds your IP address in its server logs, as any website’s does. If you sign in, your CVs are also saved to your account so they follow you between devices.',
@@ -76,8 +76,8 @@ export const PRIVACY_EN: LegalDocument = {
       body: [
         'CVs in your browser stay there until you delete them, clear your browser data, or sign out.',
         'CVs on your account stay until you delete the CV or the account. A deleted CV leaves a row with no content, holding its id, timestamps and which account it belonged to, so the deletion also reaches the other devices you use. That row is still personal data about you, and it is deleted along with the account.',
-        'If you delete your account, the account and every CV on it are deleted immediately from the live systems. Backups held by the database provider rotate out on that provider’s schedule, and deleted data is never restored into production.',
-        'Server logs held by the hosting provider are deleted on that provider’s schedule.',
+        'If you delete your account, the account and every CV on it are deleted immediately from the live systems. The database provider takes no automatic backups on the plan we are on today, so there is no copy the deletion does not reach. Were we to move to a plan with daily backups, those roll off after seven days, and deleted data is never restored into production.',
+        'Server logs held by the hosting provider are kept for one hour on the plan we are on today, and then deleted. On a paid plan it is one day.',
       ],
     },
     {

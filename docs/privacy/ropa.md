@@ -78,7 +78,7 @@ acknowledged rather than promised. See `docs/privacy/launch-checklist.md`.
 | Categories of data | IP address, user agent, request path, timestamp, response status |
 | Recipients | Vercel |
 | Transfers outside the EEA | None. Function execution pinned to `fra1` by `regions` in `vercel.json`, confirmed by `x-vercel-id` reading `arn1::fra1::…` |
-| Retention | Per Vercel's own schedule. **The actual number is not yet recorded** — see the note below |
+| Retention | **One hour.** Vercel retains runtime logs for 1 hour on Hobby; Pro is 1 day, Pro with Observability Plus 30 days. Re-check on any plan change |
 | Security | Managed by the host. No CV content is logged, because none reaches the server |
 
 ## What is deliberately not processed
@@ -96,29 +96,35 @@ assumption that everything else is too.
   uploaded object, and its EXIF is stripped by the Canvas re-encode in
   `lib/image/compress.ts`
 
-## Retention periods still to be filled in
+## Retention periods, and what changes them
 
-Two rows above say "per the provider's schedule". Art. 13(2)(a) permits stating
-the *criteria* rather than a period, so this is lawful — but a real number is
-better, and both are published facts:
+Both are plan-dependent, and CVApp is on the free tier of each. Recorded
+2026-09-11 from the providers' own documentation.
 
-1. **Supabase backups.** Backup frequency and retention are per-plan and stated
-   in the Supabase docs under Platform → Backups. Record the number for the
-   plan CVApp is actually on, not the highest tier
-2. **Vercel logs.** Runtime-log retention is per-plan and stated in Vercel's
-   docs under Observability → Logs. Hobby retains far less than Pro, so this
-   changes when the plan changes
+| What | Now (free tier) | After the planned upgrade |
+|---|---|---|
+| Supabase backups | **None.** The Free plan takes no automatic backups at all | Pro: daily backups, 7-day retention. Team 14 days, Enterprise 30. PITR is a paid add-on that replaces daily backups |
+| Vercel runtime logs | **1 hour** | Pro: 1 day. Pro with Observability Plus: 30 days |
 
-Put the numbers in this table and in the policy's `retention` section together
-— the policy is the document people read.
+**The Supabase number is the interesting one.** With no backups, an account
+deletion is genuinely complete the moment it runs — there is no copy it fails
+to reach. The policy said backups "rotate out on the provider's schedule",
+which was a caution carried over from the legal review; on this plan it
+described something that does not exist. Both languages now say what is
+actually true, and say what will change if the plan does.
+
+Buying Vercel Pro for the Art. 28 DPA does not touch this. Buying **Supabase**
+Pro does: it introduces seven days during which a deleted row still exists in a
+backup, and the policy has to say so on the same day the plan changes.
 
 ## Backup deletion reconciliation
 
-Deletion is immediate in the live database, and backups rotate on the
-provider's schedule. The reconciliation obligation is to make sure a restore
-never resurrects deleted data.
+On the current plan there is nothing to reconcile: Supabase Free takes no
+backups, so no restore can resurrect a deleted account. This procedure exists
+for the day that stops being true — a Supabase Pro upgrade introduces a
+seven-day window in which deleted rows still exist somewhere.
 
-The procedure, for the only case where it can arise:
+The procedure, for when it can arise:
 
 1. A restore from backup is an incident in itself — it happens only after data
    loss, and never as routine maintenance

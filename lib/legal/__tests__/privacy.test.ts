@@ -125,6 +125,30 @@ describe('the privacy policy', () => {
   })
 })
 
+describe('retention periods', () => {
+  it('states a period, not just the provider’s schedule', () => {
+    // Art. 13(2)(a) permits stating criteria rather than a period, so the old
+    // "on that provider's schedule" wording was lawful but told a reader
+    // nothing. Both numbers are published facts and are now named.
+    for (const [locale, policy] of Object.entries(PRIVACY_POLICY)) {
+      const retention = policy.sections.find((section) => section.id === 'retention')!
+      const body = retention.body.join(' ')
+      expect(body, `${locale} does not say how long logs are kept`).toMatch(/time|hour/)
+      expect(body, `${locale} does not say what happens to backups`).toMatch(
+        /sikkerhetskopi|backup/i,
+      )
+    }
+  })
+
+  it('does not claim backups exist that this plan does not take', () => {
+    // Supabase Free takes no automatic backups, so deletion really is
+    // complete. If the project moves to Pro, seven days of daily backups
+    // appear and this wording has to change on the same day.
+    const en = PRIVACY_POLICY.en.sections.find((section) => section.id === 'retention')!
+    expect(en.body.join(' ')).toContain('no automatic backups')
+  })
+})
+
 describe('the terms of use', () => {
   it('say the same things in both languages', () => {
     expect(TERMS.no.sections.map((s) => s.id)).toEqual(TERMS.en.sections.map((s) => s.id))

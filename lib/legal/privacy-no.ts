@@ -8,7 +8,7 @@ import type { LegalDocument } from './types'
  */
 export const PRIVACY_NO: LegalDocument = {
   title: 'Personvernerklæring',
-  lastUpdated: '2026-09-09',
+  lastUpdated: '2026-09-11',
   intro: [
     'CVApp er et verktøy for å lage din egen CV. Denne erklæringen forklarer hvilke opplysninger vi behandler, hvorfor, hvor lenge, og hva du kan kreve.',
     'Kort fortalt: du kan bruke CVApp uten konto. Da ligger CV-ene dine bare i nettleseren din, og vi lagrer ikke noe av innholdet. Driftsleverandøren vår har likevel IP-adressen din i tjenerloggene, slik enhver nettside har. Logger du inn, lagres CV-ene også på kontoen din slik at de følger deg mellom enheter.',
@@ -79,8 +79,8 @@ export const PRIVACY_NO: LegalDocument = {
       body: [
         'CV-er i nettleseren din ligger der til du sletter dem, tømmer nettleserdata eller logger ut.',
         'CV-er på kontoen din ligger der til du sletter CV-en eller kontoen. En slettet CV etterlater en rad uten innhold, med id, tidspunkt og hvilken konto den tilhørte, slik at slettingen også slår gjennom på andre enheter du bruker. Raden er fortsatt en personopplysning knyttet til deg, og den slettes sammen med kontoen.',
-        'Sletter du kontoen, slettes kontoen og alle CV-ene på den umiddelbart fra driftssystemene. Sikkerhetskopier hos databaseleverandøren roteres ut etter leverandørens rutiner, og slettede opplysninger gjenopprettes aldri til drift.',
-        'Tjenerlogger hos driftsleverandøren slettes etter leverandørens rutiner.',
+        'Sletter du kontoen, slettes kontoen og alle CV-ene på den umiddelbart fra driftssystemene. Databaseleverandøren tar ingen automatiske sikkerhetskopier på abonnementet vi bruker i dag, så det finnes ingen kopi slettingen ikke når. Skulle vi gå over til et abonnement med daglige sikkerhetskopier, roteres de ut etter sju dager, og slettede opplysninger gjenopprettes aldri til drift.',
+        'Tjenerlogger hos driftsleverandøren oppbevares i én time på abonnementet vi bruker i dag, og slettes så. På et betalt abonnement er det ett døgn.',
       ],
     },
     {

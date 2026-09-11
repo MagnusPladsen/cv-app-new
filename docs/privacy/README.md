@@ -8,9 +8,20 @@ it does:
 |---|---|
 | `data-inventory.md` | `lib/schema/__tests__/data-inventory.test.ts` — every field in the CV schema must appear in the inventory table |
 | `processors.md` | `lib/privacy/__tests__/processors.test.ts` — every external host the app talks to must be listed |
+| `ropa.md` | `lib/privacy/__tests__/records.test.ts` — every processor in the code must appear, and every activity must name a legal basis |
+| `dpia-screening.md`, `legitimate-interest.md`, `breach-runbook.md`, `rights-requests.md` | the same test — a screening must reach a conclusion, an Art. 6(1)(f) claim must have a balancing test behind it, the runbook must carry the 72-hour deadline, and the procedure must cover every right |
 
 `before-charging-money.md` is the list to work through before CVApp takes
 payment. `launch-checklist.md` is the state of the spec's blocking list.
+
+## When something happens
+
+| Situation | Read |
+|---|---|
+| Someone asks for their data, or asks you to delete or correct it | `rights-requests.md` |
+| Data has leaked, been lost, or been shown to the wrong person | `breach-runbook.md` — the 72-hour clock starts when you become aware |
+| Datatilsynet asks what you process | `ropa.md`, then `data-inventory.md` |
+| A feature is about to infer, score, share or match something | `dpia-screening.md` — its re-screen triggers are the point |
 
 ## What these are not
 
@@ -38,7 +49,16 @@ lovdata.no.
   What still holds meanwhile: `connect-src` limits where an injected script
   could send anything, and `object-src`, `base-uri`, `form-action`,
   `frame-ancestors` and `img-src` are unaffected.
-- **Vercel functions execute in `iad1` (Washington DC)**, confirmed
-  2026-09-09. CV content stays in Frankfurt; request metadata does not. The
-  policy discloses this. Moving to `fra1` needs a paid plan and would remove
-  the transfer.
+- ~~**Vercel functions execute in `iad1` (Washington DC).**~~ Resolved
+  2026-09-09: `regions: ["fra1"]` in `vercel.json` moved execution to
+  Frankfurt, which the Hobby plan honoured despite the dashboard's region
+  picker being greyed out. No Chapter V transfer remains. Re-check after any
+  plan change.
+- **No retention rule for inactive accounts.** The one genuine Art. 5(1)(e)
+  gap. A warn-then-delete job needs email sending, which CVApp has no
+  capability for, so it is acknowledged in `ropa.md` rather than promised in
+  the policy — a stated rule that nothing enforces is worse than a declared
+  gap.
+- **Two retention periods are stated as "the provider's schedule"** rather
+  than a number. Lawful under Art. 13(2)(a), which permits criteria, but weak.
+  `ropa.md` says where to look both up.

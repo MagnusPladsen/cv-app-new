@@ -14,12 +14,15 @@ export function AppHeader() {
   // The locale-aware pathname, so switching language keeps you on this page.
   const pathname = usePathname()
 
-  // Opaque, not translucent-and-blurred. A sticky backdrop-filter repaints a
-  // blurred strip the width of the viewport on every scrolled frame: in
-  // Firefox that took a 10ms frame to 30ms, with a 78ms worst case, and it is
-  // what made every page feel heavy. Chromium is vsync-locked and hid it.
+  // The blur is a deliberate cost. A sticky backdrop-filter repaints a blurred
+  // strip the width of the viewport on every scrolled frame, and one Firefox
+  // run measured that as a 10ms frame becoming 30ms. It was removed on that
+  // basis and then put back: the slowness it was blamed for turned out to be
+  // the dev server, and the look is wanted. If scrolling is ever genuinely
+  // slow in a real browser, this is the first thing to try removing - but
+  // measure against a production build first.
   return (
-    <header className="sticky top-0 z-30 border-b border-border/70 bg-sand">
+    <header className="sticky top-0 z-30 border-b border-border/70 bg-sand/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-6">
         <div className="flex items-center gap-2">
           <Link

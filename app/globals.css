@@ -64,22 +64,17 @@
   --brand-ink: #ffffff;
   --sand: #faf7f2;
   --sand-deep: #f3ede4;
-  /* Two things: a wash and a texture.
+  /* A wash, and nothing else. A teal band across the entire top edge fading
+     downward, with a warm radial on the left for a little variation. A radial
+     alone put the green in one corner rather than along the top, which is not
+     the same thing. Fixed to the viewport, so it does not repeat down a long
+     editor page.
 
-     The wash is a teal band across the entire top edge, fading downward, with
-     a warm radial on the left for a little variation. A radial alone put the
-     green in one corner rather than along the top, which is not the same
-     thing. Fixed to the viewport, so it does not repeat down a long editor
-     page.
-
-     The texture is a fine dot grid at about five per cent, which scrolls with
-     the page. Fixed, it would slide under the content and read as a bug; the
-     point is a surface, not an effect. */
+     A dot texture used to sit over this. At any strength that made it visible
+     it read as noise behind the forms, so the ground is plain. */
   --page-glow:
     linear-gradient(to bottom, rgba(15, 118, 110, 0.20), rgba(15, 118, 110, 0) 460px),
     radial-gradient(180% 380px at 15% 0%, rgba(180, 83, 9, 0.13), transparent 72%);
-  --page-pattern: radial-gradient(circle, rgba(15, 118, 110, 0.055) 1px, transparent 1px);
-  --page-pattern-size: 22px 22px;
 
   --background: var(--sand);
   --foreground: #1c2422;
@@ -128,8 +123,6 @@
   --page-glow:
     linear-gradient(to bottom, rgba(45, 212, 191, 0.14), rgba(45, 212, 191, 0) 460px),
     radial-gradient(180% 380px at 15% 0%, rgba(251, 191, 36, 0.09), transparent 72%);
-  --page-pattern: radial-gradient(circle, rgba(45, 212, 191, 0.06) 1px, transparent 1px);
-  --page-pattern-size: 22px 22px;
 
   --background: var(--sand);
   --foreground: #eef2f1;
@@ -165,12 +158,11 @@
   }
   body {
     @apply bg-background text-foreground;
-    /* Texture first so it sits above the wash; the lists that follow line up
-       with these three layers in order. */
-    background-image: var(--page-pattern), var(--page-glow);
-    background-size: var(--page-pattern-size), auto, auto;
-    background-repeat: repeat, no-repeat, no-repeat;
-    background-attachment: scroll, fixed, fixed;
+    background-image: var(--page-glow);
+    background-repeat: no-repeat;
+    /* Fixed, so the wash stays at the top of the viewport rather than tiling
+       down a long editor page. */
+    background-attachment: fixed;
   }
   html {
     @apply font-sans;

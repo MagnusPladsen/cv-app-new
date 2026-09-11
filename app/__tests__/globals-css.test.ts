@@ -14,18 +14,22 @@ describe('app palette', () => {
     expect(css).toContain('--sand: #faf7f2')
   })
 
-  it('paints the ambient page glow and its texture on the body', () => {
+  it('paints the ambient page glow on the body', () => {
     expect(css).toContain('--page-glow')
-    expect(css).toContain('--page-pattern')
-    expect(css).toContain('background-image: var(--page-pattern), var(--page-glow)')
+    expect(css).toContain('background-image: var(--page-glow)')
   })
 
-  it('anchors the glow to the viewport but lets the texture scroll', () => {
-    // A fixed texture slides under the content and reads as a rendering
-    // fault; a repeating glow tiles down a long editor page. The lists line
-    // up with the three background layers in order.
-    expect(css).toContain('background-repeat: repeat, no-repeat, no-repeat')
-    expect(css).toContain('background-attachment: scroll, fixed, fixed')
+  it('anchors the glow to the viewport', () => {
+    // Repeating, it would tile down a long editor page instead of staying a
+    // band at the top.
+    expect(css).toContain('background-repeat: no-repeat')
+    expect(css).toContain('background-attachment: fixed')
+  })
+
+  it('keeps the ground plain: no texture layer over the wash', () => {
+    // A dot grid sat here. At any strength that made it visible it read as
+    // noise behind the forms.
+    expect(css).not.toContain('--page-pattern')
   })
 
 

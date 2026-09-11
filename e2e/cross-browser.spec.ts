@@ -131,11 +131,11 @@ test('the editor preview keeps the name as a real heading', async ({ page }) => 
   await expect(page.locator('[data-cv-preview] h1.cv-header__name')).toHaveCount(1)
 })
 
-test('the background layers line up', async ({ page }) => {
-  // background-image, -size, -repeat and -attachment are positional lists.
-  // A layer added to one and not the others silently shifts every value after
-  // it, and --page-glow expands to two layers, so this can only be counted
-  // once the browser has resolved it.
+test('the background is the wash and nothing else', async ({ page }) => {
+  // --page-glow expands to two gradients, so the layer count can only be
+  // taken once the browser has resolved the custom property. A texture layer
+  // used to ride on top of it; if one comes back, the single-valued repeat
+  // and attachment below stop covering every layer.
   await page.goto('/no')
 
   const layers = await page.evaluate(() => {
@@ -152,15 +152,33 @@ test('the background layers line up', async ({ page }) => {
       }
       return layers
     }
+    // Same depth-aware walk, but returning the entries: a single declared
+    // value covers every layer, and engines disagree about whether the
+    // computed list repeats it or keeps it short. What matters is that the
+    // values are uniform, not how many times the browser wrote them down.
+    const entries = (value: string) => {
+      const parts: string[] = []
+      let depth = 0
+      let current = ''
+      for (const character of value) {
+        if (character === '(') depth += 1
+        else if (character === ')') depth -= 1
+        if (character === ',' && depth === 0) {
+          parts.push(current.trim())
+          current = ''
+        } else current += character
+      }
+      parts.push(current.trim())
+      return parts
+    }
     return {
       image: count(style.backgroundImage),
-      size: count(style.backgroundSize),
-      repeat: count(style.backgroundRepeat),
-      attachment: count(style.backgroundAttachment),
+      repeat: entries(style.backgroundRepeat),
+      attachment: entries(style.backgroundAttachment),
     }
   })
 
-  const counts = Object.values(layers)
-  expect(new Set(counts).size, `layer counts differ: ${JSON.stringify(layers)}`).toBe(1)
-  expect(layers.image, 'expected a texture plus two wash layers').toBe(3)
+  expect(layers.image, `expected the two wash layers only: ${layers.image}`).toBe(2)
+  expect(new Set(layers.repeat), 'every layer must be no-repeat').toEqual(new Set(['no-repeat']))
+  expect(new Set(layers.attachment), 'every layer must be fixed').toEqual(new Set(['fixed']))
 })

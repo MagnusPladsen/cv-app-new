@@ -2,13 +2,11 @@
 
 import { LayoutGrid } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useMemo } from 'react'
 
 import { getTemplate, TEMPLATES } from '@/components/cv/templates'
 import { TemplateCard } from '@/components/gallery/TemplateCard'
 import { Link, useRouter } from '@/i18n/navigation'
 import { PAPER, mmToPx } from '@/lib/print/paper'
-import { createDemoDocument } from '@/lib/schema/demo'
 import { useDocuments } from '@/lib/store/documents'
 
 /**
@@ -19,7 +17,6 @@ export function LandingTemplates({ limit }: { limit?: number }) {
   const t = useTranslations('gallery')
   const router = useRouter()
   const createDocument = useDocuments((state) => state.createDocument)
-  const demo = useMemo(() => createDemoDocument(), [])
 
   const shown = limit ? TEMPLATES.slice(0, limit) : TEMPLATES
   const remaining = TEMPLATES.length - shown.length
@@ -37,12 +34,7 @@ export function LandingTemplates({ limit }: { limit?: number }) {
   return (
     <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
       {shown.map((template) => (
-        <TemplateCard
-          document={demo}
-          key={template.id}
-          onChoose={handleChoose}
-          template={template}
-        />
+        <TemplateCard key={template.id} onChoose={handleChoose} template={template} />
       ))}
 
       {/* The last tile is the way to the rest, rather than a text link above

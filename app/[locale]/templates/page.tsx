@@ -1,13 +1,12 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { getTemplate, TEMPLATES } from '@/components/cv/templates'
 import type { TemplateTag } from '@/components/cv/types'
 import { TemplateCard } from '@/components/gallery/TemplateCard'
 import { Link, useRouter } from '@/i18n/navigation'
-import { createDemoDocument } from '@/lib/schema/demo'
 import { useDocuments } from '@/lib/store/documents'
 
 type Filter = TemplateTag | 'all'
@@ -28,8 +27,6 @@ export default function TemplateGalleryPage() {
   const createDocument = useDocuments((state) => state.createDocument)
   const [filter, setFilter] = useState<Filter>('all')
 
-  // One demo document shared by every card, so the comparison is like for like.
-  const demo = useMemo(() => createDemoDocument(), [])
 
   const visible = TEMPLATES.filter(
     (template) => filter === 'all' || template.tags.includes(filter),
@@ -88,12 +85,7 @@ export default function TemplateGalleryPage() {
            bigger thumbnails, which are harder to compare, not easier. */
         <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
           {visible.map((template) => (
-            <TemplateCard
-              document={demo}
-              key={template.id}
-              onChoose={handleChoose}
-              template={template}
-            />
+            <TemplateCard key={template.id} onChoose={handleChoose} template={template} />
           ))}
         </ul>
       )}

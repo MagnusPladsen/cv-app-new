@@ -1,7 +1,7 @@
-import { ScaledDocument } from '@/components/cv/ScaledDocument'
+import Image from 'next/image'
+
 import { getTemplate } from '@/components/cv/templates'
 import { PAPER, mmToPx } from '@/lib/print/paper'
-import { createDemoDocument } from '@/lib/schema/demo'
 
 /** The three the fan reads best with: plain, full-colour column, and band. */
 const SHOWCASE = ['oslo', 'fjord', 'aurora'] as const
@@ -19,16 +19,12 @@ const LAYOUT = [
 /**
  * The fanned CV sheets in the landing hero, the same idea as the share card.
  *
- * Real templates rendering the demo CV rather than a picture of them, so the
- * hero cannot drift from the product and the sheets stay crisp at any zoom.
- *
- * Each sheet is its own `container-type: inline-size` box scaled by
- * `100cqw / <page width>px`, the pattern the gallery card already uses. That
- * keeps one component correct at every width instead of a set of breakpoints.
+ * The same stills the gallery cards use, so the hero cannot drift from the
+ * product: they are captured from the templates themselves by
+ * scripts/generate-template-thumbnails.mjs. Three live CVs above the fold cost
+ * more than the hero is worth, and none of it was ever interactive.
  */
 export function HeroTemplates() {
-  const demo = createDemoDocument()
-
   return (
     <div
       aria-hidden="true"
@@ -42,11 +38,6 @@ export function HeroTemplates() {
         const { left, top, rotate } = LAYOUT[index]!
 
         return (
-          // The rotation is on this wrapper, never on the query container
-          // itself. A transform on the container makes `100cqw` unreliable -
-          // it resolved correctly in Chromium and rendered the sheets at
-          // roughly double size elsewhere, cropping every one. Keeping the
-          // container untransformed is what makes the scale dependable.
           <div
             className="absolute"
             key={id}
@@ -54,21 +45,17 @@ export function HeroTemplates() {
           >
             <div
               className="relative w-full overflow-hidden rounded-md bg-white shadow-[0_26px_60px_-26px_rgb(15_35_45/0.45)]"
-              style={{
-                aspectRatio: `${PAGE_WIDTH} / ${PAGE_HEIGHT}`,
-                containerType: 'inline-size',
-              }}
+              style={{ aspectRatio: `${PAGE_WIDTH} / ${PAGE_HEIGHT}` }}
             >
-              <ScaledDocument
-                document={{
-                  ...demo,
-                  theme: {
-                    ...demo.theme,
-                    templateId: template.id,
-                    accent: template.defaultAccent,
-                    fontPairId: template.defaultFontPairId ?? demo.theme.fontPairId,
-                  },
-                }}
+              <Image
+                alt=""
+                className="object-cover"
+                fill
+                // Above the fold, so these are the one set worth fetching
+                // eagerly rather than on approach.
+                priority
+                sizes="(min-width: 1024px) 22vw, 40vw"
+                src={`/templates/${template.id}.png`}
               />
             </div>
           </div>

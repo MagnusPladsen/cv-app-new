@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
-    "test:e2e:update": "playwright test --update-snapshots"
+    "test:e2e:update": "playwright test --update-snapshots",
+    "thumbnails": "bun scripts/generate-template-thumbnails.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

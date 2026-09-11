@@ -79,13 +79,13 @@ test('the page hydrates under the CSP', async ({ page }) => {
   // A blocked framework bootstrap renders a page that looks right and does
   // nothing. Clicking is the only way to tell the difference.
   await page.goto('/no/templates')
-  await page.locator('button:has(.cv-doc--oslo)').click()
+  await page.locator('button[data-template="oslo"]').click()
   await expect(page).toHaveURL(/\/no\/cv\/.+/)
 })
 
 test('the editor still works under the CSP', async ({ page }) => {
   await page.goto('/no/templates')
-  await page.locator('button:has(.cv-doc--oslo)').click()
+  await page.locator('button[data-template="oslo"]').click()
   await page.waitForURL(/\/no\/cv\/.+/)
 
   await page.getByLabel(/Fornavn/).first().fill('Testperson')

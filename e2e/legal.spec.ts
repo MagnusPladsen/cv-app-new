@@ -66,7 +66,7 @@ test('the policy fits a phone, table and all', async ({ page }) => {
 
 test('the footer reaches the policy from the editor too', async ({ page }) => {
   await page.goto('/no/templates')
-  await page.locator('button:has(.cv-doc--oslo)').click()
+  await page.locator('button[data-template="oslo"]').click()
   await page.waitForURL(/\/no\/cv\/.+/)
 
   await expect(page.getByRole('contentinfo').getByRole('link', { name: 'Personvern' })).toBeVisible()

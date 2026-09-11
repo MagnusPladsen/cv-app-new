@@ -36,43 +36,53 @@ test('no stylesheet request fails', async ({ page }) => {
   expect(failed, `stylesheets failed to load:\n${failed.join('\n')}`).toEqual([])
 })
 
-test('template thumbnails scale to their cards', async ({ page }) => {
+test('every template still loads, and fills its card', async ({ page }) => {
+  // The cards are captured stills now, so the failure mode moved: a missing
+  // or misnamed file is a blank white card rather than an overflowing CV, and
+  // a broken <img> reports no error anywhere else.
   await page.goto('/no/templates')
-  await page.evaluate(() => document.fonts.ready)
-
-  const overflowing = await page.evaluate(() =>
-    [...document.querySelectorAll('li button .cv-doc')]
-      .map((doc) => {
-        const scaled = doc.parentElement as HTMLElement
-        const card = scaled.parentElement as HTMLElement
-        const matrix = new DOMMatrix(getComputedStyle(scaled).transform)
-        return {
-          content: Math.round(scaled.offsetWidth * matrix.a),
-          card: card.clientWidth,
-        }
-      })
-      .filter((entry) => entry.content > entry.card + 1).length,
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll<HTMLImageElement>('li button img')].every((image) => image.complete),
   )
 
-  expect(overflowing, 'thumbnails rendering wider than their cards').toBe(0)
+  const cards = await page.evaluate(() =>
+    [...document.querySelectorAll<HTMLImageElement>('li button img')].map((image) => ({
+      src: image.getAttribute('src') ?? '',
+      painted: image.naturalWidth > 0,
+      // object-cover cannot overflow, but a card that lost its aspect ratio
+      // would still crop the sheet; compare the boxes rather than trusting it.
+      width: image.offsetWidth,
+      card: (image.closest('button') as HTMLElement).clientWidth,
+    })),
+  )
+
+  expect(cards.length).toBeGreaterThanOrEqual(12)
+  expect(
+    cards.filter((card) => !card.painted).map((card) => card.src),
+    'stills that did not load',
+  ).toEqual([])
+  expect(
+    cards.filter((card) => Math.abs(card.width - card.card) > 1).map((card) => card.src),
+    'stills not filling their card',
+  ).toEqual([])
 })
 
-test('the hero sheets scale to their cards', async ({ page }) => {
+test('the hero sheets load', async ({ page }) => {
   await page.goto('/no')
-  await page.evaluate(() => document.fonts.ready)
-
-  const overflowing = await page.evaluate(() =>
-    [...document.querySelectorAll('main section:first-of-type .cv-doc')]
-      .map((doc) => {
-        const scaled = doc.parentElement as HTMLElement
-        const card = scaled.parentElement as HTMLElement
-        const matrix = new DOMMatrix(getComputedStyle(scaled).transform)
-        return { content: Math.round(scaled.offsetWidth * matrix.a), card: card.clientWidth }
-      })
-      .filter((entry) => entry.content > entry.card + 1).length,
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll<HTMLImageElement>('main section:first-of-type img')].every(
+      (image) => image.complete,
+    ),
   )
 
-  expect(overflowing, 'hero sheets rendering wider than their cards').toBe(0)
+  const broken = await page.evaluate(() =>
+    [...document.querySelectorAll<HTMLImageElement>('main section:first-of-type img')]
+      .filter((image) => image.naturalWidth === 0)
+      .map((image) => image.getAttribute('src') ?? ''),
+  )
+
+  expect(broken, 'hero sheets that did not load').toEqual([])
 })
 
 test('no translation key renders raw', async ({ page }) => {
@@ -88,23 +98,6 @@ test('no translation key renders raw', async ({ page }) => {
     )
     expect(suspects, `${path} renders raw keys: ${suspects.join(', ')}`).toEqual([])
   }
-})
-
-test('the measured scale takes over from the CSS one', async ({ page }) => {
-  // The CSS fallback uses tan(atan2(...)), which not every engine supports -
-  // a Firefox-based browser rendered full-size A4 pages inside thumbnails
-  // even after that was added. ScaledDocument measures instead and overrides
-  // it, and measuring cannot be unsupported. If this ever reads as a CSS
-  // function rather than a number, the measurement stopped running and the
-  // app is back to depending on engine support.
-  await page.goto('/no/templates')
-  await page.evaluate(() => document.fonts.ready)
-
-  const transform = await page.locator('li button span[aria-hidden]').first().evaluate(
-    (node) => node.getAttribute('style')?.match(/transform:[^;]*/)?.[0] ?? '',
-  )
-
-  expect(transform).toMatch(/scale\(\d*\.?\d+\)/)
 })
 
 test('an indexable page has exactly one h1', async ({ page }) => {
@@ -124,7 +117,7 @@ test('the editor preview keeps the name as a real heading', async ({ page }) => 
   // The other half of the same rule: in the document being edited, the name
   // is the title of the page and must stay an h1.
   await page.goto('/no/templates')
-  await page.locator('button:has(.cv-doc--oslo)').click()
+  await page.locator('button[data-template="oslo"]').click()
   await page.waitForURL(/\/no\/cv\/.+/)
   await page.getByLabel(/Fornavn/).first().fill('Ola')
 

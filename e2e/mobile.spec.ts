@@ -18,11 +18,12 @@ test.use({
 })
 
 /**
- * Picks a template card by the template it renders, not by its display name.
- * Names are branding and change; the `cv-doc--<id>` class is the identity.
+ * Picks a template card by the template it offers, not by its display name.
+ * Names are branding and change - `oslo` is called Klassisk - so the card
+ * carries its id in a data attribute.
  */
 function templateCard(page: import('@playwright/test').Page, id: string) {
-  return page.locator(`button:has(.cv-doc--${id})`)
+  return page.locator(`button[data-template="${id}"]`)
 }
 
 async function horizontalOverflow(page: import('@playwright/test').Page) {
@@ -180,32 +181,38 @@ test('no header link wraps onto a second line', async ({ page }) => {
   expect(wrapped, `header links wrapping: ${wrapped.join(', ')}`).toEqual([])
 })
 
-test('the hero sheets scale to their cards rather than overflowing them', async ({ page }) => {
-  // The CV inside each sheet is scaled with 100cqw. Putting the rotation on
-  // the query container made that unreliable - correct in Chromium, roughly
-  // double size elsewhere, cropping every sheet. The rotation now sits on a
-  // wrapper, and this asserts the content actually fits.
+test('the hero sheets fill their cards, at any width', async ({ page }) => {
+  // The sheets are stills now, so there is no scaling left to get wrong - but
+  // a card that lost its aspect ratio would crop one, and a still that failed
+  // to load would leave a white rectangle that looks deliberate.
   await page.setViewportSize({ width: 1280, height: 900 })
   await page.goto('/no')
-  await page.evaluate(() => document.fonts.ready)
-
-  const sheets = await page.evaluate(() =>
-    [...document.querySelectorAll('main section:first-of-type .cv-doc')].map((doc) => {
-      const scaled = doc.parentElement as HTMLElement
-      const card = scaled.parentElement as HTMLElement
-      const matrix = new DOMMatrix(getComputedStyle(scaled).transform)
-      return {
-        cardWidth: card.clientWidth,
-        contentWidth: Math.round(scaled.offsetWidth * matrix.a),
-      }
-    }),
+  await page.waitForFunction(() =>
+    [...document.querySelectorAll<HTMLImageElement>('main section:first-of-type img')].every(
+      (image) => image.complete,
+    ),
   )
 
-  expect(sheets.length).toBeGreaterThan(0)
+  const sheets = await page.evaluate(() =>
+    [...document.querySelectorAll<HTMLImageElement>('main section:first-of-type img')].map(
+      (image) => ({
+        painted: image.naturalWidth > 0,
+        cardWidth: (image.parentElement as HTMLElement).clientWidth,
+        // offsetWidth, not getBoundingClientRect: each sheet sits in a
+        // rotated wrapper, and a rotated element's bounding box is wider than
+        // the element itself.
+        contentWidth: image.offsetWidth,
+      }),
+    ),
+  )
+
+  expect(sheets.length).toBe(3)
   for (const sheet of sheets) {
-    expect(sheet.contentWidth, 'a hero sheet renders wider than its card').toBeLessThanOrEqual(
-      sheet.cardWidth + 1,
-    )
+    expect(sheet.painted, 'a hero sheet did not load').toBe(true)
+    expect(
+      Math.abs(sheet.contentWidth - sheet.cardWidth),
+      'a hero sheet does not fill its card',
+    ).toBeLessThanOrEqual(1)
   }
 })
 
@@ -215,7 +222,7 @@ test('every switched-on section keeps its form, in CV order', async ({ page }) =
   // vanishes - so the editor looked able to hold one section at a time.
   await page.setViewportSize({ width: 1280, height: 900 })
   await page.goto('/no/templates')
-  await page.locator('button:has(.cv-doc--oslo)').click()
+  await templateCard(page, 'oslo').click()
   await page.waitForURL(/\/no\/cv\/.+/)
 
   const forms = page.locator('[id^=section-form-]')

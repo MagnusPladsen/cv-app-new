@@ -1,12 +1,17 @@
 import { ArrowRight, LayoutGrid, Sparkles } from 'lucide-react'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { TEMPLATES } from '@/components/cv/templates'
 import { LandingTemplates } from '@/components/gallery/LandingTemplates'
 import { HeroTemplates } from '@/components/landing/HeroTemplates'
 import { Link } from '@/i18n/navigation'
 
-export default async function HomePage() {
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  // Pins the locale so this page prerenders instead of being rendered per
+  // request. Every page under [locale] needs it, not just the layout.
+  const { locale } = await params
+  setRequestLocale(locale)
+
   const t = await getTranslations()
 
   return (

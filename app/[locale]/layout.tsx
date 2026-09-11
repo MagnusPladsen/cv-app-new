@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import type { ReactNode } from 'react'
 
@@ -79,6 +79,13 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params
   if (!hasLocale(routing.locales, locale)) notFound()
+
+  // Without this every route under [locale] is server-rendered on demand, and
+  // generateStaticParams below does nothing: next-intl's server APIs fall back
+  // to reading the request, which opts the whole segment into dynamic
+  // rendering. `next build` shows it - a prerendered route is marked with a
+  // circle, a rendered-on-demand one with an f.
+  setRequestLocale(locale)
 
   return (
     <html lang={locale} className={`${geistSans.variable} h-full antialiased`}>

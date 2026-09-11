@@ -121,7 +121,7 @@ export function PreviewPane({
             // completely, so the one thing explaining the blank page was the
             // thing you could not read.
             <div className="pointer-events-none absolute inset-x-0 top-1/3 flex justify-center px-6">
-              <p className="rounded-full bg-foreground/80 px-4 py-2 text-center text-sm font-medium text-background shadow-lg backdrop-blur-sm">
+              <p className="rounded-full bg-foreground/90 px-4 py-2 text-center text-sm font-medium text-background shadow-lg">
                 {t('previewEmpty')}
               </p>
             </div>

@@ -188,7 +188,7 @@ export function EditorSplit({
       ) : (
         <>
           <div className="h-16" />
-          <div className="fixed inset-x-0 bottom-0 z-40 flex gap-3 border-t border-border bg-card/95 px-4 py-3 backdrop-blur">
+          <div className="fixed inset-x-0 bottom-0 z-40 flex gap-3 border-t border-border bg-card px-4 py-3">
             <button
               className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold transition hover:border-brand hover:text-brand-strong"
               onClick={() => setSheetOpen(true)}

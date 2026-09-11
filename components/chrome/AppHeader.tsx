@@ -14,8 +14,12 @@ export function AppHeader() {
   // The locale-aware pathname, so switching language keeps you on this page.
   const pathname = usePathname()
 
+  // Opaque, not translucent-and-blurred. A sticky backdrop-filter repaints a
+  // blurred strip the width of the viewport on every scrolled frame: in
+  // Firefox that took a 10ms frame to 30ms, with a 78ms worst case, and it is
+  // what made every page feel heavy. Chromium is vsync-locked and hid it.
   return (
-    <header className="sticky top-0 z-30 border-b border-border/70 bg-sand/85 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b border-border/70 bg-sand">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-6">
         <div className="flex items-center gap-2">
           <Link

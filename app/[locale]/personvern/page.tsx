@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 
 import { LegalDocumentView } from '@/components/legal/LegalDocumentView'
@@ -17,6 +17,7 @@ export function generateStaticParams() {
 export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   if (locale !== 'no' && locale !== 'en') notFound()
+  setRequestLocale(locale)
 
   const t = await getTranslations({ locale, namespace: 'legal' })
 

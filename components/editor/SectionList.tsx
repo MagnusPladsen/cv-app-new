@@ -63,7 +63,11 @@ function SectionRow({
   onRename: SectionListProps['onRename']
 }) {
   const t = useTranslations('sections')
-  const [renaming, setRenaming] = useState(false)
+  // The field holds its own draft. `title` is the *display* title, which is
+  // trimmed - binding the input to it ate every trailing space as you typed,
+  // so a rename could never grow a second word.
+  const [draft, setDraft] = useState<string | null>(null)
+  const renaming = draft !== null
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: section.id,
   })
@@ -109,15 +113,18 @@ function SectionRow({
           aria-label={`${t('rename')}: ${title}`}
           autoFocus
           className="flex-1 rounded-lg border border-brand bg-card px-2 py-1 text-sm focus-visible:outline-none"
-          onBlur={() => setRenaming(false)}
-          onChange={(event) => onRename(section.id, event.target.value)}
+          onBlur={() => setDraft(null)}
+          onChange={(event) => {
+            setDraft(event.target.value)
+            onRename(section.id, event.target.value)
+          }}
           onKeyDown={(event) => {
             // Enter and Escape both finish. Escape does not revert: the
             // heading is stored as you type, and silently undoing it would be
             // the surprise.
-            if (event.key === 'Enter' || event.key === 'Escape') setRenaming(false)
+            if (event.key === 'Enter' || event.key === 'Escape') setDraft(null)
           }}
-          value={title}
+          value={draft ?? ''}
         />
       ) : (
         <>
@@ -136,7 +143,7 @@ function SectionRow({
           <button
             aria-label={`${t('rename')}: ${title}`}
             className={iconButtonClass}
-            onClick={() => setRenaming(true)}
+            onClick={() => setDraft(title)}
             type="button"
           >
             <Pencil aria-hidden="true" className="size-4" />

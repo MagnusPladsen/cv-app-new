@@ -207,3 +207,19 @@ describe('renaming from the list', () => {
   })
 })
 
+describe('spaces while renaming', () => {
+  it('keeps a trailing space, so a heading can grow a second word', async () => {
+    // The displayed title is trimmed. Binding the field to it erased every
+    // space the moment it was typed, so no rename could reach two words.
+    const onRename = vi.fn()
+    wrap(<SectionList {...props({ onRename })} />)
+    await userEvent.click(screen.getAllByRole('button', { name: /^Gi nytt navn:/ })[0]!)
+
+    const field = screen.getByRole('textbox') as HTMLInputElement
+    await userEvent.clear(field)
+    await userEvent.type(field, 'Kort om')
+
+    expect(field.value).toBe('Kort om')
+    expect(onRename).toHaveBeenLastCalledWith(expect.any(String), 'Kort om')
+  })
+})

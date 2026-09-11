@@ -111,23 +111,39 @@ describe('EditorSplit', () => {
     expect(screen.getByText('1 side')).toBeInTheDocument()
   })
 
-  it('renders the form for the active section', () => {
+  it('renders a form for every switched-on section at once', () => {
+    // It used to render only the active one, so each section switched on
+    // replaced the last and the editor looked able to hold exactly one.
     const doc = fixture()
-    const skills = doc.sections.find((section) => section.type === 'skills')!
-    wrap(<EditorSplit {...splitProps(doc)} activeSectionId={skills.id} />)
+    wrap(<EditorSplit {...splitProps(doc)} />)
 
-    // The skills form's add button, not the summary textarea.
-    expect(screen.getByRole('button', { name: 'Legg til' })).toBeInTheDocument()
-    expect(screen.queryByLabelText('Om meg')).toBeNull()
+    const enabled = doc.sections.filter((section) => section.enabled)
+    expect(enabled.length).toBeGreaterThan(1)
+
+    // The summary's textarea and a list section's add button, together.
+    expect(screen.getByLabelText('Om meg')).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Legg til' }).length).toBeGreaterThan(0)
   })
 
-  it('swaps the form when a different section becomes active', () => {
+  it('renders them in the order they appear on the CV', () => {
     const doc = fixture()
-    const summary = doc.sections.find((section) => section.type === 'summary')!
-    wrap(<EditorSplit {...splitProps(doc)} activeSectionId={summary.id} />)
+    const { container } = wrap(<EditorSplit {...splitProps(doc)} />)
 
-    expect(screen.getByLabelText('Om meg')).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Legg til' })).toBeNull()
+    const rendered = [...container.querySelectorAll('[id^=section-form-]')].map((node) =>
+      node.id.replace('section-form-', ''),
+    )
+    const expected = doc.sections.filter((section) => section.enabled).map((section) => section.id)
+
+    expect(rendered).toEqual(expected)
+  })
+
+  it('renders no form for a section that is switched off', () => {
+    const doc = fixture()
+    for (const section of doc.sections) section.enabled = false
+    const { container } = wrap(<EditorSplit {...splitProps(doc)} />)
+
+    expect(container.querySelectorAll('[id^=section-form-]')).toHaveLength(0)
+    expect(screen.getByText(messages.editor.noSections)).toBeInTheDocument()
   })
 
   it('lists every section so any of them can be reached', () => {

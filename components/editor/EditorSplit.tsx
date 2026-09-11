@@ -18,6 +18,7 @@ import { PhotoField } from './PhotoField'
 import { PreviewPane } from './PreviewPane'
 import { PreviewSheet } from './PreviewSheet'
 import { SaveState } from './SaveState'
+import { sectionFormId } from './section-form-id'
 import { SectionEditor } from './SectionEditor'
 import { SectionList } from './SectionList'
 import { SectionSettings } from './SectionSettings'
@@ -39,8 +40,6 @@ export function EditorSplit({
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
   const [sheetOpen, setSheetOpen] = useState(false)
 
-  const sectionFormRef = useRef<HTMLDivElement | null>(null)
-
   // Opening a CV is the baseline. Without this the history still holds the
   // step that created the document, so the first Angre on a new CV deletes it
   // and the editor bounces to the dashboard - which reads as the button being
@@ -57,8 +56,10 @@ export function EditorSplit({
   useEffect(() => {
     const previous = previousSectionId.current
     previousSectionId.current = activeSectionId
-    if (previous === undefined || previous === activeSectionId) return
-    sectionFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    if (previous === undefined || previous === activeSectionId || !activeSectionId) return
+    window.document
+      .getElementById(sectionFormId(activeSectionId))
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [activeSectionId])
 
   const undo = useDocumentsTemporal((state) => state.undo)
@@ -71,16 +72,19 @@ export function EditorSplit({
   const getNode = () => previewRef.current?.querySelector<HTMLElement>('.cv-doc') ?? null
 
   const labels = getCvLabels(document.language)
-  const activeSection = document.sections.find((section) => section.id === activeSectionId)
+  const enabledSections = document.sections.filter((section) => section.enabled)
 
-  // Opening a section should give you somewhere to write. Keyed on the id so
-  // it runs once per section, and only ever adds to one that is empty.
-  const seededRef = useRef<string | undefined>(undefined)
+  // A section switched on should have somewhere to write straight away, the
+  // way Om meg does. Seeded once per section and only while it is empty, so
+  // returning to a filled section never adds a stray blank row.
+  const seeded = useRef(new Set<string>())
   useEffect(() => {
-    if (!activeSection || seededRef.current === activeSection.id) return
-    seededRef.current = activeSection.id
-    seedSection(activeSection, handlers)
-  }, [activeSection, handlers])
+    for (const section of enabledSections) {
+      if (seeded.current.has(section.id)) continue
+      seeded.current.add(section.id)
+      seedSection(section, handlers)
+    }
+  }, [enabledSections, handlers])
 
 
   return (
@@ -147,20 +151,30 @@ export function EditorSplit({
 
 
 
-        {activeSection ? (
-          // Anchored and scrolled to on selection. Even directly beneath the
-          // list the form can sit below the fold on a laptop, and a click that
-          // appears to do nothing reads as a broken button - which is exactly
-          // how the section forms came to look missing.
-          <div className="flex flex-col gap-6 scroll-mt-24" ref={sectionFormRef}>
+        {/* Every switched-on section, in the order it appears on the CV.
+            Rendering only the selected one meant each new tick replaced the
+            last: switch on Utdanning and it appears, switch on Arbeidserfaring
+            and Utdanning vanishes - so the editor looked as though it could
+            hold one section at a time. Clicking a row in the list now scrolls
+            to that form rather than swapping which one exists. */}
+        {enabledSections.map((section) => (
+          <div
+            className="flex scroll-mt-24 flex-col gap-6"
+            id={sectionFormId(section.id)}
+            key={section.id}
+          >
             <SectionSettings
               labels={labels}
               onRename={handlers.onRenameSection}
               onShapeChange={handlers.onCustomShapeChange}
-              section={activeSection}
+              section={section}
             />
-            <SectionEditor handlers={handlers} labels={labels} section={activeSection} />
+            <SectionEditor handlers={handlers} labels={labels} section={section} />
           </div>
+        ))}
+
+        {enabledSections.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{t('noSections')}</p>
         ) : null}
 
       </div>

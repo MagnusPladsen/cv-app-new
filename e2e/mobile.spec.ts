@@ -208,3 +208,35 @@ test('the hero sheets scale to their cards rather than overflowing them', async 
     )
   }
 })
+
+test('every switched-on section keeps its form, in CV order', async ({ page }) => {
+  // The reported bug: only the last section ticked had a form. Switch on
+  // Utdanning and it appears, switch on Arbeidserfaring and Utdanning
+  // vanishes - so the editor looked able to hold one section at a time.
+  await page.setViewportSize({ width: 1280, height: 900 })
+  await page.goto('/no/templates')
+  await page.locator('button:has(.cv-doc--oslo)').click()
+  await page.waitForURL(/\/no\/cv\/.+/)
+
+  const forms = page.locator('[id^=section-form-]')
+  const boxes = page.locator('main input[type=checkbox]')
+
+  for (let i = 0; i < (await boxes.count()); i += 1) {
+    if (await boxes.nth(i).isChecked()) await boxes.nth(i).uncheck()
+  }
+  await expect(forms).toHaveCount(0)
+
+  await boxes.nth(2).check()
+  await expect(forms).toHaveCount(1)
+
+  await boxes.nth(1).check()
+  await expect(forms, 'ticking a second section replaced the first').toHaveCount(2)
+
+  // And in the order they appear on the CV, not the order they were ticked.
+  const ids = await forms.evaluateAll((nodes) => nodes.map((node) => node.id))
+  const listOrder = await page.evaluate(() =>
+    [...document.querySelectorAll('main li input[type=checkbox]')].map((box, index) => index),
+  )
+  expect(ids).toHaveLength(2)
+  expect(listOrder.length).toBeGreaterThan(2)
+})

@@ -1,31 +1,36 @@
 'use client'
 
-import { CvDocument } from '@/components/cv/CvDocument'
+import Image from 'next/image'
+
 import type { Template } from '@/components/cv/types'
 import { mmToPx, PAPER } from '@/lib/print/paper'
-import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
+
+const PAGE_WIDTH = mmToPx(PAPER.a4.widthMm)
+const PAGE_HEIGHT = mmToPx(PAPER.a4.heightMm)
 
 /**
- * A template thumbnail.
+ * A template thumbnail: the still from public/templates, the same one the
+ * gallery cards use.
  *
- * Always rendered with the demo CV rather than the user's own: a new CV is
- * empty, and an empty sheet shows nothing about a template except its colour.
+ * Always the demo CV rather than the user's own. A new CV is empty, and an
+ * empty sheet shows nothing about a template except its colour.
+ *
+ * Always A4, whatever paper the CV is set to. The strip answers "which
+ * template", not "which paper" - the paper is visible in the preview beside
+ * it - and the "+N" tile has always been A4-shaped for the same reason.
  */
 export function TemplateThumb({
   template,
-  document,
   width,
   active,
   onSelect,
 }: {
   template: Template
-  document: CvDocumentData
   width: number
   active: boolean
   onSelect: (templateId: string) => void
 }) {
-  const pageWidth = mmToPx(PAPER[document.paper].widthMm)
-  const pageHeight = mmToPx(PAPER[document.paper].heightMm)
+  const height = Math.round(width * (PAGE_HEIGHT / PAGE_WIDTH))
 
   return (
     <button
@@ -34,31 +39,13 @@ export function TemplateThumb({
       className={`group block shrink-0 overflow-hidden rounded-lg bg-white ring-2 transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_12px_28px_-14px_rgb(0_0_0/0.45)] focus-visible:ring-brand focus-visible:outline-none ${
         active ? 'ring-brand' : 'ring-border hover:ring-brand/60'
       }`}
+      data-template={template.id}
       onClick={() => onSelect(template.id)}
-      style={{ width, height: width * (pageHeight / pageWidth) }}
+      style={{ width, height }}
       type="button"
     >
-      <span
-        aria-hidden="true"
-        className="block origin-top-left"
-        style={{
-          width: pageWidth,
-          height: pageHeight,
-          transform: `scale(${width / pageWidth})`,
-        }}
-      >
-        <CvDocument
-          document={{
-            ...document,
-            theme: {
-              ...document.theme,
-              templateId: template.id,
-              accent: template.defaultAccent,
-              fontPairId: template.defaultFontPairId ?? document.theme.fontPairId,
-            },
-          }}
-        />
-      </span>
+      {/* Empty alt: the button carries the template's name already. */}
+      <Image alt="" height={height} src={`/templates/${template.id}.png`} width={width} />
     </button>
   )
 }

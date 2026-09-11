@@ -2,11 +2,10 @@
 
 import { LayoutGrid } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 
 import { TEMPLATES } from '@/components/cv/templates'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
-import { createDemoDocument } from '@/lib/schema/demo'
 import { TemplateDialog } from './TemplateDialog'
 import { TemplateThumb } from './TemplateThumb'
 
@@ -17,8 +16,9 @@ const THUMB_WIDTH = 84
 /**
  * Template switching, kept in plain sight rather than behind a disclosure.
  *
- * Shows a few, then a "+N" tile into the full set. The thumbnails render demo
- * content: a new CV is empty, and an empty sheet says nothing about a template.
+ * Shows a few, then a "+N" tile into the full set. The thumbnails are the
+ * stills from public/templates, showing the demo CV: a new CV is empty, and an
+ * empty sheet says nothing about a template.
  */
 export function TemplateStrip({
   document,
@@ -29,8 +29,6 @@ export function TemplateStrip({
 }) {
   const t = useTranslations('design')
   const [dialogOpen, setDialogOpen] = useState(false)
-
-  const demo = useMemo(() => createDemoDocument({ paper: document.paper }), [document.paper])
 
   // Always include the active template, even if it sits outside the first few.
   const activeIndex = TEMPLATES.findIndex(
@@ -56,7 +54,6 @@ export function TemplateStrip({
           <li className="flex flex-col items-center gap-1.5" key={template.id}>
             <TemplateThumb
               active={template.id === document.theme.templateId}
-              document={demo}
               onSelect={onSelect}
               template={template}
               width={THUMB_WIDTH}
@@ -94,7 +91,6 @@ export function TemplateStrip({
 
       <TemplateDialog
         activeTemplateId={document.theme.templateId}
-        document={demo}
         onClose={() => setDialogOpen(false)}
         onSelect={onSelect}
         open={dialogOpen}

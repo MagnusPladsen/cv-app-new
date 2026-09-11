@@ -89,15 +89,15 @@ describe('EditorSplit', () => {
     expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(1)
   })
 
-  it('keeps the template thumbnails outside the preview container', () => {
+  it('mounts exactly one CV, inside the preview container', () => {
     const { container } = wrap(<EditorSplit {...splitProps(fixture())} />)
 
-    // The strip renders a .cv-doc per template. They must never be reachable
-    // from the preview container, or export would clone the wrong one.
-    const all = container.querySelectorAll('.cv-doc').length
-    const inPreview = container.querySelectorAll('[data-cv-preview] .cv-doc').length
-    expect(all).toBeGreaterThan(1)
-    expect(inPreview).toBe(1)
+    // Export clones the .cv-doc it finds. The template strip used to render
+    // one per template, and keeping those out of the preview container was
+    // the only thing stopping the wrong one being cloned; the strip shows
+    // stills now, so there is exactly one document on the page.
+    expect(container.querySelectorAll('.cv-doc')).toHaveLength(1)
+    expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(1)
   })
 
   it('keeps the page guides outside the node the print path clones', () => {

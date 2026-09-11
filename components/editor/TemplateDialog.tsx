@@ -5,19 +5,16 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useRef } from 'react'
 
 import { TEMPLATES } from '@/components/cv/templates'
-import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { TemplateThumb } from './TemplateThumb'
 
 const THUMB_WIDTH = 150
 
 export function TemplateDialog({
-  document,
   activeTemplateId,
   open,
   onSelect,
   onClose,
 }: {
-  document: CvDocumentData
   activeTemplateId: string
   open: boolean
   onSelect: (templateId: string) => void
@@ -82,7 +79,6 @@ export function TemplateDialog({
             <li className="flex flex-col items-center gap-2" key={template.id}>
               <TemplateThumb
                 active={template.id === activeTemplateId}
-                document={document}
                 onSelect={(id) => {
                   onSelect(id)
                   onClose()

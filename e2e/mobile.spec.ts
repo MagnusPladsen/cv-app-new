@@ -83,7 +83,7 @@ test('the editor fits, with the template strip reachable', async ({ page }) => {
   // Which templates it shows depends on gallery order and on keeping the
   // active one visible, so this asserts the affordance rather than any
   // particular template: alternatives on screen, and a way to the rest.
-  const strip = page.locator('button:has(.cv-doc)')
+  const strip = page.locator('button[data-template]')
   expect(await strip.count()).toBeGreaterThan(1)
   await expect(page.getByRole('button', { name: /maler til$/ })).toBeVisible()
 })

@@ -101,25 +101,38 @@ describe('TemplateStrip', () => {
 
   it('previews demo content, never the empty CV being edited', () => {
     // A new CV is blank, and a blank sheet shows nothing about a template
-    // except its colour.
+    // except its colour. The stills are captures of the demo CV, so this now
+    // means the strip renders no live document at all - which is also what
+    // keeps the export path from ever finding the wrong .cv-doc.
     const { container } = wrap(<TemplateStrip document={fixture()} onSelect={vi.fn()} />)
 
-    expect(container.textContent).toContain('Ingrid')
-    expect(container.querySelectorAll('.cv-doc').length).toBeGreaterThan(0)
+    expect(container.querySelectorAll('.cv-doc')).toHaveLength(0)
+    expect(container.querySelectorAll('img').length).toBeGreaterThan(0)
   })
 
-  it('renders each visible thumbnail in its own template', () => {
+  it('shows each visible thumbnail its own template’s still', () => {
     const { container } = wrap(<TemplateStrip document={fixture()} onSelect={vi.fn()} />)
     for (const template of TEMPLATES.slice(0, 4)) {
-      expect(container.querySelector(`.cv-doc--${template.id}`)).not.toBeNull()
+      const button = screen.getByRole('button', { name: template.name })
+      const src = decodeURIComponent(button.querySelector('img')?.getAttribute('src') ?? '')
+      expect(src, `${template.id} thumbnail`).toContain(`/templates/${template.id}.png`)
     }
+    expect(container.querySelectorAll('img').length).toBeGreaterThanOrEqual(4)
   })
 
-  it('follows the document paper size in its previews', () => {
-    const { container } = wrap(
+  it('stays A4-shaped on letter paper, like the +N tile always has', () => {
+    // The strip answers "which template", not "which paper" - the paper is
+    // visible in the preview beside it - and the stills are captured at A4.
+    const letter = wrap(
       <TemplateStrip document={{ ...fixture(), paper: 'letter' }} onSelect={vi.fn()} />,
     )
-    const root = container.querySelector('.cv-doc') as HTMLElement
-    expect(root.style.getPropertyValue('--cv-page-width')).toBe('215.9mm')
+    const a4 = wrap(<TemplateStrip document={fixture()} onSelect={vi.fn()} />)
+
+    const shape = (result: ReturnType<typeof wrap>) => {
+      const button = within(result.container).getAllByRole('button')[0]!
+      return `${button.style.width} x ${button.style.height}`
+    }
+
+    expect(shape(letter)).toBe(shape(a4))
   })
 })

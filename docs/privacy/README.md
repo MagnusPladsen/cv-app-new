@@ -9,6 +9,7 @@ it does:
 | `data-inventory.md` | `lib/schema/__tests__/data-inventory.test.ts` — every field in the CV schema must appear in the inventory table |
 | `processors.md` | `lib/privacy/__tests__/processors.test.ts` — every external host the app talks to must be listed |
 | `ropa.md` | `lib/privacy/__tests__/records.test.ts` — every processor in the code must appear, and every activity must name a legal basis |
+| `retention.md` | `lib/retention/__tests__/retention.test.ts` — the email must promise the same intervals the migration enforces, and the job must hold no privileged key |
 | `dpia-screening.md`, `legitimate-interest.md`, `breach-runbook.md`, `rights-requests.md` | the same test — a screening must reach a conclusion, an Art. 6(1)(f) claim must have a balancing test behind it, the runbook must carry the 72-hour deadline, and the procedure must cover every right |
 
 `before-charging-money.md` is the list to work through before CVApp takes
@@ -22,6 +23,7 @@ payment. `launch-checklist.md` is the state of the spec's blocking list.
 | Data has leaked, been lost, or been shown to the wrong person | `breach-runbook.md` — the 72-hour clock starts when you become aware |
 | Datatilsynet asks what you process | `ropa.md`, then `data-inventory.md` |
 | A feature is about to infer, score, share or match something | `dpia-screening.md` — its re-screen triggers are the point |
+| An account was deleted and someone asks why | `retention.md` — 24 months inactive, warned, 30 days |
 
 ## What these are not
 
@@ -54,11 +56,10 @@ lovdata.no.
   Frankfurt, which the Hobby plan honoured despite the dashboard's region
   picker being greyed out. No Chapter V transfer remains. Re-check after any
   plan change.
-- **No retention rule for inactive accounts.** The one genuine Art. 5(1)(e)
-  gap. A warn-then-delete job needs email sending, which CVApp has no
-  capability for, so it is acknowledged in `ropa.md` rather than promised in
-  the policy — a stated rule that nothing enforces is worse than a declared
-  gap.
-- **Two retention periods are stated as "the provider's schedule"** rather
-  than a number. Lawful under Art. 13(2)(a), which permits criteria, but weak.
-  `ropa.md` says where to look both up.
+- ~~**No retention rule for inactive accounts.**~~ Implemented 2026-09-14:
+  24 months, a warning, 30 days, deletion. See `retention.md` — it needs two
+  operator steps before it does anything.
+- ~~**Two retention periods stated as "the provider's schedule".**~~ Both are
+  numbers now: Vercel keeps runtime logs one hour on Hobby, and Supabase Free
+  takes no backups at all. Supabase Pro would introduce seven days of them,
+  and the policy has to change on the same day.

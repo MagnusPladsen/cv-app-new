@@ -10,10 +10,14 @@ import { sourceFiles } from './source-files'
  * because CVs never reach a server: they live in the browser, and sync goes
  * from the browser straight to Supabase in Frankfurt.
  *
- * Vercel functions execute in Washington DC. One Server Action, one route
- * handler that accepts a CV field, or one server-side PDF render would make
- * that sentence false, and nothing about the change would look like a privacy
- * decision at the time. These tests are what makes it look like one.
+ * One Server Action, one route handler that accepts a CV field, or one
+ * server-side PDF render would make that sentence false, and nothing about the
+ * change would look like a privacy decision at the time. These tests are what
+ * makes it look like one.
+ *
+ * The functions run in Frankfurt now, which lowers the stakes but does not
+ * remove them: the claim is that CV content never reaches a CVApp server at
+ * all, not that it reaches one in a convenient country.
  */
 
 const serverFiles = () =>

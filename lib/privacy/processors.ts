@@ -73,4 +73,24 @@ export const PROCESSORS: readonly Processor[] = [
       },
     },
   },
+  {
+    name: 'Resend',
+    purpose: {
+      no: 'Utsending av varselet før en ubrukt konto slettes',
+      en: 'Sending the warning before an unused account is deleted',
+    },
+    // Resend routes through AWS. The region is an account setting, and it has
+    // to be an EU one: the alternative is a Chapter V transfer of an email
+    // address, reintroducing exactly what moving the functions to Frankfurt
+    // removed. Confirm in the Resend dashboard before the first send.
+    country: { no: 'EU (Irland, eu-west-1)', en: 'EU (Ireland, eu-west-1)' },
+    hosts: ['resend.com'],
+    dpa: {
+      covered: true,
+      note: {
+        no: 'Ja — databehandleravtalen følger av vilkårene.',
+        en: 'Yes — the data processing addendum applies through the terms.',
+      },
+    },
+  },
 ] as const

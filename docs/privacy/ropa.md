@@ -58,15 +58,21 @@ document.**
 | Purpose | Letting a user sign in so their CVs follow them between devices |
 | Legal basis | Art. 6(1)(b). Sync is the service being asked for |
 | Data subjects | Registered users |
-| Categories of data | Email address, a bcrypt password hash, sign-up and sign-in timestamps, confirmation state |
-| Recipients | Supabase (GoTrue) |
+| Categories of data | Email address, a bcrypt password hash, sign-up and sign-in timestamps, confirmation state. Plus, for an account nearing deletion, a `retention_notices` row holding the user id and the date the warning went out |
+| Recipients | Supabase (GoTrue). Resend, for the single warning email sent before an unused account is deleted — the address only, never anything else |
 | Transfers outside the EEA | None. Same Frankfurt region |
-| Retention | Until account deletion. `supabase/tests/delete_own_account.sql` proves the row and everything referencing it goes |
+| Retention | Until account deletion, **or 24 months with no sign-in**, after which a warning is emailed and the account is deleted 30 days later unless the person signs in. Enforced by `supabase/migrations/20260914000003_retention.sql`, run daily by `/api/retention`. `supabase/tests/delete_own_account.sql` proves the row and everything referencing it goes |
 | Security | CVApp never sees a plaintext password — it goes straight to `signInWithPassword`. Minimum length enforced; rate limiting in `lib/security/rate-limit.ts` |
 
-**Known gap:** no retention rule for inactive accounts. Art. 5(1)(e) expects
-one. It needs warn-then-delete email, which CVApp cannot send yet, so it is
-acknowledged rather than promised. See `docs/privacy/launch-checklist.md`.
+**Closed 2026-09-14.** There is now a retention rule: 24 months of inactivity,
+an emailed warning, 30 days, deletion. Signing in at any point cancels it, and
+the warning row is dropped.
+
+The job runs on Vercel but holds no privileged database key. The three
+functions it calls are `security definer` and check a shared secret
+themselves, and the only one that returns rows returns a user id and an email
+address. That is deliberate: a service-role key would let the server read every
+CV, which is the thing the policy says never happens.
 
 ## Activity 3 — Serving the site
 

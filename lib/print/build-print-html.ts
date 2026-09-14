@@ -1,6 +1,5 @@
 import type { PaperId } from '@/lib/schema/cv'
-import { PAPER } from './paper'
-import { CV_STYLESHEETS } from './stylesheets'
+import { CV_STYLESHEETS, printStylesheet } from './stylesheets'
 
 const TRANSLITERATIONS: Record<string, string> = {
   æ: 'ae',
@@ -51,7 +50,9 @@ export function buildPrintHtml({
   lang,
   extraStylesheets = [],
 }: BuildPrintHtmlOptions): string {
-  const stylesheets = [...CV_STYLESHEETS, ...extraStylesheets]
+  // The page setup comes last, as a file: an inline <style> here was silently
+  // dropped in production, where the CSP is `style-src 'self'`.
+  const stylesheets = [...CV_STYLESHEETS, ...extraStylesheets, printStylesheet(paper)]
     .map((href) => `<link rel="stylesheet" href="${href}">`)
     .join('\n    ')
 
@@ -61,10 +62,6 @@ export function buildPrintHtml({
     <meta charset="utf-8">
     <title>${escapeHtml(title)}</title>
     ${stylesheets}
-    <style>
-      @page { size: ${PAPER[paper].cssSize}; margin: 0; }
-      html, body { margin: 0; padding: 0; background: #ffffff; }
-    </style>
   </head>
   <body>${bodyHtml}</body>
 </html>`

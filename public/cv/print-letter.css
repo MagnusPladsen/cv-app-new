@@ -1,0 +1,21 @@
+/* Page setup for the export, as a file rather than an inline <style>.
+
+   It used to be a <style> block inside the generated print document. In
+   production the CSP is `style-src 'self'` - no 'unsafe-inline' - so the
+   browser dropped the whole block: the PDF came out with the browser's default
+   page size and margins instead of Letter edge to edge, and nothing reported an
+   error anywhere a user would see.
+
+   Same-origin file, same mechanism as every other CV stylesheet. */
+
+@page {
+  size: Letter;
+  margin: 0;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+}

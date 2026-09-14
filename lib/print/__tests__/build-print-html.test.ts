@@ -39,14 +39,27 @@ describe('buildPrintHtml', () => {
     expect(buildPrintHtml({ ...base, lang: 'en' })).toContain('<html lang="en">')
   })
 
-  it('sets an A4 page with no margin', () => {
-    expect(buildPrintHtml(base)).toContain('@page { size: A4; margin: 0; }')
+  it('links the page setup for the paper, rather than inlining it', () => {
+    // This was a <style> block carrying @page. Production's CSP is
+    // `style-src 'self'`, so the browser dropped it and every exported PDF
+    // came out with the browser's default page size and margins - in
+    // production only, and with nothing a user could see going wrong.
+    expect(buildPrintHtml(base)).toContain('href="/cv/print-a4.css"')
+    expect(buildPrintHtml({ ...base, paper: 'letter' })).toContain('href="/cv/print-letter.css"')
   })
 
-  it('sets a Letter page for Letter documents', () => {
-    expect(buildPrintHtml({ ...base, paper: 'letter' })).toContain(
-      '@page { size: Letter; margin: 0; }',
-    )
+  it('contains no inline style or script at all', () => {
+    // The rule that keeps the above from coming back: anything inline here is
+    // subject to a CSP that only bites in production.
+    const html = buildPrintHtml({ ...base, extraStylesheets: ['/cv/templates/oslo.css'] })
+    expect(html).not.toMatch(/<style[\s>]/)
+    expect(html).not.toMatch(/<script[\s>]/)
+    expect(html).not.toMatch(/\sstyle="/)
+  })
+
+  it('puts the page setup last, so it wins on margins', () => {
+    const html = buildPrintHtml({ ...base, extraStylesheets: ['/cv/templates/oslo.css'] })
+    expect(html.indexOf('/cv/print-a4.css')).toBeGreaterThan(html.indexOf('/cv/templates/oslo.css'))
   })
 
   it('links the shared CV stylesheets in order', () => {

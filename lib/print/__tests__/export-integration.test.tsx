@@ -122,7 +122,7 @@ describe('CV export, end to end', () => {
     const html = await capturePrintHtml(populatedDocument())
     expect(html).toContain('--cv-accent')
     expect(html).toContain('--cv-page-width: 210mm')
-    expect(html).toContain('@page { size: A4; margin: 0; }')
+    expect(html).toContain('href="/cv/print-a4.css"')
   })
 
   it('links the CV stylesheets so the iframe can style the clone', async () => {
@@ -141,7 +141,7 @@ describe('CV export, end to end', () => {
   it('switches paper geometry for a Letter document', async () => {
     const html = await capturePrintHtml({ ...populatedDocument(), paper: 'letter' })
     expect(html).toContain('--cv-page-width: 215.9mm')
-    expect(html).toContain('@page { size: Letter; margin: 0; }')
+    expect(html).toContain('href="/cv/print-letter.css"')
   })
 
   it('renders an English CV with English headings', async () => {

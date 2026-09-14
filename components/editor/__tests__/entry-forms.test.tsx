@@ -36,7 +36,10 @@ describe('CertificationsForm', () => {
     )
     expect(screen.getByLabelText('Navn')).toHaveValue('AWS SAA')
     expect(screen.getByLabelText('Utsteder')).toHaveValue('Amazon')
-    expect(screen.getByLabelText('Dato')).toHaveValue('2023-05')
+    // The month control is a button, and its accessible name carries both the
+    // field label and the chosen month - a screen reader user has no other
+    // way to hear what is currently selected.
+    expect(screen.getByRole('button', { name: /Dato.*mai 2023/i })).toBeInTheDocument()
   })
 
   it('reports an edit for the right entry', async () => {
@@ -55,9 +58,25 @@ describe('CertificationsForm', () => {
     expect(h.onRemoveEntry).toHaveBeenCalledWith('s', 'c1')
   })
 
-  it('uses a month input so the date matches the CV formatter contract', () => {
+  it('still stores YYYY-MM, which every template formatter expects', async () => {
+    // The native <input type="month"> is gone - Firefox never implemented it
+    // and showed a bare text box - but the stored shape has to be unchanged,
+    // or every date on every CV renders wrong.
+    const props = handlers()
+    wrap(
+      <CertificationsForm sectionId="s" title="Sertifiseringer" entries={[entry]} {...props} />,
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: /Dato/i }))
+    await userEvent.click(screen.getByRole('button', { name: 'aug' }))
+
+    expect(props.onUpdateEntry).toHaveBeenCalledWith('s', 'c1', { date: '2023-08' })
+  })
+
+  it('opens on the year already chosen, not on this one', async () => {
     wrap(<CertificationsForm sectionId="s" title="Sertifiseringer" entries={[entry]} {...handlers()} />)
-    expect(screen.getByLabelText('Dato')).toHaveAttribute('type', 'month')
+    await userEvent.click(screen.getByRole('button', { name: /Dato/i }))
+    expect(screen.getByText('2023')).toBeInTheDocument()
   })
 })
 

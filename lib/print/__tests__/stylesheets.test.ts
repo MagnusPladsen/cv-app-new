@@ -136,3 +136,23 @@ describe('base stylesheet robustness', () => {
     expect(readPublic('/cv/base.css')).toContain('text-align: left')
   })
 })
+
+describe('the print page-setup stylesheet', () => {
+  it('exists on disk for every paper size', async () => {
+    // buildPrintHtml links it by name. A missing file is a 404 inside the
+    // print iframe, which shows up as a PDF with the wrong page size and no
+    // error anywhere.
+    const { readFileSync } = await import('node:fs')
+    for (const paper of ['a4', 'letter'] as const) {
+      const css = readFileSync(`public/cv/print-${paper}.css`, 'utf8')
+      expect(css, `${paper} has no @page rule`).toMatch(/@page\s*\{/)
+      expect(css).toMatch(/margin:\s*0/)
+    }
+  })
+
+  it('names the right paper size in each', async () => {
+    const { readFileSync } = await import('node:fs')
+    expect(readFileSync('public/cv/print-a4.css', 'utf8')).toMatch(/size:\s*A4/)
+    expect(readFileSync('public/cv/print-letter.css', 'utf8')).toMatch(/size:\s*Letter/)
+  })
+})

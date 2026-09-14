@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl'
 
+import { MonthField } from '@/components/editor/MonthField'
 import { TextField } from '@/components/editor/fields'
 import type { CertEntry } from '@/lib/schema/cv'
 import { EntryListShell } from './EntryListShell'
@@ -40,10 +41,9 @@ export function CertificationsForm({
               onChange={(issuer) => update({ issuer })}
               value={entry.issuer}
             />
-            <TextField
+            <MonthField
               label={t('date')}
               onChange={(date) => update({ date })}
-              type="month"
               value={entry.date}
             />
             <TextField

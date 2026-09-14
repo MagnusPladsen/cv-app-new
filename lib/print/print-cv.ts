@@ -61,13 +61,20 @@ export async function printCvNode(
   const iframe = document.createElement('iframe')
   iframe.setAttribute('aria-hidden', 'true')
   iframe.setAttribute('tabindex', '-1')
+
+  // Off-screen at full page size, rather than zero-sized and transparent.
+  //
+  // A 0x0 frame with opacity:0 lays out correctly - the document inside is a
+  // full A4 either way - but a browser is entitled to skip painting a frame
+  // that renders nothing on screen, and printing it then yields blank paper.
+  // Chrome prints it anyway; not every engine does. Moving it off-screen at
+  // its real size costs nothing and removes the question.
   iframe.style.position = 'fixed'
-  iframe.style.right = '0'
-  iframe.style.bottom = '0'
-  iframe.style.width = '0px'
-  iframe.style.height = '0px'
+  iframe.style.left = '-10000px'
+  iframe.style.top = '0'
+  iframe.style.width = '210mm'
+  iframe.style.height = '297mm'
   iframe.style.border = '0'
-  iframe.style.opacity = '0'
 
   iframe.srcdoc = buildPrintHtml({
     bodyHtml: node.outerHTML,

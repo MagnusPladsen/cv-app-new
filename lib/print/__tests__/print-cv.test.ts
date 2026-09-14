@@ -28,7 +28,7 @@ describe('printCvNode', () => {
     await printCvNode({ node: makeNode(), title: 'Ola_CV', paper: 'a4', lang: 'no' }, deps)
 
     expect(capturedSrcdoc).toContain('class="cv-doc"')
-    expect(capturedSrcdoc).toContain('@page { size: A4; margin: 0; }')
+    expect(capturedSrcdoc).toContain('href="/cv/print-a4.css"')
     expect(capturedSrcdoc).toContain('<title>Ola_CV</title>')
   })
 
@@ -65,7 +65,7 @@ describe('printCvNode', () => {
     expect(document.querySelectorAll('iframe')).toHaveLength(0)
   })
 
-  it('hides the iframe so it never flashes on screen', async () => {
+  it('keeps the iframe off screen at full page size, not zero-sized', async () => {
     const deps = stubDeps()
     let captured: HTMLIFrameElement | undefined
     deps.waitForLoad = vi.fn(async (iframe: HTMLIFrameElement) => {
@@ -74,8 +74,14 @@ describe('printCvNode', () => {
 
     await printCvNode({ node: makeNode(), title: 'x', paper: 'a4', lang: 'no' }, deps)
 
+    // A 0x0, opacity:0 frame lays out fine but a browser may skip painting
+    // it, and then printing it yields blank paper. Off-screen at real size
+    // is visible to the renderer and invisible to the reader.
     expect(captured?.style.position).toBe('fixed')
-    expect(captured?.style.width).toBe('0px')
+    expect(captured?.style.width).toBe('210mm')
+    expect(captured?.style.height).toBe('297mm')
+    expect(captured?.style.left).toBe('-10000px')
+    expect(captured?.style.opacity).toBe('')
     expect(captured?.getAttribute('aria-hidden')).toBe('true')
   })
 })

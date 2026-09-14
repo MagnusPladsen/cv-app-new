@@ -109,7 +109,7 @@ export function LeveledItemsForm({
             </div>
 
             <button
-              className="pb-2 rounded text-sm font-medium text-muted-foreground underline-offset-2 transition hover:text-brand-strong hover:underline focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+              className="inline-flex items-center gap-1.5 rounded text-sm font-medium text-muted-foreground underline-offset-2 transition hover:text-brand-strong hover:underline focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
               onClick={() => onRemoveItem(sectionId, item.id)}
               type="button"
             >
@@ -122,7 +122,7 @@ export function LeveledItemsForm({
 
       <div>
         <button
-          className="rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+          className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
           onClick={() => onAddItem(sectionId)}
           type="button"
         >

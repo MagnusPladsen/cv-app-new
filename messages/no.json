@@ -51,7 +51,11 @@
     "exportGuest": "Fortsett som gjest",
     "exportGuestWarning": "Som gjest laster du ned CV-en som vanlig, men den lagres bare i denne nettleseren. Den følger deg ikke til andre enheter, og forsvinner hvis du tømmer nettleserdata.",
     "previewEmpty": "Forhåndsvisningen fylles ut mens du skriver.",
-    "noSections": "Ingen seksjoner er slått på. Huk av en seksjon over for å fylle den ut."
+    "noSections": "Ingen seksjoner er slått på. Huk av en seksjon over for å fylle den ut.",
+    "monthPlaceholder": "Velg måned",
+    "previousYear": "Forrige år",
+    "nextYear": "Neste år",
+    "clearMonth": "Tøm feltet"
   },
   "personalia": {
     "title": "Personalia",

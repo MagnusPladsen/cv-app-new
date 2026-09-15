@@ -56,7 +56,8 @@ export async function printCvNode(
   const waitForLoad = deps.waitForLoad ?? defaultWaitForLoad
   const waitForFonts = deps.waitForFonts ?? defaultWaitForFonts
   const invokePrint = deps.invokePrint ?? defaultInvokePrint
-  const cleanupDelayMs = deps.cleanupDelayMs ?? 1000
+  // Long, because it is only a fallback now. See the comment on `remove`.
+  const cleanupDelayMs = deps.cleanupDelayMs ?? 60_000
 
   const iframe = document.createElement('iframe')
   iframe.setAttribute('aria-hidden', 'true')
@@ -86,8 +87,30 @@ export async function printCvNode(
 
   document.body.appendChild(iframe)
 
+  /**
+   * Removes the iframe when printing is actually finished.
+   *
+   * This used to be a flat one-second timer, which is the difference between
+   * a working export and a blank page depending on the browser.
+   * `window.print()` blocks until the dialog is dismissed in Chrome, so the
+   * timer only started once the user was done. Firefox returns immediately and
+   * opens its print preview asynchronously - so one second later the document
+   * being previewed was deleted out from under it, and the PDF came out empty.
+   *
+   * `afterprint` is the event that actually means "done". The timer stays as a
+   * fallback for engines that never fire it for a subframe, but at a length
+   * that cannot beat a person reading a print dialog.
+   */
   const remove = () => {
-    setTimeout(() => iframe.remove(), cleanupDelayMs)
+    let removed = false
+    const drop = () => {
+      if (removed) return
+      removed = true
+      iframe.remove()
+    }
+
+    iframe.contentWindow?.addEventListener('afterprint', drop, { once: true })
+    setTimeout(drop, cleanupDelayMs)
   }
 
   try {

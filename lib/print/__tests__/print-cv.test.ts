@@ -51,6 +51,34 @@ describe('printCvNode', () => {
     expect(document.querySelectorAll('iframe')).toHaveLength(0)
   })
 
+  it('waits for afterprint rather than a timer, so the document outlives the dialog', async () => {
+    // The blank-PDF bug: print() blocks in Chrome and returns immediately in
+    // Firefox, so a flat timer deleted the document while the print preview
+    // was still showing it.
+    const deps = stubDeps()
+    deps.cleanupDelayMs = 60_000
+
+    let listened = ''
+    deps.waitForLoad = vi.fn(async (iframe: HTMLIFrameElement) => {
+      const add = iframe.contentWindow?.addEventListener.bind(iframe.contentWindow)
+      if (iframe.contentWindow && add) {
+        iframe.contentWindow.addEventListener = (type: string, ...rest: unknown[]) => {
+          listened = type
+          // @ts-expect-error - forwarding the original signature
+          return add(type, ...rest)
+        }
+      }
+    })
+
+    await printCvNode({ node: makeNode(), title: 'x', paper: 'a4', lang: 'no' }, deps)
+
+    expect(listened).toBe('afterprint')
+    // Still there: the fallback timer must not be short enough to race a
+    // person reading a print dialog.
+    expect(document.querySelectorAll('iframe').length).toBe(1)
+    document.querySelectorAll('iframe').forEach((frame) => frame.remove())
+  })
+
   it('removes the iframe even when printing throws', async () => {
     const deps = stubDeps()
     deps.invokePrint = vi.fn(() => {

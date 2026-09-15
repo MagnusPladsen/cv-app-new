@@ -252,28 +252,18 @@ test('every switched-on section keeps its form, in CV order', async ({ page }) =
 
 test('Last ned works on a phone without opening the preview first', async ({ page }) => {
   // The reported bug: the dialog appeared, and then nothing happened. The
-  // export looks for a .cv-doc, the sheet had never been opened, so there was
-  // none - and it returned silently, without even building a document.
+  // export copies the .cv-doc it finds, the sheet had never been opened, so
+  // there was none - and it returned silently.
   await page.goto('/no/templates')
   await templateCard(page, 'oslo').click()
   await page.waitForURL(/\/no\/cv\/.+/)
   await page.getByLabel(/Fornavn/).first().fill('Testperson')
 
-  // Record every print document the export builds, and stop the real dialog.
   await page.evaluate(() => {
-    ;(window as unknown as { __printDocs: string[] }).__printDocs = []
-    new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        for (const node of mutation.addedNodes) {
-          if (node instanceof HTMLIFrameElement && node.srcdoc) {
-            ;(window as unknown as { __printDocs: string[] }).__printDocs.push(node.srcdoc)
-            node.addEventListener('load', () => {
-              if (node.contentWindow) node.contentWindow.print = () => {}
-            })
-          }
-        }
-      }
-    }).observe(document.body, { childList: true, subtree: true })
+    ;(window as unknown as { __printed: boolean }).__printed = false
+    window.print = () => {
+      ;(window as unknown as { __printed: boolean }).__printed = true
+    }
   })
 
   await page.getByRole('button', { name: /Last ned/i }).first().click()
@@ -282,13 +272,18 @@ test('Last ned works on a phone without opening the preview first', async ({ pag
   const proceed = page.getByRole('button', { name: /Fortsett|Skjønner/i })
   if (await proceed.count()) await proceed.first().click()
 
-  const docs = await page
-    .waitForFunction(() => {
-      const found = (window as unknown as { __printDocs: string[] }).__printDocs
-      return found.length > 0 ? found : null
-    }, undefined, { timeout: 10_000 })
-    .then((handle) => handle.jsonValue() as Promise<string[]>)
+  await page.waitForFunction(
+    () => (window as unknown as { __printed: boolean }).__printed,
+    undefined,
+    { timeout: 10_000 },
+  )
 
-  expect(docs[0]).toContain('cv-doc')
-  expect(docs[0]).toContain('Testperson')
+  const printed = await page.evaluate(
+    () => document.querySelector('[data-print-root] .cv-doc')?.textContent ?? '',
+  )
+  expect(printed).toContain('Testperson')
+
+  // And no failure message. Matched by its text, not by role: Next renders a
+  // route announcer with role="alert" on every page.
+  await expect(page.getByText(/Nedlastingen startet ikke/)).toHaveCount(0)
 })

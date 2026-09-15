@@ -1,21 +1,23 @@
-/* Page setup for the export, as a file rather than an inline <style>.
+/* Page setup for the export.
 
-   It used to be a <style> block inside the generated print document. In
-   production the CSP is `style-src 'self'` - no 'unsafe-inline' - so the
-   browser dropped the whole block: the PDF came out with the browser's default
-   page size and margins instead of Letter edge to edge, and nothing reported an
-   error anywhere a user would see.
+   A file rather than an inline <style>, because production's CSP is
+   `style-src 'self'` and dropped the inline block - the PDF then came out
+   with the browser's default page size and margins, in production only.
 
-   Same-origin file, same mechanism as every other CV stylesheet. */
+   Linked into the live document for the duration of a print and removed
+   afterwards, so everything but the @page rule is scoped to print media: these
+   rules would otherwise restyle the app while the dialog is open. */
 
 @page {
   size: Letter;
   margin: 0;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  background: #ffffff;
+@media print {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+  }
 }

@@ -1,4 +1,4 @@
-import { buildPrintTitle } from '@/lib/print/build-print-html'
+import { buildPrintTitle } from '@/lib/print/print-title'
 import type { CvDocument } from '@/lib/schema/cv'
 import { SchemaError, safeMigrateDocument } from '@/lib/schema/migrations'
 

@@ -2,9 +2,8 @@ import { render } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 
 import { CvDocument } from '@/components/cv/CvDocument'
-import { buildPrintTitle } from '@/lib/print/build-print-html'
+import { buildPrintTitle } from '@/lib/print/print-title'
 import { printCvNode } from '@/lib/print/print-cv'
-import { templateStylesheet } from '@/lib/print/stylesheets'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { createEmptyDocument } from '@/lib/schema/defaults'
 
@@ -64,29 +63,46 @@ function populatedDocument(): CvDocumentData {
   return doc
 }
 
-/** Captures the HTML the print pipeline would hand the browser. */
+/**
+ * Captures what the print pipeline actually puts on paper: the copy it places
+ * in [data-print-root], read at the moment print() is called.
+ */
 async function capturePrintHtml(doc: CvDocumentData): Promise<string> {
   const { container } = render(<CvDocument document={doc} />)
   const node = container.querySelector<HTMLElement>('.cv-doc')
   expect(node).not.toBeNull()
 
   let captured = ''
+  let titleAtPrint = ''
   await printCvNode(
     {
       node: node!,
       title: buildPrintTitle(doc.personalia.firstName, doc.personalia.lastName),
       paper: doc.paper,
       lang: doc.language,
-      extraStylesheets: [templateStylesheet(doc.theme.templateId)],
     },
     {
-      waitForLoad: async (iframe) => void (captured = iframe.srcdoc),
-      waitForFonts: async (iframe) => void iframe,
-      invokePrint: (iframe) => void iframe,
+      waitForFonts: async () => {},
+      invokePrint: () => {
+        // The last one: cleanup runs on a later tick, so an earlier test's
+        // root can still be in the document and querySelector finds the
+        // oldest match.
+        const roots = document.querySelectorAll('[data-print-root]')
+        captured = roots[roots.length - 1]?.innerHTML ?? ''
+        // The title is the suggested filename, so it has to be in place while
+        // the dialog is open - not restored before it.
+        titleAtPrint = document.title
+        const link = document.querySelector('link[href^="/cv/print-"]')
+        captured += link?.outerHTML ?? ''
+      },
       cleanupDelayMs: 0,
     },
   )
 
+  expect(titleAtPrint).toContain('CV')
+  // Printing is finished as far as this test is concerned, so let the page
+  // clean itself up rather than leaving a root behind for the next one.
+  window.dispatchEvent(new Event('afterprint'))
   return captured
 }
 
@@ -125,17 +141,15 @@ describe('CV export, end to end', () => {
     expect(html).toContain('href="/cv/print-a4.css"')
   })
 
-  it('links the CV stylesheets so the iframe can style the clone', async () => {
-    const html = await capturePrintHtml(populatedDocument())
-    expect(html).toContain('href="/cv/fonts.css"')
-    expect(html).toContain('href="/cv/base.css"')
-  })
-
-  it("links the active template's stylesheet after the base sheet", async () => {
-    const html = await capturePrintHtml(populatedDocument())
-    const templateHref = templateStylesheet('oslo')
-    expect(html).toContain(`href="${templateHref}"`)
-    expect(html.indexOf(templateHref)).toBeGreaterThan(html.indexOf('/cv/base.css'))
+  it('relies on stylesheets the app already has, for every template', async () => {
+    // The print path no longer links anything but the page setup: it prints
+    // this document, which loads the CV sheets and every template's sheet in
+    // the layout. If that ever stops being true, a PDF loses its template's
+    // rules while the preview beside it still looks right.
+    const { readFileSync } = await import('node:fs')
+    const layout = readFileSync('app/[locale]/layout.tsx', 'utf8')
+    expect(layout).toContain('CV_STYLESHEETS')
+    expect(layout).toContain('ALL_TEMPLATE_STYLESHEETS')
   })
 
   it('switches paper geometry for a Letter document', async () => {
@@ -148,6 +162,8 @@ describe('CV export, end to end', () => {
     const html = await capturePrintHtml({ ...populatedDocument(), language: 'en' })
     expect(html).toContain('Work Experience')
     expect(html).toContain('Jan 2022 – Present')
-    expect(html).toContain('<html lang="en">')
+    // The language rides on the copy now: there is no document of its own to
+    // put it on, and hyphenation follows the element.
+    expect(html).toContain('lang="en"')
   })
 })

@@ -191,7 +191,7 @@ describe('when the export cannot run', () => {
     // A button that reacts to nothing reads as a broken app.
     setupFailing({ getNode: () => null })
     await userEvent.click(exportButton())
-    expect(await screen.findByRole('alert')).toBeInTheDocument()
+    expect(await screen.findByText(/Nedlastingen startet ikke/)).toBeInTheDocument()
   })
 
   it('says so when printing throws', async () => {
@@ -207,7 +207,7 @@ describe('when the export cannot run', () => {
     })
 
     await userEvent.click(exportButton())
-    expect(await screen.findByRole('alert')).toBeInTheDocument()
+    expect(await screen.findByText(/Nedlastingen startet ikke/)).toBeInTheDocument()
   })
 
   it('stays quiet when the export works', async () => {
@@ -216,6 +216,6 @@ describe('when the export cannot run', () => {
     setupFailing({ getNode: () => node, print: async () => {} })
 
     await userEvent.click(exportButton())
-    expect(screen.queryByRole('alert')).toBeNull()
+    expect(screen.queryByText(/Nedlastingen startet ikke/)).toBeNull()
   })
 })

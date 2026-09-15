@@ -6,9 +6,8 @@ import { useState } from 'react'
 
 import { useSessionUser } from '@/components/auth/SessionProvider'
 import { DESKTOP_QUERY, useMediaQuery } from '@/lib/hooks/use-media-query'
-import { buildPrintTitle } from '@/lib/print/build-print-html'
+import { buildPrintTitle } from '@/lib/print/print-title'
 import { printCvNode } from '@/lib/print/print-cv'
-import { templateStylesheet } from '@/lib/print/stylesheets'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { readFlag, writeFlag, type FlagStorage } from '@/lib/storage/flag'
 import { isSupabaseConfigured } from '@/lib/supabase/env'
@@ -58,9 +57,6 @@ export function ExportButton({
         title: buildPrintTitle(document.personalia.firstName, document.personalia.lastName),
         paper: document.paper,
         lang: document.language,
-        // Without this the exported PDF loses every template-specific rule,
-        // while the on-screen preview still looks correct.
-        extraStylesheets: [templateStylesheet(document.theme.templateId)],
       })
     } catch {
       // The print path can fail for reasons the page cannot see - a blocked

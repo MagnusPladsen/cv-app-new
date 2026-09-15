@@ -177,3 +177,35 @@
     cursor: pointer;
   }
 }
+
+/* Printing.
+
+   The export puts a copy of the CV in [data-print-root] and calls print() on
+   this document. It used to print a hidden iframe instead - isolated from the
+   app's CSS, but Firefox would not print a frame that renders nowhere on
+   screen, and its preview came up empty.
+
+   So: hide every other child of <body>, including anything Next has portalled
+   there, and let the copy through. `display: none` rather than clipping or
+   positioning, because a sticky header and a fixed bottom bar reposition
+   unpredictably across engines when the page becomes a sheet of paper. */
+[data-print-root] {
+  display: none;
+}
+
+@media print {
+  body > *:not([data-print-root]) {
+    display: none !important;
+  }
+
+  [data-print-root] {
+    display: block;
+  }
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+}

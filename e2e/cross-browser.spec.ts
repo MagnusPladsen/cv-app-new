@@ -176,88 +176,62 @@ test('the background is the wash and nothing else', async ({ page }) => {
   expect(new Set(layers.attachment), 'every layer must be fixed').toEqual(new Set(['fixed']))
 })
 
-test('the export builds a document every engine can print', async ({ page }) => {
-  // The export path only ever had a Chromium test, and the two things that
-  // break it are engine-specific: the print stylesheet being dropped, and the
-  // document not rendering under print media. Both are invisible on screen.
-  await page.goto('/no/preview')
-  await page.evaluate(() => document.fonts.ready)
-  await page.emulateMedia({ media: 'print' })
+test('the export puts the CV, and only the CV, on the paper', async ({ page }) => {
+  // The export used to print a hidden iframe, which Firefox refused to do:
+  // print() threw and the preview came up empty. It now prints this document
+  // with everything but the CV hidden, and this runs in all three engines
+  // because that refusal was invisible in Chromium.
+  await page.goto('/no/templates')
+  await page.locator('button[data-template="fjord"]').click()
+  await page.waitForURL(/\/no\/cv\/.+/)
+  await page.getByLabel(/Fornavn/).first().fill('Testperson')
+  await page.getByRole('button', { name: /Legg til stilling/ }).first().click()
+  await page.getByLabel(/Stilling|Rolle/).first().fill('Utvikler')
 
-  const result = await page.evaluate(async () => {
-    const source = document.querySelector('.cv-doc--fjord')!
-    const html = `<!doctype html><html lang="no"><head><meta charset="utf-8"><title>T</title>
-      <link rel="stylesheet" href="/cv/fonts.css">
-      <link rel="stylesheet" href="/cv/base.css">
-      <link rel="stylesheet" href="/cv/templates/fjord.css">
-      <link rel="stylesheet" href="/cv/print-a4.css">
-      </head><body>${source.outerHTML}</body></html>`
-
-    return new Promise<{
-      width: number
-      height: number
-      display: string
-      visibility: string
-      bodyMargin: string
-      text: number
-      sheets: number
-      pageRule: string
-    }>((resolve) => {
-      const frame = document.createElement('iframe')
-      Object.assign(frame.style, {
-        position: 'fixed',
-        left: '-10000px',
-        top: '0',
-        width: '210mm',
-        height: '297mm',
-        border: '0',
-      })
-      frame.srcdoc = html
-      frame.addEventListener('load', () => {
-        const doc = frame.contentDocument!
-        const cv = doc.querySelector('.cv-doc') as HTMLElement
-        const styles = getComputedStyle(cv)
-        const rect = cv.getBoundingClientRect()
-
-        let pageRule = 'missing'
-        for (const sheet of doc.styleSheets) {
-          try {
-            for (const rule of sheet.cssRules) {
-              if (/@page/.test(rule.cssText ?? '')) pageRule = rule.cssText
-            }
-          } catch {
-            pageRule = 'unreadable'
-          }
-        }
-
-        resolve({
-          width: Math.round(rect.width),
-          height: Math.round(rect.height),
-          display: styles.display,
-          visibility: styles.visibility,
-          bodyMargin: getComputedStyle(doc.body).margin,
-          text: (cv.textContent ?? '').trim().length,
-          sheets: doc.styleSheets.length,
-          pageRule,
-        })
-      })
-      document.body.appendChild(frame)
-    })
+  // Hold the dialog open, so the page can be inspected mid-print.
+  await page.evaluate(() => {
+    ;(window as unknown as { __printed: boolean }).__printed = false
+    window.print = () => {
+      ;(window as unknown as { __printed: boolean }).__printed = true
+    }
   })
 
-  // Every stylesheet loaded. Three is the shared pair plus the template; the
-  // fourth is the page setup, which was silently dropped once already when it
-  // was an inline <style> under a production CSP.
-  expect(result.sheets, 'a print stylesheet did not load').toBe(4)
-  expect(result.pageRule, '@page did not survive parsing').toContain('margin')
+  await page.getByRole('button', { name: /Last ned/i }).first().click()
+  const guest = page.getByRole('button', { name: 'Fortsett som gjest' })
+  if (await guest.count()) await guest.click()
 
-  // An A4 page at the app's 96dpi geometry, with no page margin of its own.
-  expect(result.width).toBe(794)
-  expect(result.height).toBeGreaterThan(500)
-  expect(result.bodyMargin).toBe('0px')
+  await page.waitForFunction(() => (window as unknown as { __printed: boolean }).__printed, undefined, {
+    timeout: 10_000,
+  })
 
-  // Actually printable: on the page, and carrying the CV.
-  expect(result.display).not.toBe('none')
-  expect(result.visibility).toBe('visible')
-  expect(result.text).toBeGreaterThan(500)
+  await page.emulateMedia({ media: 'print' })
+
+  const sheet = await page.evaluate(() => {
+    const root = document.querySelector('[data-print-root]')
+    const cv = root?.querySelector('.cv-doc') as HTMLElement | null
+    const rect = cv?.getBoundingClientRect()
+    return {
+      width: rect ? Math.round(rect.width) : 0,
+      display: cv ? getComputedStyle(cv).display : 'missing',
+      text: (cv?.textContent ?? '').trim(),
+      title: document.title,
+      pageLink: document.querySelector('link[href^="/cv/print-"]')?.getAttribute('href') ?? '',
+      // Anything else still displayed would be printed alongside the CV.
+      othersVisible: [...document.body.children]
+        .filter((element) => !element.hasAttribute('data-print-root'))
+        .filter((element) => getComputedStyle(element).display !== 'none').length,
+    }
+  })
+
+  expect(sheet.display, 'the CV is not on the page at print time').not.toBe('missing')
+  expect(sheet.display).not.toBe('none')
+  // A4 at the app's 96dpi geometry.
+  expect(sheet.width).toBe(794)
+  expect(sheet.text).toContain('Utvikler')
+  expect(sheet.pageLink).toBe('/cv/print-a4.css')
+  // The document title is the filename the dialog offers.
+  expect(sheet.title).toContain('Testperson')
+  expect(sheet.othersVisible, 'the app would print alongside the CV').toBe(0)
+
+  await page.emulateMedia({ media: 'screen' })
 })

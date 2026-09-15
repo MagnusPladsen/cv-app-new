@@ -55,7 +55,8 @@
     "monthPlaceholder": "Velg måned",
     "previousYear": "Forrige år",
     "nextYear": "Neste år",
-    "clearMonth": "Tøm feltet"
+    "clearMonth": "Tøm feltet",
+    "exportFailed": "Nedlastingen startet ikke. Prøv igjen, eller bruk Skriv ut i nettleseren og velg «Lagre som PDF»."
   },
   "personalia": {
     "title": "Personalia",

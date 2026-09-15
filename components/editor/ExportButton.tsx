@@ -1,6 +1,6 @@
 'use client'
 
-import { Download } from 'lucide-react'
+import { AlertTriangle, Download } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
@@ -39,12 +39,19 @@ export function ExportButton({
   const [hintOpen, setHintOpen] = useState(false)
   const [signInOpen, setSignInOpen] = useState(false)
   const [feedbackOpen, setFeedbackOpen] = useState(false)
+  const [failed, setFailed] = useState(false)
 
   async function runExport() {
     const node = getNode()
-    if (!node) return
+    // Not silently: doing nothing at all is how this looked on a phone for
+    // weeks, and a button that reacts to nothing reads as a broken app.
+    if (!node) {
+      setFailed(true)
+      return
+    }
 
     setBusy(true)
+    setFailed(false)
     try {
       await print({
         node,
@@ -55,6 +62,12 @@ export function ExportButton({
         // while the on-screen preview still looks correct.
         extraStylesheets: [templateStylesheet(document.theme.templateId)],
       })
+    } catch {
+      // The print path can fail for reasons the page cannot see - a blocked
+      // dialog, a browser that refuses to print a frame. Say so rather than
+      // leaving someone clicking a button that appears dead.
+      setFailed(true)
+      return
     } finally {
       setBusy(false)
     }
@@ -114,6 +127,16 @@ export function ExportButton({
         <Download aria-hidden="true" className="size-4" />
         {t('export')}
       </button>
+
+      {failed ? (
+        <p
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-destructive"
+          role="alert"
+        >
+          <AlertTriangle aria-hidden="true" className="size-3.5 shrink-0" />
+          {t('exportFailed')}
+        </p>
+      ) : null}
 
       <ExportSignInPrompt
         next={typeof window === 'undefined' ? '/' : window.location.pathname}

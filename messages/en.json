@@ -55,7 +55,8 @@
     "monthPlaceholder": "Pick a month",
     "previousYear": "Previous year",
     "nextYear": "Next year",
-    "clearMonth": "Clear"
+    "clearMonth": "Clear",
+    "exportFailed": "The download did not start. Try again, or use your browser’s Print and choose “Save as PDF”."
   },
   "personalia": {
     "title": "Personal details",

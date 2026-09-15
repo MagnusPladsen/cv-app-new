@@ -156,3 +156,66 @@ describe('guest mode at export', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument()
   })
 })
+
+describe('when the export cannot run', () => {
+  /** Desktop, signed out but past the guest prompt, with a print that is asked for. */
+  function setupFailing(options: {
+    getNode: () => HTMLElement | null
+    print?: (options: PrintCvNodeOptions) => Promise<void>
+  }) {
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: true,
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    })) as unknown as typeof window.matchMedia
+
+    const storage = memory({
+      [BETA_NOTICE_KEY]: '1',
+      [EXPORT_HINT_KEY]: '1',
+      [GUEST_EXPORT_KEY]: '1',
+    })
+
+    wrap(
+      <ExportButton
+        document={fixture()}
+        getNode={options.getNode}
+        print={options.print ?? (async () => {})}
+        storage={storage}
+      />,
+    )
+  }
+
+  it('says so when there is no CV to print, rather than doing nothing', async () => {
+    // The reported mobile behaviour: the dialog appeared, and then silence.
+    // A button that reacts to nothing reads as a broken app.
+    setupFailing({ getNode: () => null })
+    await userEvent.click(exportButton())
+    expect(await screen.findByRole('alert')).toBeInTheDocument()
+  })
+
+  it('says so when printing throws', async () => {
+    // A blocked dialog, or an engine that refuses to print a frame. Neither
+    // is visible to the page, and both used to be swallowed.
+    const node = window.document.createElement('div')
+    node.className = 'cv-doc'
+    setupFailing({
+      getNode: () => node,
+      print: async () => {
+        throw new Error('refused')
+      },
+    })
+
+    await userEvent.click(exportButton())
+    expect(await screen.findByRole('alert')).toBeInTheDocument()
+  })
+
+  it('stays quiet when the export works', async () => {
+    const node = window.document.createElement('div')
+    node.className = 'cv-doc'
+    setupFailing({ getNode: () => node, print: async () => {} })
+
+    await userEvent.click(exportButton())
+    expect(screen.queryByRole('alert')).toBeNull()
+  })
+})

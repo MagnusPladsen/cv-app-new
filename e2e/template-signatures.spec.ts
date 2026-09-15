@@ -247,3 +247,23 @@ test('Ramme boxes its header and marks each heading with a square', async ({ pag
   // A square, not a dot: that is the difference from Tidslinje.
   expect(marker.radius).toBe('0px')
 })
+
+test('register keeps its headings inside the gutter', async ({ page }) => {
+  // A grid item overflows its column without a word of complaint: at 34mm the
+  // fifteen letters of ARBEIDSERFARING ran over the entry beside it, and the
+  // thumbnail read "ARBEIDSERFARINGSenior frontendutvikler".
+  //
+  // Measured as content against box, not as one rectangle against another:
+  // with `text-align: right` the element keeps its width while the glyphs
+  // spill, so the rects never overlap even when the words plainly do.
+  await page.goto('/no/preview')
+  await page.evaluate(() => document.fonts.ready)
+
+  const overflowing = await page.evaluate(() =>
+    [...document.querySelectorAll('.cv-doc--register .cv-section__title')]
+      .filter((title) => title.scrollWidth > title.clientWidth + 1)
+      .map((title) => title.textContent ?? ''),
+  )
+
+  expect(overflowing, `headings wider than the gutter: ${overflowing.join(', ')}`).toEqual([])
+})

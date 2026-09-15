@@ -1,0 +1,64 @@
+/* Register — headings in a left gutter, content in one measure.
+
+   The gutter is a grid column rather than a float, so a heading that wraps
+   pushes nothing sideways and the two columns keep their baselines. */
+
+.cv-doc--register .cv-header {
+  padding-bottom: calc(5mm * var(--cv-scale));
+  border-bottom: 0.4mm solid var(--cv-ink);
+  margin-bottom: calc(8mm * var(--cv-scale));
+}
+
+.cv-doc--register .cv-header__name {
+  font-size: calc(24pt * var(--cv-scale) * var(--cv-name-scale, 1));
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.cv-doc--register .cv-header__title {
+  color: var(--cv-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: calc(10pt * var(--cv-scale));
+}
+
+.cv-doc--register .cv-section {
+  display: grid;
+  /* 42mm, not 34: "ARBEIDSERFARING" and "SERTIFISERINGER" are fifteen
+     letters, and at the narrower width they ran straight out of the gutter and
+     over the entry beside them. A grid item overflows its column silently. */
+  grid-template-columns: calc(42mm * var(--cv-scale)) 1fr;
+  gap: calc(6mm * var(--cv-scale));
+  margin-bottom: calc(8mm * var(--cv-scale));
+}
+
+/* In the gutter the rule and the colour are what a heading does not need: its
+   position already says what it is. */
+.cv-doc--register .cv-section__title {
+  color: var(--cv-ink);
+  border-bottom: 0;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  font-size: calc(9pt * var(--cv-scale));
+  letter-spacing: 0.07em;
+  line-height: 1.45;
+  text-align: right;
+  /* A custom section can be named anything. Wrapping is the failure this
+     template should have, not overlapping. */
+  overflow-wrap: anywhere;
+}
+
+.cv-doc--register .cv-entry__role {
+  font-size: calc(11pt * var(--cv-scale));
+}
+
+.cv-doc--register .cv-bullets li::before {
+  color: var(--cv-muted);
+}
+
+/* No media query guarding the gutter: a CV page is 210mm whatever the window
+   is, and `max-width` measures the viewport. One here collapsed the gutter in
+   every thumbnail and every preview at less than about 720px, which is most
+   of them. If the gutter ever has to give way, it is the paper width that
+   decides, so it would be a container query. */

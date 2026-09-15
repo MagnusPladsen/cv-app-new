@@ -1,0 +1,51 @@
+/* Spalte — a tinted right-hand panel in Inter.
+
+   The tint is mixed from the accent rather than fixed, so the panel follows
+   whatever colour the CV is set to instead of fighting it. */
+
+.cv-doc--spalte .cv-header {
+  padding-bottom: calc(5mm * var(--cv-scale));
+  border-bottom: 0.5mm solid var(--cv-accent);
+  margin-bottom: calc(7mm * var(--cv-scale));
+}
+
+.cv-doc--spalte .cv-header__name {
+  font-size: calc(25pt * var(--cv-scale) * var(--cv-name-scale, 1));
+  letter-spacing: -0.02em;
+}
+
+.cv-doc--spalte .cv-header__title {
+  font-weight: 500;
+  font-size: calc(12pt * var(--cv-scale));
+}
+
+/* The panel. Padding and a soft corner make it read as a surface; the base
+   sidebar is a bare column with a rule. */
+.cv-doc--spalte .cv-shell__aside {
+  width: calc(56mm * var(--cv-scale));
+  padding: calc(5mm * var(--cv-scale));
+  background: color-mix(in srgb, var(--cv-accent) 8%, #ffffff);
+  border-radius: calc(2mm * var(--cv-scale));
+}
+
+.cv-doc--spalte .cv-shell__aside .cv-section__title {
+  border-bottom: 0;
+  padding-bottom: 0;
+  font-size: calc(10pt * var(--cv-scale));
+  margin-bottom: calc(2.6mm * var(--cv-scale));
+}
+
+.cv-doc--spalte .cv-shell__aside .cv-bar {
+  height: calc(1.2mm * var(--cv-scale));
+  border-radius: calc(1mm * var(--cv-scale));
+}
+
+.cv-doc--spalte .cv-section__title {
+  color: var(--cv-accent);
+  font-size: calc(11pt * var(--cv-scale));
+  border-bottom: 0.3mm solid var(--cv-rule);
+}
+
+.cv-doc--spalte .cv-entry__role {
+  font-size: calc(11.5pt * var(--cv-scale));
+}

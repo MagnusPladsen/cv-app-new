@@ -1,0 +1,55 @@
+/* Sand — a full-height column in a pale tint rather than solid accent.
+
+   base.css paints everything in the full-height column with --cv-accent-ink,
+   which is derived for contrast against a saturated colour. On a pale ground
+   that is unreadable, so every one of those rules is taken back to ink here.
+   Tinting rather than overriding --cv-accent keeps the accent itself available
+   for the headings in the main column. */
+
+.cv-doc--sand .cv-shell--full .cv-shell__aside {
+  width: calc(64mm * var(--cv-scale));
+  background: color-mix(in srgb, var(--cv-accent) 12%, #ffffff);
+  color: var(--cv-ink);
+  border-right: 0.3mm solid color-mix(in srgb, var(--cv-accent) 26%, #ffffff);
+}
+
+.cv-doc--sand .cv-shell--full .cv-shell__aside .cv-header__name,
+.cv-doc--sand .cv-shell--full .cv-shell__aside .cv-entry__role,
+.cv-doc--sand .cv-shell--full .cv-shell__aside .cv-item__name {
+  color: var(--cv-ink);
+}
+
+.cv-doc--sand .cv-shell--full .cv-shell__aside .cv-header__title,
+.cv-doc--sand .cv-shell--full .cv-shell__aside .cv-section__title,
+.cv-doc--sand .cv-shell--full .cv-shell__aside .cv-links__item {
+  color: color-mix(in srgb, var(--cv-accent) 82%, #000000);
+}
+
+.cv-doc--sand .cv-shell--full .cv-shell__aside .cv-header__contact,
+.cv-doc--sand .cv-shell--full .cv-shell__aside .cv-item__level {
+  color: var(--cv-muted);
+}
+
+.cv-doc--sand .cv-shell--full .cv-shell__aside .cv-header__photo {
+  border: 0.6mm solid #ffffff;
+}
+
+/* The bar track has to be visible against the tint, not against white. */
+.cv-doc--sand .cv-shell__aside .cv-bar {
+  background: color-mix(in srgb, var(--cv-accent) 22%, #ffffff);
+}
+
+.cv-doc--sand .cv-shell__aside .cv-bar__fill {
+  background: var(--cv-accent);
+}
+
+.cv-doc--sand .cv-header__name {
+  font-size: calc(22pt * var(--cv-scale) * var(--cv-name-scale, 1));
+  line-height: 1.12;
+}
+
+.cv-doc--sand .cv-section__title {
+  font-size: calc(11pt * var(--cv-scale));
+  letter-spacing: 0.12em;
+  border-bottom-color: color-mix(in srgb, var(--cv-accent) 30%, #ffffff);
+}

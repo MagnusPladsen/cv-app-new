@@ -47,7 +47,12 @@ export function TemplateCard({
           alt=""
           className="object-cover"
           fill
-          sizes="(min-width: 1280px) 18vw, (min-width: 1024px) 22vw, (min-width: 640px) 30vw, 45vw"
+          // A fixed width, not a list of viewport fractions. The card is
+          // capped around 220px at every breakpoint, and each distinct size
+          // here is another variant Next has to generate on first request -
+          // with eighteen templates that was slow enough to time out a
+          // browser test.
+          sizes="240px"
           src={`/templates/${template.id}.png`}
         />
 

@@ -32,6 +32,10 @@ const TEMPLATE_IDS = [
   'portrett',
   'minimal',
   'ramme',
+  'spalte',
+  'register',
+  'raster',
+  'sand',
 ] as const
 
 test.beforeEach(async ({ page }) => {

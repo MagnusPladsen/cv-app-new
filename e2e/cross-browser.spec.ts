@@ -42,8 +42,16 @@ test('every template still loads, and fills its card', async ({ page }) => {
   // a broken <img> reports no error anywhere else.
   await page.goto('/no/templates')
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-  await page.waitForFunction(() =>
-    [...document.querySelectorAll<HTMLImageElement>('li button img')].every((image) => image.complete),
+  await page.waitForFunction(
+    () =>
+      [...document.querySelectorAll<HTMLImageElement>('li button img')].every(
+        (image) => image.complete,
+      ),
+    undefined,
+    // Eighteen stills, optimised on first request. One width each now that
+    // `sizes` is fixed rather than a list of viewport fractions - which was
+    // the difference between this finishing in seconds and timing out.
+    { timeout: 20_000 },
   )
 
   const cards = await page.evaluate(() =>
@@ -89,7 +97,9 @@ test('no translation key renders raw', async ({ page }) => {
   // A missing key renders as `namespace.key`, which reads as a bug to a user
   // and is easy to introduce by naming the wrong namespace.
   for (const path of ['/no', '/no/templates', '/no/personvern', '/no/vilkar']) {
-    await page.goto(path)
+    // Text, not pictures: waiting for eighteen optimised stills to finish
+    // downloading has nothing to do with whether a translation key resolved.
+    await page.goto(path, { waitUntil: 'domcontentloaded' })
     const raw = await page.evaluate(
       () => document.body.innerText.match(/\b[a-z]+\.[a-zA-Z]+\b(?![\w./-])/g) ?? [],
     )
@@ -107,7 +117,9 @@ test('an indexable page has exactly one h1', async ({ page }) => {
   // page offered a crawler fourteen <h1>Ingrid Bjørnstad Halvorsen</h1> and
   // an invitation to decide the page is about her.
   for (const path of ['/no', '/no/templates', '/no/personvern', '/no/vilkar']) {
-    await page.goto(path)
+    // Text, not pictures: waiting for eighteen optimised stills to finish
+    // downloading has nothing to do with whether a translation key resolved.
+    await page.goto(path, { waitUntil: 'domcontentloaded' })
     const headings = await page.locator('h1').allTextContents()
     expect(headings, `${path} has ${headings.length} h1 elements`).toHaveLength(1)
   }

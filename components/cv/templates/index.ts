@@ -10,7 +10,11 @@ import { minimal } from './minimal'
 import { nord } from './nord'
 import { oslo } from './oslo'
 import { portrett } from './portrett'
+import { raster } from './raster'
+import { register } from './register'
 import { ramme } from './ramme'
+import { sand } from './sand'
+import { spalte } from './spalte'
 import { studio } from './studio'
 import { tidslinje } from './tidslinje'
 import { trondheim } from './trondheim'
@@ -41,6 +45,10 @@ export const TEMPLATES: Template[] = [
   kompakt,
   nord,
   studio,
+  spalte,
+  register,
+  raster,
+  sand,
 ]
 
 /** Every template's stylesheet, for the app layout to load up front. */

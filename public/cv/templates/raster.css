@@ -1,0 +1,77 @@
+/* Raster — Swiss grid. Hairlines, tight leading, and an oversized name.
+
+   The accent appears four times in the whole document: under the name, on the
+   section markers, on the bullets, and on links. Everything else is ink. */
+
+.cv-doc--raster .cv-header {
+  align-items: flex-end;
+  padding-bottom: calc(3.5mm * var(--cv-scale));
+  border-bottom: 1.2mm solid var(--cv-accent);
+  margin-bottom: calc(8mm * var(--cv-scale));
+}
+
+.cv-doc--raster .cv-header__name {
+  font-size: calc(34pt * var(--cv-scale) * var(--cv-name-scale, 1));
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+
+.cv-doc--raster .cv-header__title {
+  margin-top: calc(2.5mm * var(--cv-scale));
+  color: var(--cv-ink);
+  font-size: calc(10pt * var(--cv-scale));
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.cv-doc--raster .cv-header__contact {
+  font-size: calc(9pt * var(--cv-scale));
+  letter-spacing: 0.01em;
+}
+
+.cv-doc--raster .cv-header__photo {
+  border-radius: 0;
+}
+
+/* A hairline above each section, and the label hanging off it: the rule is
+   the grid line, not a decoration under the words. */
+.cv-doc--raster .cv-section {
+  padding-top: calc(2.4mm * var(--cv-scale));
+  border-top: 0.25mm solid var(--cv-rule);
+  margin-bottom: calc(7mm * var(--cv-scale));
+}
+
+.cv-doc--raster .cv-section__title {
+  color: var(--cv-ink);
+  border-bottom: 0;
+  padding-bottom: 0;
+  margin-bottom: calc(3.5mm * var(--cv-scale));
+  font-size: calc(8.5pt * var(--cv-scale));
+  font-weight: 600;
+  letter-spacing: 0.2em;
+}
+
+.cv-doc--raster .cv-entry__role {
+  font-size: calc(11pt * var(--cv-scale));
+  font-weight: 700;
+  letter-spacing: -0.005em;
+}
+
+.cv-doc--raster .cv-entry__dates,
+.cv-doc--raster .cv-entry__location {
+  font-variant-numeric: tabular-nums;
+  font-size: calc(9pt * var(--cv-scale));
+  letter-spacing: 0.02em;
+}
+
+.cv-doc--raster .cv-bullets li::before {
+  content: '\2014';
+  left: calc(-4.6mm * var(--cv-scale));
+}
+
+.cv-doc--raster .cv-item__name {
+  font-weight: 500;
+}

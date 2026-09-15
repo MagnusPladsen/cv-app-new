@@ -116,10 +116,14 @@ describe('EditorSplit layout', () => {
     expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(1)
   })
 
-  it('mounts no CV document on mobile until the sheet is opened', () => {
+  it('keeps one CV mounted on mobile with the sheet shut, so Last ned works', () => {
+    // It used to mount none until the sheet was opened, and Last ned then did
+    // nothing at all on a phone: the export looks for a .cv-doc, found none,
+    // and returned without a word. The copy is hidden, which is enough -
+    // exporting clones markup, not pixels.
     setViewport(false)
     const { container } = wrap(<EditorSplit {...splitProps(fixture())} />)
-    expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(0)
+    expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(1)
     expect(screen.getByRole('button', { name: 'Forhåndsvis' })).toBeInTheDocument()
   })
 
@@ -131,12 +135,16 @@ describe('EditorSplit layout', () => {
     expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(1)
   })
 
-  it('closes the mobile sheet again', async () => {
+  it('closes the mobile sheet again, and never mounts two', async () => {
+    // Two would be a coin flip over which CV the export clones.
     setViewport(false)
     const { container } = wrap(<EditorSplit {...splitProps(fixture())} />)
 
     await userEvent.click(screen.getByRole('button', { name: 'Forhåndsvis' }))
+    expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(1)
+
     await userEvent.click(screen.getByRole('button', { name: 'Lukk' }))
-    expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(0)
+    expect(container.querySelectorAll('[data-cv-preview] .cv-doc')).toHaveLength(1)
+    expect(screen.queryByRole('dialog')).toBeNull()
   })
 })

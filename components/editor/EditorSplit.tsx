@@ -178,9 +178,9 @@ export function EditorSplit({
 
       </div>
 
-      {/* Exactly one preview is mounted at a time. A CSS-hidden second copy
-          would still be in the DOM, and the export path clones the first
-          .cv-doc it finds. */}
+      {/* Exactly one preview is mounted at a time - the export path clones
+          the first .cv-doc it finds, so a second copy anywhere, hidden or
+          not, would be a coin flip over which CV gets printed. */}
       {isDesktop ? (
         <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
           <PreviewPane containerRef={previewRef} document={document} />
@@ -199,6 +199,18 @@ export function EditorSplit({
             </button>
             <ExportButton document={document} getNode={getNode} />
           </div>
+
+          {/* Mounted only while the sheet is shut, so there is still exactly
+              one .cv-doc at any moment - and so that Last ned works without
+              opening the preview first. It used to do nothing at all on a
+              phone: the sheet returns null when closed, getNode found no
+              node, and the export returned silently. Hidden is enough,
+              because the export clones markup rather than pixels. */}
+          {!sheetOpen ? (
+            <div className="hidden">
+              <PreviewPane containerRef={previewRef} document={document} />
+            </div>
+          ) : null}
 
           <PreviewSheet
             containerRef={previewRef}

@@ -95,9 +95,11 @@ test('the editor shows a preview button rather than a side-by-side preview', asy
 
   await expect(page.getByRole('button', { name: 'Forhåndsvis' })).toBeVisible()
 
-  // Only the strip's thumbnails; the full preview lives in the sheet.
-  const inPreview = await page.locator('[data-cv-preview] .cv-doc').count()
-  expect(inPreview).toBe(0)
+  // The full preview lives in the sheet, so nothing is on screen - but a
+  // hidden copy stays mounted, because Last ned exports the .cv-doc it finds
+  // and on a phone there was none until the sheet had been opened.
+  await expect(page.locator('[data-cv-preview] .cv-doc')).toHaveCount(1)
+  await expect(page.locator('[data-cv-preview] .cv-doc')).toBeHidden()
 })
 
 test('opening the preview sheet mounts exactly one CV to export', async ({ page }) => {
@@ -246,4 +248,47 @@ test('every switched-on section keeps its form, in CV order', async ({ page }) =
   )
   expect(ids).toHaveLength(2)
   expect(listOrder.length).toBeGreaterThan(2)
+})
+
+test('Last ned works on a phone without opening the preview first', async ({ page }) => {
+  // The reported bug: the dialog appeared, and then nothing happened. The
+  // export looks for a .cv-doc, the sheet had never been opened, so there was
+  // none - and it returned silently, without even building a document.
+  await page.goto('/no/templates')
+  await templateCard(page, 'oslo').click()
+  await page.waitForURL(/\/no\/cv\/.+/)
+  await page.getByLabel(/Fornavn/).first().fill('Testperson')
+
+  // Record every print document the export builds, and stop the real dialog.
+  await page.evaluate(() => {
+    ;(window as unknown as { __printDocs: string[] }).__printDocs = []
+    new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          if (node instanceof HTMLIFrameElement && node.srcdoc) {
+            ;(window as unknown as { __printDocs: string[] }).__printDocs.push(node.srcdoc)
+            node.addEventListener('load', () => {
+              if (node.contentWindow) node.contentWindow.print = () => {}
+            })
+          }
+        }
+      }
+    }).observe(document.body, { childList: true, subtree: true })
+  })
+
+  await page.getByRole('button', { name: /Last ned/i }).first().click()
+  const guest = page.getByRole('button', { name: 'Fortsett som gjest' })
+  if (await guest.count()) await guest.click()
+  const proceed = page.getByRole('button', { name: /Fortsett|Skjønner/i })
+  if (await proceed.count()) await proceed.first().click()
+
+  const docs = await page
+    .waitForFunction(() => {
+      const found = (window as unknown as { __printDocs: string[] }).__printDocs
+      return found.length > 0 ? found : null
+    }, undefined, { timeout: 10_000 })
+    .then((handle) => handle.jsonValue() as Promise<string[]>)
+
+  expect(docs[0]).toContain('cv-doc')
+  expect(docs[0]).toContain('Testperson')
 })

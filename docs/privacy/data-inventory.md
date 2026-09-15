@@ -41,6 +41,7 @@ for all of them.
 | `language` | Preference | Which language the CV's own labels print in |
 | `paper` | Preference | A4 or Letter |
 | `updatedAt` | Technical | Ordering, and deciding which copy wins when two devices disagree |
+| `createdAt` | Technical | Naming an unnamed CV after the day it was made, so two are told apart |
 | `theme.templateId` | Preference | Chosen template |
 | `theme.accent` | Preference | Chosen colour |
 | `theme.fontPairId` | Preference | Chosen typeface pairing |

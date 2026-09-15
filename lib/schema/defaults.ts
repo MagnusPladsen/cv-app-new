@@ -98,6 +98,7 @@ export function createEmptyDocument(
     language: input.language ?? 'no',
     paper: input.paper ?? 'a4',
     updatedAt: now(),
+    createdAt: now(),
     theme: {
       templateId: input.templateId ?? 'oslo',
       accent: input.accent ?? '#2563eb',

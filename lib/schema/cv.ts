@@ -199,6 +199,12 @@ export const cvDocumentSchema = z.object({
   language: cvLanguageSchema,
   paper: paperSchema,
   updatedAt: z.number(),
+  /**
+   * When the CV was made. Optional because documents predate it, and because
+   * sync compares `updatedAt` alone - a missing value here must never make a
+   * document look newer or older than it is.
+   */
+  createdAt: z.number().optional(),
   theme: themeSchema,
   personalia: personaliaSchema,
   sections: z.array(sectionSchema),

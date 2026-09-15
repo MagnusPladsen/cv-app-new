@@ -1,13 +1,14 @@
 'use client'
 
 import { Plus } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 import { ClaimNotice } from '@/components/auth/ClaimNotice'
 import { SyncStatusBadge } from '@/components/auth/SyncStatusBadge'
 import { BackupControls } from '@/components/dashboard/BackupControls'
 import { CvCard } from '@/components/dashboard/CvCard'
 import { useRouter } from '@/i18n/navigation'
+import { cvDisplayName } from '@/lib/cv-name'
 import { useHydrated } from '@/lib/hooks/use-hydrated'
 import { backupFilename, parseBackup, serialiseDocument } from '@/lib/store/backup'
 import { useShallow } from 'zustand/react/shallow'
@@ -25,6 +26,7 @@ function downloadJson(filename: string, contents: string) {
 
 export default function DashboardPage() {
   const t = useTranslations('dashboard')
+  const locale = useLocale()
   const router = useRouter()
   const hydrated = useHydrated()
 
@@ -45,7 +47,7 @@ export default function DashboardPage() {
   function handleDuplicate(id: string) {
     const original = documents.find((document) => document.id === id)
     if (!original) return
-    duplicateDocument(id, `${original.name || t('untitled')} (${t('copySuffix')})`)
+    duplicateDocument(id, `${cvDisplayName(original, locale)} (${t('copySuffix')})`)
   }
 
   function handleExport(id: string) {

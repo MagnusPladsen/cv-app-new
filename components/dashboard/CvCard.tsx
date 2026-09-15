@@ -1,9 +1,10 @@
 'use client'
 
 import { Copy, Download, Pencil, Trash2 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 
+import { cvDisplayName } from '@/lib/cv-name'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 
 export function CvCard({
@@ -22,11 +23,14 @@ export function CvCard({
   onExport: (id: string) => void
 }) {
   const t = useTranslations('dashboard')
+  const locale = useLocale()
   const [renaming, setRenaming] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [draftName, setDraftName] = useState(document.name)
 
-  const displayName = document.name || t('untitled')
+  // Never "Uten navn": an unnamed CV is named after whoever it is for and the
+  // day it was made, which is what tells two of them apart in a list.
+  const displayName = cvDisplayName(document, locale)
   const actionClass =
     'inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-medium text-muted-foreground transition duration-150 hover:bg-brand-soft hover:text-brand-strong focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none'
 

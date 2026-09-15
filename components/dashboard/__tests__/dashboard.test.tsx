@@ -39,9 +39,23 @@ describe('CvCard', () => {
     expect(screen.getByRole('button', { name: 'Frontend' })).toBeInTheDocument()
   })
 
-  it('falls back to a placeholder when the name is blank', () => {
-    wrap(<CvCard document={fixture('')} {...handlers()} />)
-    expect(screen.getByRole('button', { name: 'CV uten navn' })).toBeInTheDocument()
+  it('names an unnamed CV after the person and the day it was made', () => {
+    // "CV uten navn" told you nothing, and told you the same nothing about
+    // every unnamed CV in the list.
+    const doc = fixture('')
+    doc.personalia = { ...doc.personalia, firstName: 'Ola', lastName: 'Nordmann' }
+    doc.createdAt = Date.UTC(2026, 8, 15)
+
+    wrap(<CvCard document={doc} {...handlers()} />)
+    expect(screen.getByRole('button', { name: /Ola Nordmann/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /15\.09\.2026/ })).toBeInTheDocument()
+  })
+
+  it('falls back to the date alone before there is a name to use', () => {
+    const doc = fixture('')
+    doc.createdAt = Date.UTC(2026, 8, 15)
+    wrap(<CvCard document={doc} {...handlers()} />)
+    expect(screen.getByRole('button', { name: /^CV · 15\.09\.2026$/ })).toBeInTheDocument()
   })
 
   it('opens the CV', async () => {

@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { ClaimNotice } from '@/components/auth/ClaimNotice'
 import { SyncStatusBadge } from '@/components/auth/SyncStatusBadge'
 import { BackupControls } from '@/components/dashboard/BackupControls'
+import { ImportCvButton } from '@/components/dashboard/ImportCvButton'
 import { CvCard } from '@/components/dashboard/CvCard'
 import { useRouter } from '@/i18n/navigation'
 import { cvDisplayName } from '@/lib/cv-name'
@@ -56,6 +57,18 @@ export default function DashboardPage() {
     downloadJson(backupFilename(document), serialiseDocument(document))
   }
 
+  async function handleImportParsed(
+    parsed: import('@/lib/import/parse-cv').ParsedCv,
+    choice: import('@/lib/import/to-document').ImportChoice,
+  ) {
+    // Built here and handed to importDocument, which is the same validated
+    // path a backup file takes: a fresh id, and a schema check before
+    // anything reaches the store.
+    const { documentFromParse } = await import('@/lib/import/to-document')
+    const result = importDocument(documentFromParse(parsed, choice))
+    if (result.ok) router.push(`/cv/${result.id}`)
+  }
+
   function handleImportText(text: string) {
     const parsed = parseBackup(text)
     if (!parsed.ok) return { ok: false }
@@ -103,7 +116,10 @@ export default function DashboardPage() {
             </ul>
           )}
 
-          <BackupControls onImportText={handleImportText} />
+          <div className="flex flex-wrap items-start gap-4">
+            <ImportCvButton onImport={handleImportParsed} />
+            <BackupControls onImportText={handleImportText} />
+          </div>
         </>
       )}
     </main>

@@ -349,5 +349,24 @@
     "closing": "Closing",
     "previewCv": "CV",
     "previewLetter": "Letter"
+  },
+  "import": {
+    "button": "Import a CV from PDF",
+    "local": "The file is read here on your machine and never uploaded.",
+    "reviewTitle": "Here is what we found",
+    "reviewBody": "Tick what you want to keep. You fill in the rest yourself — nothing is overwritten.",
+    "nothingFound": "We could not recognise anything in this file. It is most likely set in two columns, or is a picture.",
+    "personalia": "Name and contact details",
+    "summary": "Summary",
+    "experience": "Jobs",
+    "education": "Education",
+    "skills": "Skills",
+    "languages": "Languages",
+    "interests": "Interests",
+    "unrecognised": "Lines we could not place",
+    "create": "Create the CV",
+    "cancel": "Cancel",
+    "scanned": "This PDF is a picture rather than text — most likely a scan. There is no text in it to read.",
+    "unreadable": "We could not read that file. Is it a PDF?"
   }
 }

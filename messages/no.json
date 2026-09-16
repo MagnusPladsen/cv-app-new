@@ -349,5 +349,24 @@
     "closing": "Avslutning",
     "previewCv": "CV",
     "previewLetter": "Søknad"
+  },
+  "import": {
+    "button": "Hent inn CV fra PDF",
+    "local": "Filen leses her på maskinen din og lastes aldri opp.",
+    "reviewTitle": "Dette fant vi",
+    "reviewBody": "Huk av det du vil ta med. Resten fyller du ut selv etterpå — ingenting blir overskrevet.",
+    "nothingFound": "Vi klarte ikke å kjenne igjen noe i denne filen. Den er sannsynligvis satt opp i to spalter eller som en grafikk.",
+    "personalia": "Navn og kontaktinfo",
+    "summary": "Om meg",
+    "experience": "Jobber",
+    "education": "Utdanning",
+    "skills": "Ferdigheter",
+    "languages": "Språk",
+    "interests": "Interesser",
+    "unrecognised": "Linjer vi ikke plasserte",
+    "create": "Lag CV-en",
+    "cancel": "Avbryt",
+    "scanned": "Denne PDF-en er et bilde, ikke tekst — sannsynligvis skannet. Da finnes det ingen tekst å hente ut.",
+    "unreadable": "Vi klarte ikke å lese filen. Er den en PDF?"
   }
 }

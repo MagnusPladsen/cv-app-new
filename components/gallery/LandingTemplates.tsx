@@ -7,7 +7,6 @@ import { getTemplate, TEMPLATES } from '@/components/cv/templates'
 import { TemplateCard } from '@/components/gallery/TemplateCard'
 import { Link, useRouter } from '@/i18n/navigation'
 import { PAPER, mmToPx } from '@/lib/print/paper'
-import { useDocuments } from '@/lib/store/documents'
 
 /**
  * The same cards as the gallery, so a template looks and behaves identically
@@ -43,13 +42,17 @@ const VISIBILITY = [
 export function LandingTemplates() {
   const t = useTranslations('gallery')
   const router = useRouter()
-  const createDocument = useDocuments((state) => state.createDocument)
 
   const shown = TEMPLATES.slice(0, SHOWN)
 
-  function handleChoose(templateId: string) {
+  // Imported on the click rather than at the top of the file. This is the
+  // only thing on the landing page that needs the document store, and a
+  // static import put the store, immer and zod into the first JavaScript
+  // every visitor downloads - to serve a button most of them never press.
+  async function handleChoose(templateId: string) {
+    const { useDocuments } = await import('@/lib/store/documents')
     const template = getTemplate(templateId)
-    const id = createDocument({
+    const id = useDocuments.getState().createDocument({
       templateId: template.id,
       accent: template.defaultAccent,
       fontPairId: template.defaultFontPairId,

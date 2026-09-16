@@ -20,6 +20,8 @@ import { PreviewSheet } from './PreviewSheet'
 import { SaveState } from './SaveState'
 import { sectionFormId } from './section-form-id'
 import { SectionEditor } from './SectionEditor'
+import { QualityPanel } from './QualityPanel'
+import { SectionHelp } from './SectionHelp'
 import { SectionList } from './SectionList'
 import { SectionSettings } from './SectionSettings'
 import { TemplateStrip } from './TemplateStrip'
@@ -61,6 +63,10 @@ export function EditorSplit({
       .getElementById(sectionFormId(activeSectionId))
       ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [activeSectionId])
+
+  // Reported by the preview, which is the only thing that knows how tall the
+  // rendered document is.
+  const [pages, setPages] = useState(1)
 
   const undo = useDocumentsTemporal((state) => state.undo)
   const redo = useDocumentsTemporal((state) => state.redo)
@@ -125,18 +131,30 @@ export function EditorSplit({
           theme={document.theme}
         />
 
-        <PhotoField
-          onChange={(dataUrl) => handlers.onPersonaliaChange({ photo: { dataUrl } })}
-          onRemove={() => handlers.onPersonaliaChange({ photo: undefined })}
-          onToggle={(showPhoto) => handlers.onPersonaliaChange({ showPhoto })}
-          photo={document.personalia.photo}
-          showPhoto={document.personalia.showPhoto}
-        />
+        {/* The two places somebody is most likely to put something they should
+            not: a national identity number, or a holiday photograph. */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <PhotoField
+              onChange={(dataUrl) => handlers.onPersonaliaChange({ photo: { dataUrl } })}
+              onRemove={() => handlers.onPersonaliaChange({ photo: undefined })}
+              onToggle={(showPhoto) => handlers.onPersonaliaChange({ showPhoto })}
+              photo={document.personalia.photo}
+              showPhoto={document.personalia.showPhoto}
+            />
+          </div>
+          <SectionHelp topic="photo" />
+        </div>
 
-        <PersonaliaForm
-          personalia={document.personalia}
-          onChange={handlers.onPersonaliaChange}
-        />
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <PersonaliaForm
+              personalia={document.personalia}
+              onChange={handlers.onPersonaliaChange}
+            />
+          </div>
+          <SectionHelp topic="personalia" />
+        </div>
 
         <SectionList
           activeSectionId={activeSectionId}
@@ -150,7 +168,14 @@ export function EditorSplit({
           sections={document.sections}
         />
 
-
+        {/* After the sections rather than before: it is a review of what you
+            have written, and putting a list of faults above the fields would
+            be scolding somebody for not having filled them in yet. */}
+        <QualityPanel
+          document={document}
+          onSelectSection={onSelectSection}
+          pages={pages}
+        />
 
         {/* Every switched-on section, in the order it appears on the CV.
             Rendering only the selected one meant each new tick replaced the
@@ -167,7 +192,15 @@ export function EditorSplit({
             id={sectionFormId(section.id)}
             key={section.id}
           >
-            <SectionSettings onShapeChange={handlers.onCustomShapeChange} section={section} />
+            {/* Anchored top-right so it sits beside the form's own heading
+                without the forms having to know it exists. */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <SectionSettings onShapeChange={handlers.onCustomShapeChange} section={section} />
+              </div>
+              <SectionHelp topic={section.type} />
+            </div>
+
             <SectionEditor handlers={handlers} labels={labels} section={section} />
           </div>
         ))}
@@ -183,7 +216,11 @@ export function EditorSplit({
           not, would be a coin flip over which CV gets printed. */}
       {isDesktop ? (
         <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
-          <PreviewPane containerRef={previewRef} document={document} />
+          <PreviewPane
+            containerRef={previewRef}
+            document={document}
+            onPagesChange={setPages}
+          />
         </div>
       ) : (
         <>
@@ -208,7 +245,11 @@ export function EditorSplit({
               because the export clones markup rather than pixels. */}
           {!sheetOpen ? (
             <div className="hidden">
-              <PreviewPane containerRef={previewRef} document={document} />
+              <PreviewPane
+                containerRef={previewRef}
+                document={document}
+                onPagesChange={setPages}
+              />
             </div>
           ) : null}
 

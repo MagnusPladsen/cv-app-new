@@ -179,14 +179,16 @@
     "allTemplates": "Alle maler"
   },
   "landing": {
-    "lead": "Gratis i beta. Uten vannmerke.",
+    "lead": "Gratis. Alltid uten vannmerke.",
     "cta": "Kom i gang",
     "point1Title": "Ubegrenset",
     "point1Body": "Så mange CV-er du vil, og like mange nedlastinger.",
     "point2Title": "Ekte PDF",
     "point2Body": "Teksten kan markeres og leses av søkesystemene arbeidsgivere bruker.",
-    "point3Title": "Norsk og engelsk",
-    "point3Body": "Skriv CV-en på ett språk mens appen er på et annet.",
+    "point3Title": "Aldri vannmerke",
+    "point3Body": "Ikke nå i beta, og ikke senere. CV-en er din, ikke en reklameplakat.",
+    "point4Title": "Blir på maskinen din",
+    "point4Body": "CV-en lagres i nettleseren. Logger du inn, synkes den rett til en database i Tyskland — aldri innom våre servere.",
     "templatesTitle": "{count} maler å velge mellom"
   },
   "beta": {
@@ -275,6 +277,56 @@
   },
   "meta": {
     "title": "CVApp — lag en CV du er stolt av",
-    "description": "Gratis CV-bygger med fjorten maler, ekte PDF og ingen vannmerke. Fungerer uten konto."
+    "description": "Gratis CV-bygger med ekte PDF og aldri vannmerke. Fungerer uten konto."
+  },
+  "quality": {
+    "title": "Sjekk av CV-en",
+    "clean": "Ingenting å utsette. CV-en ser ryddig ut.",
+    "countErrors": "{count, plural, =1 {1 ting å fikse} other {# ting å fikse}}",
+    "countWarnings": "{count, plural, =1 {1 å se på} other {# å se på}}",
+    "countInfo": "{count, plural, =1 {1 tips} other {# tips}}",
+    "goto": "Gå til seksjonen",
+    "severityError": "Må fikses",
+    "severityWarning": "Bør ses på",
+    "severityInfo": "Tips",
+    "nationalId": "Det ser ut som et fødselsnummer står i CV-en. Fjern det — arbeidsgivere skal aldri ha det, og det brukes til identitetstyveri.",
+    "noName": "CV-en mangler navn.",
+    "noContact": "Ingen kan kontakte deg. Fyll inn e-post eller telefon.",
+    "emailLooksWrong": "E-postadressen ser ikke riktig ut. Sjekk den før du sender.",
+    "noTitle": "Uten en tittel må leseren gjette hva du søker på. Skriv for eksempel «Frontendutvikler» eller «Sykepleier».",
+    "noCity": "Legg inn poststed. Arbeidsgivere sorterer ofte på hvor du er.",
+    "linkNotAUrl": "«{label}» er ikke en fungerende lenke. Den må begynne med https:// for å kunne klikkes i PDF-en.",
+    "noHistory": "CV-en har verken jobber eller utdanning ennå.",
+    "noSummary": "Om meg er tom. To–fire setninger øverst er det eneste leseren garantert får med seg.",
+    "summaryShort": "Om meg er veldig kort. Ta med hva du gjør, hvor lenge, og hva du er god til.",
+    "summaryLong": "Om meg er lang. Den leses først og bør være to–fire setninger.",
+    "entryNoDates": "«{entry}» mangler datoer. Hull i tidslinjen leses som noe du skjuler.",
+    "entryEndsBeforeStart": "«{entry}» slutter før den begynner.",
+    "entryInFuture": "«{entry}» starter fram i tid. Er datoen riktig?",
+    "gap": "Det er et opphold på {months} måneder i tidslinjen. Det er helt greit — men regn med å bli spurt, og vurder å forklare det i Om meg.",
+    "tooManyBullets": "«{entry}» har {count} punkter. Tre til fem er nok; de beste leses, resten skummes.",
+    "longBullet": "Et punkt under «{entry}» er langt nok til å bli hoppet over. Én linje per punkt.",
+    "referencesOnRequest": "Du oppgir kontaktopplysninger til {count, plural, =1 {én referanse} other {# referanser}}. I Norge er det vanlig å skrive «Referanser oppgis på forespørsel» — og du bør uansett spørre dem først.",
+    "photo": "CV-en har bilde. Det er vanlig i Norge, men ikke påkrevd, og noen arbeidsgivere ber om CV uten for å unngå skjevheter.",
+    "tooLong": "CV-en er på {pages} sider. To er normalt taket; har du under ti års erfaring holder én."
+  },
+  "help": {
+    "open": "Tips til denne delen",
+    "close": "Lukk tipset",
+    "personalia": "Navn, tittel og én måte å nå deg på. Tittelen er det arbeidsgiveren leser først — skriv stillingen du søker på, ikke den du har.\nIkke ta med fødselsnummer, sivilstatus eller bilde av ID. Poststed holder; gateadresse trenger ingen.",
+    "photo": "Bilde er vanlig i Norge, men aldri påkrevd. Bruk et nøytralt portrett i dagslys — ikke ferie, ikke fest.\nNoen arbeidsgivere ber om CV uten bilde for å unngå skjevheter. Da slår du det bare av.",
+    "summary": "To til fire setninger: hva du gjør, hvor lenge, og hva du er god til. Dette er den eneste delen som garantert blir lest.\nSkriv konkret. «Frontendutvikler med åtte år i finans» sier noe; «strukturert og løsningsorientert» sier ingenting.",
+    "experience": "Nyeste jobb først. Tittel, arbeidsgiver, sted og datoer — og to til fire punkter om hva du faktisk fikk til.\nSkriv resultater, ikke arbeidsoppgaver: «kuttet lastetid med 42 prosent» er sterkere enn «ansvar for ytelse». Tall selger seg selv.",
+    "education": "Nyeste først. Grad, lærested og år. Har du jobbet i ti år, holder én linje per utdanning.\nEr du nyutdannet, kan du ta med relevante emner, karakter eller oppgavetittel — da er det det du har.",
+    "skills": "Ta med det du faktisk kan bruke på jobb i morgen. Fem til tolv er nok; en liste på tretti sier at ingenting er viktig.\nNivåene er til for deg selv — vær ærlig, du kan bli spurt om dem i intervjuet.",
+    "languages": "Språk og nivå. Norsk og engelsk er ofte underforstått i Norge, men ta dem med om du har et nivå verdt å vise.",
+    "certifications": "Sertifiseringer med utsteder og dato. Ta med det som er relevant og gyldig — en utløpt sertifisering er verre enn ingen.",
+    "projects": "Egne prosjekter, bidrag eller oppdrag som viser noe jobbene dine ikke viser. Lenke hvis det finnes noe å se på.",
+    "courses": "Kurs som er relevante for stillingen. Korte kurs uten sammenheng med jobben tar bare plass.",
+    "volunteering": "Frivillig arbeid teller som erfaring — særlig hvis det viser ansvar, ledelse eller folk du har jobbet med.",
+    "interests": "Tre til fem, konkrete. «Langrenn» og «brettspill» gir en samtalestarter; «musikk og film» gir ingenting.",
+    "drivingLicence": "Ta med førerkort når stillingen kan trenge det. Ellers er det plass som kunne vært brukt på noe annet.",
+    "references": "I Norge er det vanlig å skrive «Referanser oppgis på forespørsel». Tar du dem med, spør personen først — og sjekk at nummeret stemmer.",
+    "custom": "En egen seksjon til det som ikke passer andre steder: publikasjoner, verv, militærtjeneste, priser.\nGi den et navn arbeidsgiveren forstår med én gang."
   }
 }

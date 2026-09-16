@@ -33,9 +33,12 @@ const PREVIEW_PADDING_PX = 16
 export function PreviewPane({
   document,
   containerRef,
+  onPagesChange,
 }: {
   document: CvDocumentData
   containerRef: RefObject<HTMLDivElement | null>
+  /** The page count, for anything outside the preview that needs it. */
+  onPagesChange?: (pages: number) => void
 }) {
   const t = useTranslations('editor')
   const frameRef = useRef<HTMLDivElement | null>(null)
@@ -78,6 +81,12 @@ export function PreviewPane({
 
   const marginMm = documentMarginMm(document)
   const pages = countPages(contentMm, document.paper, marginMm)
+
+  // Measured here because only a rendered document has a height. The CV check
+  // needs the number and cannot get it from the document alone.
+  useEffect(() => {
+    onPagesChange?.(pages)
+  }, [pages, onPagesChange])
   const renderedHeightPx = Math.max(pageHeightPx, docHeightPx)
 
   // A brand-new CV renders a blank sheet, which is correct but reads as

@@ -179,14 +179,16 @@
     "allTemplates": "All templates"
   },
   "landing": {
-    "lead": "Free in beta. No watermark.",
+    "lead": "Free. Never a watermark.",
     "cta": "Get started",
     "point1Title": "Unlimited",
     "point1Body": "As many CVs as you like, and as many downloads.",
     "point2Title": "A real PDF",
     "point2Body": "Selectable text that the applicant tracking systems employers use can read.",
-    "point3Title": "Norwegian and English",
-    "point3Body": "Write your CV in one language while the app is in another.",
+    "point3Title": "Never a watermark",
+    "point3Body": "Not now in beta, and not later. Your CV is yours, not an advertisement.",
+    "point4Title": "Stays on your machine",
+    "point4Body": "Your CV is stored in the browser. Sign in and it syncs straight to a database in Germany — never through our servers.",
     "templatesTitle": "{count} templates to choose from"
   },
   "beta": {
@@ -275,6 +277,56 @@
   },
   "meta": {
     "title": "CVApp — build a CV you are proud of",
-    "description": "A free CV builder with fourteen templates, a real PDF and no watermark. Works without an account."
+    "description": "A free CV builder with a real PDF and never a watermark. Works without an account."
+  },
+  "quality": {
+    "title": "CV check",
+    "clean": "Nothing to flag. The CV looks tidy.",
+    "countErrors": "{count, plural, =1 {1 thing to fix} other {# things to fix}}",
+    "countWarnings": "{count, plural, =1 {1 to look at} other {# to look at}}",
+    "countInfo": "{count, plural, =1 {1 tip} other {# tips}}",
+    "goto": "Go to the section",
+    "severityError": "Fix this",
+    "severityWarning": "Worth checking",
+    "severityInfo": "Tip",
+    "nationalId": "This looks like a national identity number in the CV. Take it out — employers never need it, and it is what identity theft is built on.",
+    "noName": "The CV has no name on it.",
+    "noContact": "Nobody can reach you. Add an email address or a phone number.",
+    "emailLooksWrong": "That email address does not look right. Check it before you send anything.",
+    "noTitle": "Without a title the reader has to guess what you are applying for. Write something like “Frontend developer” or “Nurse”.",
+    "noCity": "Add a town or city. Employers often sort by where you are.",
+    "linkNotAUrl": "“{label}” is not a working link. It has to start with https:// to be clickable in the PDF.",
+    "noHistory": "The CV has no jobs and no education yet.",
+    "noSummary": "The summary is empty. Two to four sentences at the top is the one part a reader is certain to read.",
+    "summaryShort": "The summary is very short. Say what you do, for how long, and what you are good at.",
+    "summaryLong": "The summary is long. It is read first and should be two to four sentences.",
+    "entryNoDates": "“{entry}” has no dates. A hole in the timeline reads as something being hidden.",
+    "entryEndsBeforeStart": "“{entry}” ends before it starts.",
+    "entryInFuture": "“{entry}” starts in the future. Is that date right?",
+    "gap": "There is a {months}-month gap in the timeline. That is fine — but expect to be asked, and consider explaining it in the summary.",
+    "tooManyBullets": "“{entry}” has {count} bullets. Three to five is enough; the best ones get read and the rest get skimmed.",
+    "longBullet": "A bullet under “{entry}” is long enough to be skipped. One line each.",
+    "referencesOnRequest": "You are listing contact details for {count, plural, =1 {one reference} other {# references}}. Many people write “References available on request” instead — and ask the person first either way.",
+    "photo": "The CV has a photo. That is normal in Norway but not required, and some employers ask for one without to avoid bias.",
+    "tooLong": "The CV runs to {pages} pages. Two is the usual ceiling; under ten years of experience, one is plenty."
+  },
+  "help": {
+    "open": "Tips for this section",
+    "close": "Close tip",
+    "personalia": "Your name, a title, and one way to reach you. The title is read first — write the job you are applying for, not the one you have.\nLeave out national identity numbers, marital status and ID photos. A town is enough; nobody needs a street address.",
+    "photo": "A photo is common in Norway but never required. Use a plain daylight portrait — not a holiday, not a party.\nSome employers ask for a CV without one to avoid bias. Then you just switch it off.",
+    "summary": "Two to four sentences: what you do, how long you have done it, and what you are good at. This is the one part certain to be read.\nBe concrete. \"Frontend developer with eight years in finance\" says something; \"structured and solution-oriented\" says nothing.",
+    "experience": "Most recent first. Title, employer, place and dates — then two to four bullets about what you actually achieved.\nWrite results, not duties: \"cut load time by 42 per cent\" beats \"responsible for performance\". Numbers sell themselves.",
+    "education": "Most recent first. Degree, institution and years. Ten years into a career, one line each is plenty.\nIf you have just graduated, include relevant courses, grades or your thesis title — that is what you have.",
+    "skills": "What you could use at work tomorrow. Five to twelve is enough; a list of thirty says nothing is important.\nThe levels are for your own benefit — be honest, you may be asked about them in the interview.",
+    "languages": "Languages and level. Say so if you have a level worth showing.",
+    "certifications": "Certifications with the issuer and the date. Include what is relevant and current — an expired certification is worse than none.",
+    "projects": "Your own projects, contributions or commissions that show something your jobs do not. Link them if there is something to look at.",
+    "courses": "Courses relevant to the role. Short courses unconnected to the job just take up room.",
+    "volunteering": "Volunteering counts as experience — especially where it shows responsibility, leadership, or who you worked with.",
+    "interests": "Three to five, specific. \"Cross-country skiing\" and \"board games\" start a conversation; \"music and film\" does not.",
+    "drivingLicence": "Include a licence when the job might need one. Otherwise it is room that could have gone to something else.",
+    "references": "In Norway it is normal to write \"References available on request\". If you do list them, ask the person first — and check the number is right.",
+    "custom": "A section of your own for what fits nowhere else: publications, board positions, military service, awards.\nGive it a name an employer understands immediately."
   }
 }

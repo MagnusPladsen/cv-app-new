@@ -1,4 +1,4 @@
-import { ArrowRight, LayoutGrid, Sparkles } from 'lucide-react'
+import { ArrowRight, BadgeCheck, FileText, Infinity, Laptop, LayoutGrid, Sparkles } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { TEMPLATES } from '@/components/cv/templates'
@@ -62,12 +62,24 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
-      <section className="grid gap-6 sm:grid-cols-3">
-        {(['point1', 'point2', 'point3'] as const).map((point) => (
+      {/* Four, not a wall. Each one is something a person weighing CV builders
+          actually decides on, and each is true of CVApp today rather than
+          planned: no watermark ever, a PDF with real text in it, no cap, and
+          a CV that does not pass through our servers. */}
+      <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {(
+          [
+            ['point1', Infinity],
+            ['point2', FileText],
+            ['point3', BadgeCheck],
+            ['point4', Laptop],
+          ] as const
+        ).map(([point, Icon]) => (
           <div
             className="flex flex-col gap-2 rounded-xl border border-border bg-card p-6"
             key={point}
           >
+            <Icon aria-hidden="true" className="size-5 text-brand" />
             <h2 className="text-base font-bold text-brand-strong">
               {t(`landing.${point}Title`)}
             </h2>

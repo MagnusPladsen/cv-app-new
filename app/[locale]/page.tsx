@@ -95,7 +95,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
         {/* The same component the gallery uses, so a template looks and behaves
             identically wherever it appears. */}
-        <LandingTemplates limit={5} />
+        <LandingTemplates />
       </section>
     </main>
   )

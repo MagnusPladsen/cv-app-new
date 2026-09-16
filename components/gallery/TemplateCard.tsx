@@ -22,14 +22,17 @@ const PAGE_HEIGHT = mmToPx(PAPER.a4.heightMm)
 export function TemplateCard({
   template,
   onChoose,
+  className = '',
 }: {
   template: Template
   onChoose: (templateId: string) => void
+  /** Lets a grid decide whether this card appears at a given width. */
+  className?: string
 }) {
   const t = useTranslations('gallery')
 
   return (
-    <li className="group flex flex-col gap-2.5">
+    <li className={`group flex flex-col gap-2.5 ${className}`}>
       <button
         aria-label={template.name}
         className="relative block w-full overflow-hidden rounded-xl bg-white ring-1 ring-border transition duration-200 group-hover:-translate-y-1 group-hover:shadow-[0_18px_45px_-18px_rgb(0_0_0/0.4)] group-hover:ring-brand focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"

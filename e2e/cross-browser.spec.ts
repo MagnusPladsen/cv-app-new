@@ -280,3 +280,35 @@ test('a søknad prints as the first page of the same PDF', async ({ page }) => {
   )
   expect(order).toEqual(['letter', 'cv'])
 })
+
+test('the landing grid never strands the “all templates” tile on a row of its own', async ({
+  page,
+}) => {
+  // It used to show five cards at every width. At four and five columns that
+  // left the tile alone on a second row beside a page of empty space. How many
+  // cards appear is decided in CSS, so this is the only place it can be
+  // checked - and it has to hold at every breakpoint, not one.
+  for (const width of [390, 768, 1100, 1500]) {
+    await page.setViewportSize({ width, height: 1400 })
+    await page.goto('/no')
+    await page.waitForTimeout(150)
+
+    const grid = await page.evaluate(() => {
+      const list = document.querySelector('main ul.grid') as HTMLElement
+      const items = [...list.children].filter(
+        (item) => getComputedStyle(item).display !== 'none',
+      )
+      return {
+        columns: getComputedStyle(list).gridTemplateColumns.split(' ').length,
+        visible: items.length,
+        tileIsLast: (items.at(-1)?.textContent ?? '').includes('Alle maler'),
+      }
+    })
+
+    expect(grid.tileIsLast, `${width}px: the tile is not last`).toBe(true)
+    expect(
+      grid.visible % grid.columns,
+      `${width}px: ${grid.visible} items over ${grid.columns} columns leaves a short row`,
+    ).toBe(0)
+  }
+})

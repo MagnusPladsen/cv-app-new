@@ -1,0 +1,102 @@
+/* The søknad.
+
+   Rules are written as `.cv-letter .cv-letter__x`, not as a bare class: base
+   .css styles `.cv-doc p`, which is a class plus an element and outranks any
+   single class. Bare class selectors here lost every margin silently, and the
+   letter came out with its recipient, subject and greeting stacked on top of
+   one another.
+
+   Scoped entirely to .cv-letter, and deliberately parasitic on the rest: the
+   page size, margins, accent, typefaces and ink all come from the same
+   variables the CV uses, because a letter set differently from the CV beside
+   it reads as two documents from two people.
+
+   The measure is narrower than the page. A line of body text running the full
+   210mm is about 110 characters, which is roughly twice what anybody reads
+   comfortably. */
+
+.cv-letter {
+  display: flex;
+  flex-direction: column;
+  font-size: calc(11pt * var(--cv-scale));
+  line-height: 1.65;
+  /* One page, always. A søknad that runs to two is not a søknad. */
+  break-after: page;
+  page-break-after: always;
+}
+
+.cv-letter:last-child {
+  break-after: auto;
+  page-break-after: auto;
+}
+
+.cv-letter .cv-letter__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: calc(8mm * var(--cv-scale));
+  padding-bottom: calc(5mm * var(--cv-scale));
+  border-bottom: 0.3mm solid var(--cv-rule);
+  margin-bottom: calc(10mm * var(--cv-scale));
+}
+
+.cv-letter .cv-letter__name {
+  font-family: var(--cv-font-head);
+  font-size: calc(16pt * var(--cv-scale));
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.cv-letter .cv-letter__title {
+  color: var(--cv-accent);
+  font-size: calc(10.5pt * var(--cv-scale));
+  font-weight: 600;
+}
+
+.cv-letter .cv-letter__contact {
+  margin-top: calc(1.5mm * var(--cv-scale));
+  color: var(--cv-muted);
+  font-size: calc(9.5pt * var(--cv-scale));
+}
+
+.cv-letter .cv-letter__dateline {
+  flex: 0 0 auto;
+  color: var(--cv-muted);
+  font-size: calc(9.5pt * var(--cv-scale));
+  white-space: nowrap;
+}
+
+.cv-letter .cv-letter__recipient {
+  margin-bottom: calc(8mm * var(--cv-scale));
+  white-space: pre-line;
+}
+
+/* The subject line is what a reader uses to sort one application from
+   another, so it gets the weight the CV gives a section heading. */
+.cv-letter .cv-letter__subject {
+  font-family: var(--cv-font-head);
+  font-weight: 700;
+  font-size: calc(11.5pt * var(--cv-scale));
+  color: var(--cv-accent);
+  margin-bottom: calc(7mm * var(--cv-scale));
+}
+
+.cv-letter .cv-letter__greeting {
+  margin-bottom: calc(4mm * var(--cv-scale));
+}
+
+.cv-letter .cv-letter__body {
+  max-width: calc(155mm * var(--cv-scale));
+  white-space: pre-line;
+}
+
+.cv-letter .cv-letter__closing {
+  margin-top: calc(8mm * var(--cv-scale));
+}
+
+.cv-letter .cv-letter__signature {
+  margin-top: calc(2mm * var(--cv-scale));
+  font-family: var(--cv-font-head);
+  font-weight: 600;
+}

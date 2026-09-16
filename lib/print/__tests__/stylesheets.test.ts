@@ -11,8 +11,10 @@ function readPublic(url: string): string {
 }
 
 describe('CV_STYLESHEETS', () => {
-  it('lists fonts before the base stylesheet', () => {
-    expect(CV_STYLESHEETS).toEqual(['/cv/fonts.css', '/cv/base.css'])
+  it('lists fonts first, then the base rules, then the letter', () => {
+    // Order is the cascade. Faces have to be declared before anything asks
+    // for them, and letter.css layers on the base rather than replacing them.
+    expect(CV_STYLESHEETS).toEqual(['/cv/fonts.css', '/cv/base.css', '/cv/letter.css'])
   })
 
   it('points at files that exist in public/', () => {

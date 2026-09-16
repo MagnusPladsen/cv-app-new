@@ -56,7 +56,7 @@ function setup(isDesktop: boolean, storage = memory({ [BETA_NOTICE_KEY]: '1' }))
   wrap(
     <ExportButton
       document={fixture()}
-      getNode={() => node}
+      getNodes={() => [node]}
       print={print}
       storage={storage}
     />,
@@ -139,7 +139,7 @@ describe('export hint', () => {
     wrap(
       <ExportButton
         document={fixture()}
-        getNode={() => node}
+        getNodes={() => [node]}
         print={print}
         storage={throwing}
       />,

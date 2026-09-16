@@ -36,6 +36,9 @@ function freeText(document: CvDocument): { sectionId?: string; value: string }[]
   const chunks: { sectionId?: string; value: string }[] = [
     { value: document.personalia.title },
     ...document.personalia.links.map((link) => ({ value: link.label })),
+    // The søknad is free text like any other, and is the likeliest place
+    // somebody writes out a date of birth in full.
+    { value: document.coverLetter?.body ?? '' },
   ]
 
   for (const section of document.sections) {
@@ -264,6 +267,22 @@ export function checkDocument(document: CvDocument, context: CheckContext): Find
 
   if (personalia.photo && personalia.showPhoto) {
     findings.push({ id: 'photo', severity: 'info' })
+  }
+
+  // --- The søknad ----------------------------------------------------------
+
+  const letter = document.coverLetter
+  if (letter?.enabled) {
+    if (!filled(letter.body)) {
+      findings.push({ id: 'letterEmpty', severity: 'warning' })
+    } else if (text(letter.body).length > 2600) {
+      // Roughly a page at this measure. A søknad that runs to two is not one.
+      findings.push({ id: 'letterLong', severity: 'info' })
+    }
+
+    if (!filled(letter.position)) {
+      findings.push({ id: 'letterNoPosition', severity: 'warning' })
+    }
   }
 
   // --- Length --------------------------------------------------------------

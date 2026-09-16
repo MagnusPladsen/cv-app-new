@@ -162,12 +162,12 @@ describe('ExportButton', () => {
     const node = window.document.createElement('div')
     node.className = 'cv-doc'
 
-    wrap(<ExportButton document={doc} getNode={() => node} print={print} />)
+    wrap(<ExportButton document={doc} getNodes={() => [node]} print={print} />)
     await userEvent.click(screen.getByRole('button', { name: 'Last ned PDF' }))
 
     expect(print).toHaveBeenCalledTimes(1)
     expect(print.mock.calls[0]![0]).toMatchObject({
-      node,
+      nodes: [node],
       title: 'Ola_Nordmann_CV',
       paper: 'a4',
       lang: 'no',
@@ -176,7 +176,7 @@ describe('ExportButton', () => {
 
   it('does nothing when there is no node to print', async () => {
     const print = vi.fn(async (options: PrintCvNodeOptions) => void options)
-    wrap(<ExportButton document={fixture()} getNode={() => null} print={print} />)
+    wrap(<ExportButton document={fixture()} getNodes={() => []} print={print} />)
     await userEvent.click(screen.getByRole('button', { name: 'Last ned PDF' }))
     expect(print).not.toHaveBeenCalled()
   })
@@ -186,7 +186,7 @@ describe('ExportButton', () => {
     const doc = { ...fixture(), language: 'en' as const }
     const node = window.document.createElement('div')
 
-    wrap(<ExportButton document={doc} getNode={() => node} print={print} />)
+    wrap(<ExportButton document={doc} getNodes={() => [node]} print={print} />)
     await userEvent.click(screen.getByRole('button', { name: 'Last ned PDF' }))
 
     expect(print.mock.calls[0]![0]).toMatchObject({ lang: 'en' })

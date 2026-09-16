@@ -308,7 +308,10 @@
     "longBullet": "A bullet under “{entry}” is long enough to be skipped. One line each.",
     "referencesOnRequest": "You are listing contact details for {count, plural, =1 {one reference} other {# references}}. Many people write “References available on request” instead — and ask the person first either way.",
     "photo": "The CV has a photo. That is normal in Norway but not required, and some employers ask for one without to avoid bias.",
-    "tooLong": "The CV runs to {pages} pages. Two is the usual ceiling; under ten years of experience, one is plenty."
+    "tooLong": "The CV runs to {pages} pages. Two is the usual ceiling; under ten years of experience, one is plenty.",
+    "letterEmpty": "The cover letter is switched on but empty. It goes out as the first page of the PDF.",
+    "letterLong": "The cover letter is long enough to run past one page. Three or four paragraphs is the norm.",
+    "letterNoPosition": "The cover letter does not say which job it is for. That is the first thing a reader looks for."
   },
   "help": {
     "open": "Tips for this section",
@@ -327,6 +330,24 @@
     "interests": "Three to five, specific. \"Cross-country skiing\" and \"board games\" start a conversation; \"music and film\" does not.",
     "drivingLicence": "Include a licence when the job might need one. Otherwise it is room that could have gone to something else.",
     "references": "In Norway it is normal to write \"References available on request\". If you do list them, ask the person first — and check the number is right.",
-    "custom": "A section of your own for what fits nowhere else: publications, board positions, military service, awards.\nGive it a name an employer understands immediately."
+    "custom": "A section of your own for what fits nowhere else: publications, board positions, military service, awards.\nGive it a name an employer understands immediately.",
+    "coverLetter": "One page, three or four paragraphs. First: which job, and why that one. Middle: two or three things you have done that match what they asked for — do not repeat the CV, explain it. Last: what you want, and that you would be glad to come in.\nWrite to the company rather than about yourself at length. If the advert names a person, use the name."
+  },
+  "letter": {
+    "title": "Cover letter",
+    "enable": "Write a cover letter for this CV",
+    "recipient": "To",
+    "recipientHint": "The company, the department, or the person. Use a name if you have one.",
+    "position": "The job",
+    "positionHint": "Goes at the top, so whoever opens it knows what it is about.",
+    "place": "Place",
+    "date": "Date",
+    "greeting": "Opening",
+    "greetingHint": "For example “Hi,” or “Dear hiring manager,”.",
+    "body": "The letter",
+    "bodyHint": "Three or four paragraphs on one page. Blank lines are kept where you put them.",
+    "closing": "Closing",
+    "previewCv": "CV",
+    "previewLetter": "Letter"
   }
 }

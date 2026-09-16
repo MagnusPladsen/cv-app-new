@@ -42,6 +42,14 @@ for all of them.
 | `paper` | Preference | A4 or Letter |
 | `updatedAt` | Technical | Ordering, and deciding which copy wins when two devices disagree |
 | `createdAt` | Technical | Naming an unnamed CV after the day it was made, so two are told apart |
+| `coverLetter.enabled` | Preference | Whether a søknad is sent with this CV |
+| `coverLetter.recipient` | Written by the user | Who the søknad is addressed to — a company, a department, sometimes a named person |
+| `coverLetter.position` | Written by the user | The job applied for |
+| `coverLetter.place` | Written by the user | Place in the dateline |
+| `coverLetter.date` | Written by the user | Date in the dateline |
+| `coverLetter.greeting` | Written by the user | Opening line |
+| `coverLetter.body` | Written by the user | The letter itself. Free text, so it can contain anything the writer chooses to put there — see the note on special categories below |
+| `coverLetter.closing` | Written by the user | Closing line |
 | `theme.templateId` | Preference | Chosen template |
 | `theme.accent` | Preference | Chosen colour |
 | `theme.fontPairId` | Preference | Chosen typeface pairing |

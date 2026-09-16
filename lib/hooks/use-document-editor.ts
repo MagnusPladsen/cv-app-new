@@ -6,6 +6,7 @@ import { useStore } from 'zustand'
 import type { SectionEditorHandlers } from '@/components/editor/SectionEditor'
 import type {
   CertEntry,
+  CoverLetter,
   CvDocument,
   CvTheme,
   LanguageItem,
@@ -20,6 +21,7 @@ import { useDocuments, type DocumentsStoreApi } from '@/lib/store/documents'
 
 export type DocumentEditorHandlers = SectionEditorHandlers & {
   onPersonaliaChange: (patch: Partial<Personalia>) => void
+  onCoverLetterChange: (patch: Partial<CoverLetter>) => void
   onToggleSection: (sectionId: string, enabled: boolean) => void
   onRenameSection: (sectionId: string, title: string) => void
   onMoveSection: (from: number, to: number) => void
@@ -67,6 +69,24 @@ export function useDocumentEditor(
     () => ({
       onPersonaliaChange: (patch: Partial<Personalia>) =>
         edit((draft) => void Object.assign(draft.personalia, patch)),
+
+      onCoverLetterChange: (patch: Partial<CoverLetter>) =>
+        edit((draft) => {
+          // Created on first touch rather than on every document: a CV that
+          // never has a letter should not carry an empty one around, through
+          // sync and into everyone's export file.
+          draft.coverLetter ??= {
+            enabled: false,
+            recipient: '',
+            position: '',
+            place: '',
+            date: '',
+            greeting: '',
+            body: '',
+            closing: '',
+          }
+          Object.assign(draft.coverLetter, patch)
+        }),
 
       onToggleSection: (sectionId, enabled) =>
         edit((draft) => actions.setSectionEnabled(draft, sectionId, enabled)),

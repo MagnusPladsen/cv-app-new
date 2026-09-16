@@ -20,6 +20,7 @@ import { PreviewSheet } from './PreviewSheet'
 import { SaveState } from './SaveState'
 import { sectionFormId } from './section-form-id'
 import { SectionEditor } from './SectionEditor'
+import { CoverLetterForm } from './CoverLetterForm'
 import { QualityPanel } from './QualityPanel'
 import { SectionHelp } from './SectionHelp'
 import { SectionList } from './SectionList'
@@ -75,7 +76,11 @@ export function EditorSplit({
 
   // Scoped to the preview container: the template strip renders thumbnails
   // that are also .cv-doc nodes.
-  const getNode = () => previewRef.current?.querySelector<HTMLElement>('.cv-doc') ?? null
+  // Every page in the preview, in order: the søknad prints before the CV, and
+  // the export does not need to know which is which.
+  const getNodes = () => [
+    ...(previewRef.current?.querySelectorAll<HTMLElement>('.cv-doc') ?? []),
+  ]
 
   const labels = getCvLabels(document.language)
   const enabledSections = document.sections.filter((section) => section.enabled)
@@ -108,7 +113,7 @@ export function EditorSplit({
               accessible name on one screen. */}
           <div className="flex flex-wrap items-center gap-3">
             <SaveState documentId={document.id} />
-            {isDesktop ? <ExportButton document={document} getNode={getNode} /> : null}
+            {isDesktop ? <ExportButton document={document} getNodes={getNodes} /> : null}
           </div>
 
           <HistoryControls
@@ -168,15 +173,6 @@ export function EditorSplit({
           sections={document.sections}
         />
 
-        {/* After the sections rather than before: it is a review of what you
-            have written, and putting a list of faults above the fields would
-            be scolding somebody for not having filled them in yet. */}
-        <QualityPanel
-          document={document}
-          onSelectSection={onSelectSection}
-          pages={pages}
-        />
-
         {/* Every switched-on section, in the order it appears on the CV.
             Rendering only the selected one meant each new tick replaced the
             last: switch on Utdanning and it appears, switch on Arbeidserfaring
@@ -209,6 +205,23 @@ export function EditorSplit({
           <p className="text-sm text-muted-foreground">{t('noSections')}</p>
         ) : null}
 
+        {/* Last, because it is written about a finished CV and for one
+            employer at a time. */}
+        <CoverLetterForm
+          letter={document.coverLetter}
+          onChange={handlers.onCoverLetterChange}
+        />
+
+        {/* After the sections rather than before: it is a review of what you
+            have written, and putting a list of faults above the fields would
+            be scolding somebody for not having filled them in yet. */}
+        <QualityPanel
+          document={document}
+          onSelectSection={onSelectSection}
+          pages={pages}
+        />
+
+
       </div>
 
       {/* Exactly one preview is mounted at a time - the export path clones
@@ -234,13 +247,13 @@ export function EditorSplit({
               <Eye aria-hidden="true" className="size-4" />
               {t('preview')}
             </button>
-            <ExportButton document={document} getNode={getNode} />
+            <ExportButton document={document} getNodes={getNodes} />
           </div>
 
           {/* Mounted only while the sheet is shut, so there is still exactly
               one .cv-doc at any moment - and so that Last ned works without
               opening the preview first. It used to do nothing at all on a
-              phone: the sheet returns null when closed, getNode found no
+              phone: the sheet returns null when closed, getNodes found no
               node, and the export returned silently. Hidden is enough,
               because the export clones markup rather than pixels. */}
           {!sheetOpen ? (

@@ -2,8 +2,11 @@ import type { PaperId } from '@/lib/schema/cv'
 import { printStylesheet } from './stylesheets'
 
 export type PrintCvNodeOptions = {
-  /** The live `.cv-doc` element. A copy of it is what gets printed. */
-  node: HTMLElement
+  /**
+   * The live `.cv-doc` elements, in the order they should print. Copies of
+   * them are what get printed. Usually one; two when a søknad goes first.
+   */
+  nodes: HTMLElement[]
   title: string
   paper: PaperId
   lang: string
@@ -53,7 +56,7 @@ function defaultInvokePrint(target: Window): void {
  *   page size depends on the document's paper and `@page` cannot be scoped.
  */
 export async function printCvNode(
-  { node, title, paper, lang }: PrintCvNodeOptions,
+  { nodes, title, paper, lang }: PrintCvNodeOptions,
   deps: PrintDeps = {},
 ): Promise<void> {
   const waitForFonts = deps.waitForFonts ?? defaultWaitForFonts
@@ -66,9 +69,11 @@ export async function printCvNode(
   // something already on the page.
   root.setAttribute('aria-hidden', 'true')
 
-  const copy = node.cloneNode(true) as HTMLElement
-  copy.setAttribute('lang', lang)
-  root.append(copy)
+  for (const node of nodes) {
+    const copy = node.cloneNode(true) as HTMLElement
+    copy.setAttribute('lang', lang)
+    root.append(copy)
+  }
 
   const link = document.createElement('link')
   link.rel = 'stylesheet'

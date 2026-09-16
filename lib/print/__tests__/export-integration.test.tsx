@@ -76,7 +76,7 @@ async function capturePrintHtml(doc: CvDocumentData): Promise<string> {
   let titleAtPrint = ''
   await printCvNode(
     {
-      node: node!,
+      nodes: [node!],
       title: buildPrintTitle(doc.personalia.firstName, doc.personalia.lastName),
       paper: doc.paper,
       lang: doc.language,

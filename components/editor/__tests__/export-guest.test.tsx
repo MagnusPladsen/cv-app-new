@@ -69,7 +69,7 @@ function setup(storage = memory({ [BETA_NOTICE_KEY]: '1', [EXPORT_HINT_KEY]: '1'
   const node = window.document.createElement('div')
   node.className = 'cv-doc'
 
-  wrap(<ExportButton document={fixture()} getNode={() => node} print={print} storage={storage} />)
+  wrap(<ExportButton document={fixture()} getNodes={() => [node]} print={print} storage={storage} />)
   return { print, storage }
 }
 
@@ -160,7 +160,7 @@ describe('guest mode at export', () => {
 describe('when the export cannot run', () => {
   /** Desktop, signed out but past the guest prompt, with a print that is asked for. */
   function setupFailing(options: {
-    getNode: () => HTMLElement | null
+    getNodes: () => HTMLElement[]
     print?: (options: PrintCvNodeOptions) => Promise<void>
   }) {
     window.matchMedia = vi.fn().mockImplementation((query: string) => ({
@@ -179,7 +179,7 @@ describe('when the export cannot run', () => {
     wrap(
       <ExportButton
         document={fixture()}
-        getNode={options.getNode}
+        getNodes={options.getNodes}
         print={options.print ?? (async () => {})}
         storage={storage}
       />,
@@ -189,7 +189,7 @@ describe('when the export cannot run', () => {
   it('says so when there is no CV to print, rather than doing nothing', async () => {
     // The reported mobile behaviour: the dialog appeared, and then silence.
     // A button that reacts to nothing reads as a broken app.
-    setupFailing({ getNode: () => null })
+    setupFailing({ getNodes: () => [] })
     await userEvent.click(exportButton())
     expect(await screen.findByText(/Nedlastingen startet ikke/)).toBeInTheDocument()
   })
@@ -200,7 +200,7 @@ describe('when the export cannot run', () => {
     const node = window.document.createElement('div')
     node.className = 'cv-doc'
     setupFailing({
-      getNode: () => node,
+      getNodes: () => [node],
       print: async () => {
         throw new Error('refused')
       },
@@ -213,7 +213,7 @@ describe('when the export cannot run', () => {
   it('stays quiet when the export works', async () => {
     const node = window.document.createElement('div')
     node.className = 'cv-doc'
-    setupFailing({ getNode: () => node, print: async () => {} })
+    setupFailing({ getNodes: () => [node], print: async () => {} })
 
     await userEvent.click(exportButton())
     expect(screen.queryByText(/Nedlastingen startet ikke/)).toBeNull()

@@ -247,3 +247,36 @@ test('the export puts the CV, and only the CV, on the paper', async ({ page }) =
 
   await page.emulateMedia({ media: 'screen' })
 })
+
+test('a søknad prints as the first page of the same PDF', async ({ page }) => {
+  // "CV og søknad" is one attachment in a Norwegian application, so the letter
+  // is a page of the same document rather than a second download. Checked in
+  // every engine because the export copies whatever .cv-doc it finds and the
+  // order of them is the whole feature.
+  await page.goto('/no/templates')
+  await page.locator('button[data-template="oslo"]').click()
+  await page.waitForURL(/\/no\/cv\/.+/)
+  await page.getByLabel(/Fornavn/).first().fill('Ingrid')
+
+  await page.getByRole('checkbox', { name: /Skriv søknad/ }).check()
+  const letter = page.locator('section:has(h2:text("SØKNAD"))')
+  await letter.getByRole('textbox', { name: 'Søknadsteksten' }).fill('Jeg søker stillingen.')
+
+  await expect(page.locator('[data-cv-preview] .cv-doc')).toHaveCount(2)
+
+  await page.evaluate(() => {
+    window.print = () => {}
+  })
+  await page.getByRole('button', { name: /Last ned/i }).first().click()
+  const guest = page.getByRole('button', { name: 'Fortsett som gjest' })
+  if (await guest.count()) await guest.click()
+
+  await expect(page.locator('[data-print-root] .cv-doc')).toHaveCount(2)
+
+  const order = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-print-root] .cv-doc')].map((node) =>
+      node.classList.contains('cv-letter') ? 'letter' : 'cv',
+    ),
+  )
+  expect(order).toEqual(['letter', 'cv'])
+})

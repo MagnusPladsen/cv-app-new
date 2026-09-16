@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState, type RefObject } from 'react'
 
+import { CoverLetterDocument } from '@/components/cv/CoverLetterDocument'
 import { CvDocument } from '@/components/cv/CvDocument'
 import { documentMarginMm } from '@/components/cv/margin'
 import { contentHeightMm } from '@/lib/print/measure'
@@ -120,6 +121,10 @@ export function PreviewPane({
             ref={containerRef}
             style={{ transform: `scale(${scale})`, width: pageWidthPx }}
           >
+            {/* Before the CV, because that is the order it is read in and the
+                order it prints in. Both are .cv-doc, so the export picks up
+                the pair without knowing a letter exists. */}
+            <CoverLetterDocument document={document} />
             <CvDocument document={document} />
             <PageGuides contentHeightMm={contentMm} marginMm={marginMm} paper={document.paper} />
           </div>

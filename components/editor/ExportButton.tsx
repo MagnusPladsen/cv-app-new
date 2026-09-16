@@ -21,12 +21,12 @@ export const GUEST_EXPORT_KEY = 'cvapp:guest-export:v1'
 
 export function ExportButton({
   document,
-  getNode,
+  getNodes,
   print = printCvNode,
   storage,
 }: {
   document: CvDocumentData
-  getNode: () => HTMLElement | null
+  getNodes: () => HTMLElement[]
   print?: typeof printCvNode
   /** Injected in tests; defaults to localStorage. */
   storage?: FlagStorage
@@ -41,10 +41,10 @@ export function ExportButton({
   const [failed, setFailed] = useState(false)
 
   async function runExport() {
-    const node = getNode()
+    const nodes = getNodes()
     // Not silently: doing nothing at all is how this looked on a phone for
     // weeks, and a button that reacts to nothing reads as a broken app.
-    if (!node) {
+    if (nodes.length === 0) {
       setFailed(true)
       return
     }
@@ -53,7 +53,7 @@ export function ExportButton({
     setFailed(false)
     try {
       await print({
-        node,
+        nodes,
         title: buildPrintTitle(document.personalia.firstName, document.personalia.lastName),
         paper: document.paper,
         lang: document.language,

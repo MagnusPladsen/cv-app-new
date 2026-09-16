@@ -30,7 +30,7 @@ describe('printCvNode', () => {
       copyAtPrint = printRoot()?.querySelector<HTMLElement>('.cv-doc') ?? null
     })
 
-    await printCvNode({ node, title: 'Ola_CV', paper: 'a4', lang: 'no' }, deps)
+    await printCvNode({ nodes: [node], title: 'Ola_CV', paper: 'a4', lang: 'no' }, deps)
 
     // Read through a fresh binding: TypeScript narrows the captured variable
     // to null, because nothing it can see assigns to it.
@@ -52,7 +52,7 @@ describe('printCvNode', () => {
       titleAtPrint = document.title
     })
 
-    await printCvNode({ node: makeNode(), title: 'Ola_Nordmann_CV', paper: 'a4', lang: 'no' }, deps)
+    await printCvNode({ nodes: [makeNode()], title: 'Ola_Nordmann_CV', paper: 'a4', lang: 'no' }, deps)
 
     // Restoring before the dialog closed would offer the wrong name.
     expect(titleAtPrint).toBe('Ola_Nordmann_CV')
@@ -67,7 +67,7 @@ describe('printCvNode', () => {
       href = document.querySelector('link[href^="/cv/print-"]')?.getAttribute('href') ?? ''
     })
 
-    await printCvNode({ node: makeNode(), title: 'x', paper: 'letter', lang: 'no' }, deps)
+    await printCvNode({ nodes: [makeNode()], title: 'x', paper: 'letter', lang: 'no' }, deps)
     expect(href).toBe('/cv/print-letter.css')
     window.dispatchEvent(new Event('afterprint'))
   })
@@ -79,7 +79,7 @@ describe('printCvNode', () => {
       lang = printRoot()?.querySelector('.cv-doc')?.getAttribute('lang') ?? ''
     })
 
-    await printCvNode({ node: makeNode(), title: 'x', paper: 'a4', lang: 'en' }, deps)
+    await printCvNode({ nodes: [makeNode()], title: 'x', paper: 'a4', lang: 'en' }, deps)
     expect(lang).toBe('en')
     window.dispatchEvent(new Event('afterprint'))
   })
@@ -92,7 +92,7 @@ describe('printCvNode', () => {
       cleanupDelayMs: 0,
     }
 
-    await printCvNode({ node: makeNode(), title: 'x', paper: 'a4', lang: 'no' }, deps)
+    await printCvNode({ nodes: [makeNode()], title: 'x', paper: 'a4', lang: 'no' }, deps)
     expect(order).toEqual(['fonts', 'print'])
     window.dispatchEvent(new Event('afterprint'))
   })
@@ -104,7 +104,7 @@ describe('printCvNode', () => {
     const deps = stubDeps()
     deps.cleanupDelayMs = 60_000
 
-    await printCvNode({ node: makeNode(), title: 'x', paper: 'a4', lang: 'no' }, deps)
+    await printCvNode({ nodes: [makeNode()], title: 'x', paper: 'a4', lang: 'no' }, deps)
     expect(printRoot()).not.toBeNull()
 
     window.dispatchEvent(new Event('afterprint'))
@@ -119,7 +119,7 @@ describe('printCvNode', () => {
     })
 
     await expect(
-      printCvNode({ node: makeNode(), title: 'x', paper: 'a4', lang: 'no' }, deps),
+      printCvNode({ nodes: [makeNode()], title: 'x', paper: 'a4', lang: 'no' }, deps),
     ).rejects.toThrow('user cancelled')
 
     expect(printRoot()).toBeNull()

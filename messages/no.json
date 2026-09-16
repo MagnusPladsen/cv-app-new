@@ -308,7 +308,10 @@
     "longBullet": "Et punkt under «{entry}» er langt nok til å bli hoppet over. Én linje per punkt.",
     "referencesOnRequest": "Du oppgir kontaktopplysninger til {count, plural, =1 {én referanse} other {# referanser}}. I Norge er det vanlig å skrive «Referanser oppgis på forespørsel» — og du bør uansett spørre dem først.",
     "photo": "CV-en har bilde. Det er vanlig i Norge, men ikke påkrevd, og noen arbeidsgivere ber om CV uten for å unngå skjevheter.",
-    "tooLong": "CV-en er på {pages} sider. To er normalt taket; har du under ti års erfaring holder én."
+    "tooLong": "CV-en er på {pages} sider. To er normalt taket; har du under ti års erfaring holder én.",
+    "letterEmpty": "Søknaden er slått på, men tom. Den blir med som første side i PDF-en.",
+    "letterLong": "Søknaden er lang nok til å gå over én side. Tre–fire avsnitt er normen.",
+    "letterNoPosition": "Søknaden mangler hvilken stilling den gjelder. Det er det første den som leser ser etter."
   },
   "help": {
     "open": "Tips til denne delen",
@@ -327,6 +330,24 @@
     "interests": "Tre til fem, konkrete. «Langrenn» og «brettspill» gir en samtalestarter; «musikk og film» gir ingenting.",
     "drivingLicence": "Ta med førerkort når stillingen kan trenge det. Ellers er det plass som kunne vært brukt på noe annet.",
     "references": "I Norge er det vanlig å skrive «Referanser oppgis på forespørsel». Tar du dem med, spør personen først — og sjekk at nummeret stemmer.",
-    "custom": "En egen seksjon til det som ikke passer andre steder: publikasjoner, verv, militærtjeneste, priser.\nGi den et navn arbeidsgiveren forstår med én gang."
+    "custom": "En egen seksjon til det som ikke passer andre steder: publikasjoner, verv, militærtjeneste, priser.\nGi den et navn arbeidsgiveren forstår med én gang.",
+    "coverLetter": "Én side, tre–fire avsnitt. Første avsnitt: hvilken stilling, og hvorfor akkurat den. Midten: to–tre ting du har gjort som treffer det de ber om — ikke gjenta CV-en, forklar den. Siste: hva du vil, og at du gjerne kommer på intervju.\nSkriv til bedriften, ikke om deg selv i det vide og brede. Er det et navn i annonsen, bruk det."
+  },
+  "letter": {
+    "title": "Søknad",
+    "enable": "Skriv søknad til denne CV-en",
+    "recipient": "Til",
+    "recipientHint": "Bedriften, avdelingen eller personen. Har du et navn, bruk det.",
+    "position": "Stillingen",
+    "positionHint": "Står øverst i søknaden, slik at den som leser vet hva den gjelder.",
+    "place": "Sted",
+    "date": "Dato",
+    "greeting": "Innledning",
+    "greetingHint": "For eksempel «Hei,» eller «Til rekrutteringsansvarlig,».",
+    "body": "Søknadsteksten",
+    "bodyHint": "Tre til fire avsnitt på én side. Blanke linjer beholdes slik du skriver dem.",
+    "closing": "Avslutning",
+    "previewCv": "CV",
+    "previewLetter": "Søknad"
   }
 }

@@ -54,7 +54,7 @@ async function exportOnce(storage = memory()) {
   node.className = 'cv-doc'
 
   wrap(
-    <ExportButton document={fixture()} getNode={() => node} print={print} storage={storage} />,
+    <ExportButton document={fixture()} getNodes={() => [node]} print={print} storage={storage} />,
   )
   await userEvent.click(screen.getByRole('button', { name: 'Last ned PDF' }))
   return { print, storage }

@@ -192,6 +192,30 @@ export const themeSchema = z.object({
 })
 export type CvTheme = z.infer<typeof themeSchema>
 
+/**
+ * A søknad, carried by the CV it belongs with rather than stored on its own.
+ *
+ * A cover letter is written for one application, and the CV it goes with is
+ * part of that application - keeping them together means one thing to
+ * duplicate when you apply somewhere else, one theme, one export. It prints as
+ * the first page of the same PDF, which is what an employer asking for "CV og
+ * søknad" expects to receive.
+ */
+export const coverLetterSchema = z.object({
+  enabled: z.boolean(),
+  /** Who it is addressed to: a company, a department, a person. */
+  recipient: z.string(),
+  /** The job applied for, which belongs in the subject line. */
+  position: z.string(),
+  place: z.string(),
+  /** "YYYY-MM-DD". Empty means today, resolved at render time. */
+  date: z.string(),
+  greeting: z.string(),
+  body: z.string(),
+  closing: z.string(),
+})
+export type CoverLetter = z.infer<typeof coverLetterSchema>
+
 export const cvDocumentSchema = z.object({
   id: z.string(),
   schemaVersion: z.number().int(),
@@ -208,5 +232,7 @@ export const cvDocumentSchema = z.object({
   theme: themeSchema,
   personalia: personaliaSchema,
   sections: z.array(sectionSchema),
+  /** Optional: documents written before cover letters existed have none. */
+  coverLetter: coverLetterSchema.optional(),
 })
 export type CvDocument = z.infer<typeof cvDocumentSchema>

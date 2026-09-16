@@ -9,7 +9,7 @@ import type { PaperId } from '@/lib/schema/cv'
  * because the print iframe is a separate document that cannot see the app's
  * bundled styles.
  */
-export const CV_STYLESHEETS = ['/cv/fonts.css', '/cv/base.css'] as const
+export const CV_STYLESHEETS = ['/cv/fonts.css', '/cv/base.css', '/cv/letter.css'] as const
 
 /**
  * A template's own stylesheet. Every registered template has one, even when it

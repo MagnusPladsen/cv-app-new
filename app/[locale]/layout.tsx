@@ -8,9 +8,7 @@ import type { ReactNode } from 'react'
 import { SessionProvider } from '@/components/auth/SessionProvider'
 import { AppFooter } from '@/components/chrome/AppFooter'
 import { AppHeader } from '@/components/chrome/AppHeader'
-import { ALL_TEMPLATE_STYLESHEETS } from '@/components/cv/templates'
 import { routing } from '@/i18n/routing'
-import { CV_STYLESHEETS } from '@/lib/print/stylesheets'
 import { siteUrl } from '@/lib/site'
 import '../globals.css'
 
@@ -89,13 +87,6 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className={`${geistSans.variable} h-full antialiased`}>
-      <head>
-        {/* The CV stylesheets are plain CSS in public/ so the print iframe can
-            load the exact same files. See lib/print/stylesheets.ts. */}
-        {[...CV_STYLESHEETS, ...ALL_TEMPLATE_STYLESHEETS].map((href) => (
-          <link key={href} rel="stylesheet" href={href} />
-        ))}
-      </head>
       {/* Not a flex column: `mx-auto` on a flex item shrinks it to fit rather
           than filling and then capping, so every max-w-* container collapsed. */}
       <body className="min-h-full">

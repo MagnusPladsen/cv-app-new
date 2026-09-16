@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { CvDocument } from '@/components/cv/CvDocument'
+import { CvStylesheets } from '@/components/cv/CvStylesheets'
 import { TEMPLATES } from '@/components/cv/templates'
 import { mmToPx, PAPER } from '@/lib/print/paper'
 import { createDemoDocument } from '@/lib/schema/demo'
@@ -26,6 +27,7 @@ export default function TemplatePreviewPage() {
 
   return (
     <main className="mx-auto flex max-w-none flex-col gap-8 bg-sand-deep px-8 py-10">
+      <CvStylesheets />
       <h1 className="text-2xl font-bold tracking-tight">Maler ({TEMPLATES.length})</h1>
 
       <div className="flex flex-wrap gap-10">

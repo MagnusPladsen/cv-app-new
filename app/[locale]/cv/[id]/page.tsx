@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { use } from 'react'
 
+import { CvStylesheets } from '@/components/cv/CvStylesheets'
 import { EditorSplit } from '@/components/editor/EditorSplit'
 import { Link } from '@/i18n/navigation'
 import { useDocumentEditor } from '@/lib/hooks/use-document-editor'
@@ -29,6 +30,7 @@ export default function EditorPage({ params }: { params: Promise<{ id: string }>
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
+      <CvStylesheets />
       <EditorSplit
         activeSectionId={activeSectionId}
         document={document}

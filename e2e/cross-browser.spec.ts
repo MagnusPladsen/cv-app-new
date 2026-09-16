@@ -312,3 +312,24 @@ test('the landing grid never strands the “all templates” tile on a row of it
     ).toBe(0)
   }
 })
+
+test('only the pages that render a CV pay for the CV stylesheets', async ({ page }) => {
+  // Twenty-one stylesheets used to block the first paint of every page in the
+  // app, for a document the landing page and the gallery stopped rendering
+  // when they moved to captured stills.
+  const sheets = async (path: string) => {
+    const seen: string[] = []
+    const onResponse = (response: { url: () => string }) => {
+      if (/\/cv\/.*\.css/.test(response.url())) seen.push(response.url())
+    }
+    page.on('response', onResponse)
+    await page.goto(path, { waitUntil: 'networkidle' })
+    page.off('response', onResponse)
+    return seen.length
+  }
+
+  expect(await sheets('/no'), 'the landing page loads CV stylesheets').toBe(0)
+  expect(await sheets('/no/templates'), 'the gallery loads CV stylesheets').toBe(0)
+  // The proof sheet renders all eighteen templates, so it needs all of them.
+  expect(await sheets('/no/preview')).toBeGreaterThan(15)
+})

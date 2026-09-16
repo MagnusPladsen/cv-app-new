@@ -51,10 +51,18 @@ export function HeroTemplates() {
                 alt=""
                 className="object-cover"
                 fill
+                // The largest of these is the LCP element. `priority` alone
+                // preloads it without saying it is urgent, so the hint is
+                // given explicitly.
+                fetchPriority="high"
                 // Above the fold, so these are the one set worth fetching
                 // eagerly rather than on approach.
                 priority
-                sizes="(min-width: 1024px) 22vw, 40vw"
+                // A width, not a share of the viewport. A sheet is 58% of a
+                // box capped by the page container, so it never exceeds about
+                // 340px - and a vw expression made Next offer ten candidates
+                // up to 3840w for it.
+                sizes="(min-width: 1024px) 340px, 45vw"
                 src={`/templates/${template.id}.png`}
               />
             </div>

@@ -55,6 +55,10 @@ export function TemplateCard({
           // here is another variant Next has to generate on first request -
           // with eighteen templates that was slow enough to time out a
           // browser test.
+          // 65 rather than the default 75: these are 240px thumbnails of a
+          // page of text, where the difference is invisible and the bytes are
+          // not - eighteen of them load on the gallery.
+          quality={65}
           sizes="240px"
           src={`/templates/${template.id}.png`}
         />

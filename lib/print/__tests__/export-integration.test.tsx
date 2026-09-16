@@ -141,15 +141,26 @@ describe('CV export, end to end', () => {
     expect(html).toContain('href="/cv/print-a4.css"')
   })
 
-  it('relies on stylesheets the app already has, for every template', async () => {
-    // The print path no longer links anything but the page setup: it prints
-    // this document, which loads the CV sheets and every template's sheet in
-    // the layout. If that ever stops being true, a PDF loses its template's
-    // rules while the preview beside it still looks right.
+  it('relies on stylesheets the editor page already loads', async () => {
+    // The print path links nothing but the page setup: it prints this
+    // document, and the document has the CV sheets because the editor page
+    // renders <CvStylesheets />. If that ever stops being true, a PDF loses
+    // its template's rules while the preview beside it still looks right.
+    //
+    // They used to live in the root layout, where they blocked the first
+    // paint of every page in the app for a document only two of them render.
     const { readFileSync } = await import('node:fs')
+
+    const editor = readFileSync('app/[locale]/cv/[id]/page.tsx', 'utf8')
+    expect(editor).toContain('<CvStylesheets />')
+
+    const sheets = readFileSync('components/cv/CvStylesheets.tsx', 'utf8')
+    expect(sheets).toContain('CV_STYLESHEETS')
+    expect(sheets).toContain('ALL_TEMPLATE_STYLESHEETS')
+
+    // And not in the layout, which is the regression worth catching.
     const layout = readFileSync('app/[locale]/layout.tsx', 'utf8')
-    expect(layout).toContain('CV_STYLESHEETS')
-    expect(layout).toContain('ALL_TEMPLATE_STYLESHEETS')
+    expect(layout).not.toContain('ALL_TEMPLATE_STYLESHEETS')
   })
 
   it('switches paper geometry for a Letter document', async () => {

@@ -141,11 +141,11 @@ describe('SectionList', () => {
 })
 
 describe('switching a section on', () => {
-  it('opens it, because that is what a person expects next', async () => {
-    // Ticking a section says "I want this on my CV", and the next thing
-    // wanted is somewhere to write. Without this a section could be enabled,
-    // sitting in the list, and still appear to have no form anywhere - which
-    // is exactly how the sections came to look unfillable.
+  it('switches it on without moving the page', async () => {
+    // Ticking used to select the section as well, and selecting scrolls to
+    // that section's form. Ticking four boxes meant four jumps to somewhere
+    // you had not asked to be. Every enabled section has a form below
+    // regardless; clicking the name is how you go to one.
     const onSelect = vi.fn()
     const onToggle = vi.fn()
     wrap(<SectionList {...props({ onSelect, onToggle })} />)
@@ -154,7 +154,7 @@ describe('switching a section on', () => {
     await userEvent.click(off)
 
     expect(onToggle).toHaveBeenCalledWith(expect.any(String), true)
-    expect(onSelect).toHaveBeenCalledWith(expect.any(String))
+    expect(onSelect).not.toHaveBeenCalled()
   })
 
   it('does not open a section being switched off', async () => {

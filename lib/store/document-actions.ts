@@ -88,10 +88,18 @@ export function addCustomSection(
   doc: CvDocument,
   shape: 'entries' | 'bullets' | 'text',
   newId: IdFactory,
+  /**
+   * What to call it until the user renames it. A custom section used to be
+   * created nameless, which left a row in the section list with nothing in it
+   * but its controls - unreadable, unclickable as a label, and impossible to
+   * tell from a second one.
+   */
+  title = doc.language === 'en' ? 'Custom section' : 'Egen seksjon',
 ): string {
   const section = createEmptySection('custom', { newId })
   if (section.type !== 'custom') throw new Error('createEmptySection returned the wrong type')
 
+  section.title = title
   section.shape = shape
   if (shape === 'entries') section.entries = []
   if (shape === 'bullets') section.bullets = []

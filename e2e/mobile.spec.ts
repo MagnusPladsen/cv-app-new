@@ -71,7 +71,7 @@ test('the filter chips scroll rather than wrapping into a wall', async ({ page }
   expect(scrollWidth).toBeGreaterThan(clientWidth)
 })
 
-test('the editor fits, with the template strip reachable', async ({ page }) => {
+test('the editor fits, with the template picker one tap away', async ({ page }) => {
   await page.goto('/no/templates')
   await templateCard(page, 'bergen').click()
   await page.waitForURL(/\/no\/cv\/.+/)
@@ -79,13 +79,17 @@ test('the editor fits, with the template strip reachable', async ({ page }) => {
 
   expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1)
 
-  // The strip is the point: switching template must not be hidden on a phone.
-  // Which templates it shows depends on gallery order and on keeping the
-  // active one visible, so this asserts the affordance rather than any
-  // particular template: alternatives on screen, and a way to the rest.
+  // The picker moved inside the design disclosure: by the time the editor
+  // opens, a template has already been chosen, so a row of thumbnails above
+  // the form offers a decision already made. It still has to be reachable,
+  // and opening the panel must not push the page sideways on a phone.
+  await page.getByRole('group').filter({ hasText: /Mal, farger og skrift/ }).click()
+
   const strip = page.locator('button[data-template]')
+  await expect(strip.first()).toBeVisible()
   expect(await strip.count()).toBeGreaterThan(1)
   await expect(page.getByRole('button', { name: /maler til$/ })).toBeVisible()
+  expect(await horizontalOverflow(page)).toBeLessThanOrEqual(1)
 })
 
 test('the editor shows a preview button rather than a side-by-side preview', async ({ page }) => {

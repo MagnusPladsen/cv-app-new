@@ -6,8 +6,13 @@ import { describe, expect, it, vi } from 'vitest'
 
 import { DesignPanel } from '@/components/editor/DesignPanel'
 import { getTemplate } from '@/components/cv/templates'
+import { createEmptyDocument } from '@/lib/schema/defaults'
 import { FONT_PAIRS } from '@/lib/theme/fonts'
 import messages from '@/messages/no.json'
+
+let counter = 0
+const fixture = () =>
+  createEmptyDocument({}, { newId: () => `id-${++counter}`, now: () => 0 })
 
 function wrap(ui: ReactNode) {
   return render(
@@ -19,6 +24,7 @@ function wrap(ui: ReactNode) {
 
 function props(overrides: Record<string, unknown> = {}) {
   return {
+    document: fixture(),
     theme: {
       templateId: 'oslo',
       accent: '#1e3a8a',
@@ -33,9 +39,12 @@ function props(overrides: Record<string, unknown> = {}) {
 }
 
 describe('DesignPanel', () => {
-  it('does not duplicate the template picker, which lives in the strip', () => {
+  it('holds the template picker, which is a setting rather than a first step', () => {
+    // It used to sit above the form as a row of thumbnails, offering a
+    // decision already made on the way in. Changing template later belongs
+    // with the other things you change later.
     wrap(<DesignPanel {...props()} />)
-    expect(screen.queryByLabelText('Mal')).toBeNull()
+    expect(screen.getByRole('button', { name: getTemplate('oslo').name })).toBeInTheDocument()
   })
 
   it('shows the active template swatches', () => {

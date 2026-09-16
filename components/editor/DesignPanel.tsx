@@ -6,10 +6,11 @@ import { useTranslations } from 'next-intl'
 import { getTemplate } from '@/components/cv/templates'
 import { SelectField } from '@/components/editor/fields'
 import { PAPER } from '@/lib/print/paper'
-import type { CvTheme, Density, PaperId } from '@/lib/schema/cv'
+import type { CvDocument as CvDocumentData, CvTheme, Density, PaperId } from '@/lib/schema/cv'
 import { contrastRatio } from '@/lib/theme/contrast'
 import { FONT_PAIRS } from '@/lib/theme/fonts'
 import { ColourPicker } from './ColourPicker'
+import { TemplateStrip } from './TemplateStrip'
 
 const DENSITIES: Density[] = ['compact', 'normal', 'roomy']
 
@@ -19,13 +20,21 @@ const MIN_ACCENT_CONTRAST = 4.5
 /**
  * Collapsed by default: the editor should open on your content, not on styling
  * controls. The fields stay in the DOM while closed, so they remain findable.
+ *
+ * The template picker lives in here too. By the time the editor opens, a
+ * template has already been chosen - it is what you came through to get here -
+ * so a row of eighteen thumbnails above the form is offering a decision
+ * already made, in the place the content should be. Changing it later is a
+ * setting, and this is where the settings are.
  */
 export function DesignPanel({
+  document,
   theme,
   paper,
   onThemeChange,
   onPaperChange,
 }: {
+  document: CvDocumentData
   theme: CvTheme
   paper: PaperId
   onThemeChange: (patch: Partial<CvTheme>) => void
@@ -50,6 +59,11 @@ export function DesignPanel({
       </summary>
 
       <div className="flex flex-col gap-4 px-4 pt-1 pb-4">
+        <TemplateStrip
+          document={document}
+          onSelect={(templateId) => onThemeChange({ templateId })}
+        />
+
         <ColourPicker
           customLabel={t('custom')}
           label={t('accent')}

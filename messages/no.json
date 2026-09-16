@@ -155,7 +155,7 @@
     "contrastWarning": "Denne fargen har lav kontrast mot hvitt og kan bli vanskelig å lese på papir.",
     "templates": "Maler",
     "seeAll": "Se alle maler",
-    "colours": "Farger og skrift",
+    "colours": "Mal, farger og skrift",
     "more": "+{count}",
     "moreLabel": "Vis {count} maler til",
     "allTemplates": "Alle maler",

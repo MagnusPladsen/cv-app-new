@@ -90,18 +90,16 @@ function SectionRow({
         <GripVertical aria-hidden="true" className="size-4" />
       </button>
 
-      {/* Ticking a section is how people expect to say "I want this on my CV",
-          and they then expect somewhere to write. Switching one on therefore
-          opens it as well - otherwise a section could be enabled, visible in
-          the list, and still look like it had no form anywhere. */}
+      {/* Ticking switches the section on and nothing else. It used to select
+          it too, which scrolled the page down to the new form and left you
+          somewhere you had not asked to be - halfway through ticking four
+          boxes, that is four jumps. Every enabled section has a form below
+          regardless; clicking the name is how you go to one. */}
       <input
         aria-label={section.enabled ? t('hide') : t('show')}
         checked={section.enabled}
         className="size-4 shrink-0 accent-brand"
-        onChange={(event) => {
-          onToggle(section.id, event.target.checked)
-          if (event.target.checked) onSelect(section.id)
-        }}
+        onChange={(event) => onToggle(section.id, event.target.checked)}
         type="checkbox"
       />
 

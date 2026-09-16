@@ -25,7 +25,6 @@ import { QualityPanel } from './QualityPanel'
 import { SectionHelp } from './SectionHelp'
 import { SectionList } from './SectionList'
 import { SectionSettings } from './SectionSettings'
-import { TemplateStrip } from './TemplateStrip'
 
 export function EditorSplit({
   document,
@@ -124,12 +123,8 @@ export function EditorSplit({
           />
         </div>
 
-        <TemplateStrip
-          document={document}
-          onSelect={(templateId) => handlers.onThemeChange({ templateId })}
-        />
-
         <DesignPanel
+          document={document}
           onPaperChange={handlers.onPaperChange}
           onThemeChange={handlers.onThemeChange}
           paper={document.paper}
@@ -227,8 +222,12 @@ export function EditorSplit({
       {/* Exactly one preview is mounted at a time - the export path clones
           the first .cv-doc it finds, so a second copy anywhere, hidden or
           not, would be a coin flip over which CV gets printed. */}
+      {/* The preview sticks clear of the header rather than under it. The
+          header is sticky and 57px tall, so holding the preview 24px from the
+          top of the viewport slid its grey surround up against the navigation
+          and the two appeared to merge. */}
       {isDesktop ? (
-        <div className="min-w-0 lg:sticky lg:top-6 lg:self-start">
+        <div className="min-w-0 lg:sticky lg:top-[5.25rem] lg:self-start">
           <PreviewPane
             containerRef={previewRef}
             document={document}

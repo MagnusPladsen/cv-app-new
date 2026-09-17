@@ -13,8 +13,9 @@ import { useEffect, useId, useRef, useState } from 'react'
  * pointer moves. It is anchored rather than inline so that opening it does not
  * push the form down and lose the field you were looking at.
  *
- * Every tip is two or three sentences. Anything longer is an article, and
- * nobody looking at a form wanted an article.
+ * Every tip is a few short lines, one idea each. Each line is its own
+ * paragraph with space around it: run together, advice that does not belong
+ * to the sentence before it reads as a wall.
  */
 export function SectionHelp({ topic }: { topic: string }) {
   const t = useTranslations('help')
@@ -67,7 +68,13 @@ export function SectionHelp({ topic }: { topic: string }) {
           id={id}
           role="note"
         >
-          <p className="flex-1 whitespace-pre-line">{t(topic)}</p>
+          <div className="flex flex-1 flex-col gap-2">
+            {t(topic)
+              .split('\n')
+              .map((line) => (
+                <p key={line}>{line}</p>
+              ))}
+          </div>
           <button
             aria-label={t('close')}
             className="size-5 shrink-0 rounded text-muted-foreground transition hover:text-brand-strong focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"

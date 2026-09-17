@@ -179,18 +179,23 @@ export function EditorSplit({
           // one ends and the next begins is obvious when they are all on
           // screen together.
           <div
-            className="flex scroll-mt-24 flex-col gap-4 rounded-xl border border-border/70 bg-card/40 p-4 sm:p-5"
+            className="relative flex scroll-mt-24 flex-col gap-4 rounded-xl border border-border/70 bg-card/40 p-4 sm:p-5"
             id={sectionFormId(section.id)}
             key={section.id}
           >
-            {/* Anchored top-right so it sits beside the form's own heading
-                without the forms having to know it exists. */}
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0 flex-1">
-                <SectionSettings onShapeChange={handlers.onCustomShapeChange} section={section} />
-              </div>
+            {/* Pinned to the corner, level with the form's own heading. It
+                used to sit in a row of its own above the form, which on every
+                section but a custom one was a row holding nothing else - a
+                band of empty space at the top of each card. */}
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
               <SectionHelp topic={section.type} />
             </div>
+
+            {section.type === 'custom' ? (
+              <div className="pr-9">
+                <SectionSettings onShapeChange={handlers.onCustomShapeChange} section={section} />
+              </div>
+            ) : null}
 
             <SectionEditor handlers={handlers} labels={labels} section={section} />
           </div>

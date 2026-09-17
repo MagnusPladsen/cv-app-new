@@ -50,3 +50,9 @@ next-env.d.ts
 /playwright-report
 /blob-report
 /playwright/.cache
+
+# Real CVs used to measure the importer against. Never committed: this
+# repository is public, and these are other people's personal data - the exact
+# thing the rest of the app goes to some trouble never to hold.
+/import examples/
+/test-cvs/

@@ -235,6 +235,15 @@ describe('dates as Norwegian CVs write them', () => {
     expect(findDateRange('08.2019–d.d.')).toMatchObject({ from: '2019-08', current: true })
   })
 
+  it('keeps an entry whose dates are still a template’s placeholder', () => {
+    expect(findDateRange('mm.åå – mm.åå Leksehjelp')).toMatchObject({
+      from: '',
+      to: '',
+      rest: 'Leksehjelp',
+    })
+    expect(findDateRange('mm.åå–d.d.')).toMatchObject({ from: '', current: true })
+  })
+
   it('looks past a word that sits in front of a year', () => {
     // "NTNU 2010" has the shape of "mai 2010". It is not a date, and the real
     // range starts one word later.

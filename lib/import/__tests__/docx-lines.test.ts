@@ -11,6 +11,7 @@ import { parseCv } from '@/lib/import/parse-cv'
 
 const NS = [
   'xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"',
+  'xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing"',
   'xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"',
 ].join(' ')
 
@@ -133,6 +134,72 @@ describe('reading a Word document', () => {
       }),
     )
     expect(lines.map((line) => line.text)).toEqual(['Kari Nordmann', 'Om meg'])
+  })
+})
+
+describe('a page made of floating text boxes', () => {
+  const EMU = 12_700
+  /** A text box placed at x, y (points from the top left), 200pt wide. */
+  const floating = (x: number, y: number, ...texts: string[]) =>
+    paragraph(
+      `<w:r><mc:AlternateContent><mc:Choice><w:drawing><wp:anchor>` +
+        `<wp:positionH relativeFrom="column"><wp:posOffset>${x * EMU}</wp:posOffset></wp:positionH>` +
+        `<wp:positionV relativeFrom="paragraph"><wp:posOffset>${y * EMU}</wp:posOffset></wp:positionV>` +
+        `<wp:extent cx="${200 * EMU}" cy="${20 * EMU}"/>` +
+        `<w:txbxContent>${texts.map((text) => paragraph(run(text))).join('')}</w:txbxContent>` +
+        `</wp:anchor></w:drawing></mc:Choice>` +
+        `<mc:Fallback><w:txbxContent>${paragraph(run('VML-kopi'))}</w:txbxContent></mc:Fallback>` +
+        `</mc:AlternateContent></w:r>`,
+    )
+
+  it('reads the boxes by where they sit, one column at a time', () => {
+    // Stored in the order a template author happened to draw them. The
+    // columns are set independently: small boxes close together on the
+    // left, a few tall ones far apart on the right.
+    const body = [
+      floating(300, 207, 'Norsk'),
+      floating(0, 115, 'Leksehjelp', 'Oslo Røde Kors'),
+      floating(300, 107, 'Språk'),
+      floating(100, 0, 'Kari Nordmann Hansen Olsen Berg'),
+      floating(0, 100, 'Erfaring'),
+      floating(300, 257, 'Engelsk'),
+      floating(0, 130, 'Redaktør', 'Zoon Politikon'),
+      floating(0, 145, 'Utdanning'),
+      floating(0, 160, 'Master, NTNU'),
+      floating(300, 157, 'Engelsk og norsk'),
+    ].join('')
+
+    expect(texts(docx(body)).map((line) => line.text)).toEqual([
+      'Kari Nordmann Hansen Olsen Berg',
+      'Erfaring',
+      'Leksehjelp',
+      'Oslo Røde Kors',
+      'Redaktør',
+      'Zoon Politikon',
+      'Utdanning',
+      'Master, NTNU',
+      'Språk',
+      'Engelsk og norsk',
+      'Norsk',
+      'Engelsk',
+    ])
+  })
+
+  it('keeps document order when a box or two sits in ordinary text', () => {
+    const body = [
+      paragraph(run('Kari Nordmann')),
+      paragraph(run('Om meg')),
+      paragraph(run('Prosjektleder i ti år.')),
+      floating(300, 0, 'Sitat i en boks'),
+      paragraph(run('Erfaring')),
+    ].join('')
+    expect(texts(docx(body)).map((line) => line.text)).toEqual([
+      'Kari Nordmann',
+      'Om meg',
+      'Prosjektleder i ti år.',
+      'Sitat i en boks',
+      'Erfaring',
+    ])
   })
 })
 

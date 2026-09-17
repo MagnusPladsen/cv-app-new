@@ -150,7 +150,20 @@ function spansColumns(row: Fragment[], gutter: Gutter): boolean {
  * separate every job from its dates. Sidebars are set independently, so their
  * baselines line up only by chance. That is the test.
  */
-export function findGutter(rows: Fragment[][], width: number): Gutter | null {
+export type LayoutOptions = {
+  /**
+   * Fragments that each stand for a block of several lines, as a Word text
+   * box does. Line spacing says nothing about such rows, so the sparse-label
+   * test is skipped.
+   */
+  blocks?: boolean
+}
+
+export function findGutter(
+  rows: Fragment[][],
+  width: number,
+  options: LayoutOptions = {},
+): Gutter | null {
   if (rows.length < 8 || width <= 0) return null
 
   const bins = new Array<number>(Math.ceil(width)).fill(0)
@@ -165,8 +178,9 @@ export function findGutter(rows: Fragment[][], width: number): Gutter | null {
   }
 
   // A header - name, title, a line or two of contact details - can run
-  // across the gutter, and is often four or five rows deep.
-  const allowed = Math.max(5, Math.floor(rows.length * 0.1))
+  // across the gutter, and is often four or five rows deep. Capped by the
+  // page's size, or on a short page a whole column would count as blank.
+  const allowed = Math.max(2, Math.min(5, Math.floor(rows.length * 0.1)))
   let best: { from: number; to: number } | null = null
   let runStart = -1
 
@@ -219,7 +233,9 @@ export function findGutter(rows: Fragment[][], width: number): Gutter | null {
   }
   const leftSpacing = spacing(leftY)
   const rightSpacing = spacing(rightY)
-  if (Math.max(leftSpacing, rightSpacing) > 3 * Math.min(leftSpacing, rightSpacing)) return null
+  if (!options.blocks && Math.max(leftSpacing, rightSpacing) > 3 * Math.min(leftSpacing, rightSpacing)) {
+    return null
+  }
   // Independent columns still line up by chance - a sidebar on a 27pt rhythm
   // meets a main column on 16pt about every other line. A label column
   // lines up almost always.
@@ -229,9 +245,9 @@ export function findGutter(rows: Fragment[][], width: number): Gutter | null {
 }
 
 /** One page's lines in reading order. */
-export function pageToLines(page: PdfPage): Line[] {
+export function pageToLines(page: PdfPage, options: LayoutOptions = {}): Line[] {
   const rows = toRows(page.fragments)
-  const gutter = findGutter(rows, page.width)
+  const gutter = findGutter(rows, page.width, options)
   if (gutter === null) return rows.flatMap(rowToLines)
 
   const lines: Line[] = []
@@ -323,7 +339,7 @@ export async function pdfToLines(file: ArrayBuffer): Promise<PdfExtraction> {
       return { ok: false, reason: 'no-text' }
     }
 
-    return { ok: true, lines: pages.flatMap(pageToLines), pages: document.numPages }
+    return { ok: true, lines: pages.flatMap((page) => pageToLines(page)), pages: document.numPages }
   } catch {
     return { ok: false, reason: 'unreadable' }
   }

@@ -215,7 +215,9 @@ function letterSpaced(text: string): string | null {
 
 /** A heading if it names a section and is short enough to be one. */
 function headingType(line: Line): SectionType | null {
-  const text = normalise(line.text)
+  // "Referanser (2-4)", "Interesser (valgfritt)": a note in brackets is not
+  // part of the name.
+  const text = normalise(line.text.replace(/\s*\([^)]*\)\s*$/, ''))
   if (!text || text.length > 40) return null
 
   const spaced = letterSpaced(text)
@@ -232,7 +234,14 @@ function headingType(line: Line): SectionType | null {
 }
 
 /** "mai 2021" / "05/2021" / "2021" as "YYYY-MM", or "" for a bare year. */
+/**
+ * "mm.åå", "MM/YYYY": a template's placeholder the writer never replaced. It
+ * still marks where an entry's dates go, so the entry is kept with them blank.
+ */
+const PLACEHOLDER_DATE = String.raw`mm[./-](?:åå|åååå|yy|yyyy)`
+
 function monthToken(raw: string): string | null {
+  if (new RegExp(`^${PLACEHOLDER_DATE}$`, 'i').test(raw.trim())) return ''
   // Only the full stop that ends an abbreviated month goes. Stripping every
   // dot turned "08.2019", the most common way to write a date on a Norwegian
   // CV, into "082019", and no date written that way was ever found.
@@ -266,7 +275,7 @@ export type DateRange = { from: string; to: string; current: boolean; rest: stri
 /** Finds a date range anywhere in a line, and returns what is left of it. */
 export function findDateRange(text: string): DateRange | null {
   const separator = /\s*(?:–|—|-|til|to|until)\s*/i
-  const datePart = String.raw`(?:[A-Za-zæøåÆØÅ]+\.?\s+\d{4}|\d{1,2}[/.\-]\d{4}|\d{4})`
+  const datePart = String.raw`(?:${PLACEHOLDER_DATE}|[A-Za-zæøåÆØÅ]+\.?\s+\d{4}|\d{1,2}[/.\-]\d{4}|\d{4})`
   const pattern = new RegExp(
     `(${datePart})${separator.source}(${datePart}|nå|no|na|d\\.?d\\.?|i dag|present|current|now|ongoing|pågående)`,
     'gi',
@@ -423,14 +432,19 @@ function buildEntries(block: Line[]): { entries: ParsedEntry[]; leftovers: strin
   const entries: ParsedEntry[] = []
   const leftovers: string[] = []
 
-  const newEntry = (range: DateRange): ParsedEntry => ({
-    role: range.rest,
-    organisation: '',
-    from: range.from,
-    to: range.to,
-    current: range.current,
-    bullets: [],
-  })
+  // "Redaktør · Universitetet i Oslo" beside the date is role and employer,
+  // as separate cells of a table row or separate boxes come out.
+  const newEntry = (range: DateRange): ParsedEntry => {
+    const [role = '', ...organisation] = range.rest.split(' · ')
+    return {
+      role,
+      organisation: organisation.join(' · '),
+      from: range.from,
+      to: range.to,
+      current: range.current,
+      bullets: [],
+    }
+  }
 
   // Fills an entry's empty fields from a run of lines, then the description.
   const fill = (entry: ParsedEntry, run: string[]) => {
@@ -492,13 +506,12 @@ function buildEntries(block: Line[]): { entries: ParsedEntry[]; leftovers: strin
     else leftovers.push(...spill)
 
     const range = lines[index]!.range!
-    const entry = newEntry(range)
-    entry.role = ''
+    let entry = newEntry({ ...range, rest: '' })
     fill(entry, title)
     // What shared the date's line - "Gj.snittskarakter:", a place - is kept
     // as description rather than lost.
     if (range.rest) {
-      if (!entry.role) entry.role = range.rest
+      if (!entry.role) entry = { ...newEntry(range), bullets: entry.bullets }
       else entry.bullets.push(range.rest)
     }
     entries.push(entry)
@@ -616,6 +629,8 @@ export function parseCv(lines: Line[]): ParsedCv {
       !EMAIL.test(next.text) &&
       !findPhone(next.text) &&
       !headingType(next) &&
+      // "Valgfritt: bilde" is a template's instruction, not a job title.
+      !next.text.includes(':') &&
       next.text.length < 60
     ) {
       result.personalia.title = next.text

@@ -1,7 +1,7 @@
 'use client'
 
 import { FileUp, Loader2 } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useId, useState } from 'react'
 
 import { DialogPortal } from '@/components/ui/DialogPortal'
@@ -38,6 +38,7 @@ export function ImportCvButton({
   onImport: (parsed: ParsedCv, choice: ImportChoice) => void
 }) {
   const t = useTranslations('import')
+  const locale = useLocale()
   const inputId = useId()
   const [stage, setStage] = useState<Stage>({ kind: 'idle' })
   const [choice, setChoice] = useState<ImportChoice>(ACCEPT_ALL)
@@ -66,8 +67,8 @@ export function ImportCvButton({
   const counts = stage.kind === 'review' ? stage.parsed : null
 
   type Row = { key: keyof ImportChoice; label: string; found: number }
-  const rows: Row[] = counts
-    ? ([
+  const allRows: Row[] = counts
+    ? [
         {
           key: 'personalia',
           label: t('personalia'),
@@ -84,8 +85,13 @@ export function ImportCvButton({
         { key: 'languages', label: t('languages'), found: counts.languages.length },
         { key: 'interests', label: t('interests'), found: counts.interests.length },
         { key: 'unrecognised', label: t('unrecognised'), found: counts.unrecognised.length },
-      ] satisfies Row[]).filter((row) => row.found > 0)
+      ]
     : []
+  const rows = allRows.filter((row) => row.found > 0)
+  // Said out loud rather than left out, so an import that found the jobs but
+  // not the education does not read as if the CV had none. Leftover lines are
+  // not a section anyone expects, so their absence is not news.
+  const missing = allRows.filter((row) => row.found === 0 && row.key !== 'unrecognised')
 
   return (
     <div className="flex flex-col gap-2">
@@ -170,6 +176,16 @@ export function ImportCvButton({
                   ))}
                 </ul>
               )}
+
+              {rows.length > 0 && missing.length > 0 ? (
+                <p className="rounded-xl bg-brand-soft/60 px-3 py-2.5 text-sm text-foreground/80">
+                  {t('missing', {
+                    sections: new Intl.ListFormat(locale, { type: 'conjunction' }).format(
+                      missing.map((row) => row.label.toLowerCase()),
+                    ),
+                  })}
+                </p>
+              ) : null}
 
               <div className="flex flex-wrap justify-end gap-3">
                 <button

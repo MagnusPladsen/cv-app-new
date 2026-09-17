@@ -369,6 +369,7 @@
     "scanned": "Vi fant ingen tekst i filen. En skannet PDF er et bilde, og da finnes det ingen tekst å hente ut.",
     "unreadable": "Vi klarte ikke å lese filen.",
     "oldWord": "Dette er en eldre Word-fil (.doc). Åpne den i Word, lagre som .docx eller PDF, og prøv igjen.",
-    "unsupported": "Vi kan lese PDF og Word (.docx). Denne filen er ingen av delene."
+    "unsupported": "Vi kan lese PDF og Word (.docx). Denne filen er ingen av delene.",
+    "missing": "Fant ikke {sections}. Det fyller du inn selv etterpå."
   }
 }

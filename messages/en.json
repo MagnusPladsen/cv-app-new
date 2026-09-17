@@ -369,6 +369,7 @@
     "scanned": "We found no text in this file. A scanned PDF is a picture, so there is no text in it to read.",
     "unreadable": "We could not read that file.",
     "oldWord": "This is an older Word file (.doc). Open it in Word, save it as .docx or PDF, and try again.",
-    "unsupported": "We can read PDF and Word (.docx). This file is neither."
+    "unsupported": "We can read PDF and Word (.docx). This file is neither.",
+    "missing": "Not found: {sections}. You can fill those in afterwards."
   }
 }

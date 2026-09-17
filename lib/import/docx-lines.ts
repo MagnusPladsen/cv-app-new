@@ -1,6 +1,7 @@
 import { unzipSync } from 'fflate'
 
 import type { Line } from './parse-cv'
+import { pageToLines, type Fragment } from './pdf-lines'
 
 /**
  * Reading a Word document into the same lines a PDF produces.
@@ -20,6 +21,25 @@ export type DocxExtraction =
 
 const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main'
 const MC = 'http://schemas.openxmlformats.org/markup-compatibility/2006'
+const WP = 'http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing'
+
+/** Drawing coordinates are in English Metric Units: 12,700 to the point. */
+const EMU_PER_POINT = 12_700
+
+/** A text box placed at a position on the page, in points. */
+type Box = { id: number; x: number; y: number; width: number }
+
+type BoxedLine = Line & { box?: Box }
+
+/** The line without its box, once the box has been used for ordering. */
+const unboxed = (line: BoxedLine): Line => {
+  const plain: BoxedLine = { ...line }
+  delete plain.box
+  return plain
+}
+
+/** Something found inside a paragraph that is read after it. */
+type Nested = { element: Element; box?: Box }
 
 /** Word's own default when a document sets none: 10pt. */
 const WORD_DEFAULT_SIZE = 10
@@ -102,7 +122,38 @@ function readStyles(xml: Document | null): Styles {
  * and read after the paragraph that anchors them, rather than spliced into the
  * middle of its sentence.
  */
-function readParagraph(paragraph: Element, styles: Styles, nested: Element[]): Line[] {
+let boxCount = 0
+
+const inWp = (node: Node | undefined, name: string): Element | undefined =>
+  node
+    ? ([...node.childNodes].find(
+        (child) =>
+          child.nodeType === 1 &&
+          (child as Element).namespaceURI === WP &&
+          (child as Element).localName === name,
+      ) as Element | undefined)
+    : undefined
+
+/** Where a floating drawing sits. An alignment instead of an offset is 0. */
+function readAnchor(anchor: Element): Box {
+  const offset = (axis: string) =>
+    Number(inWp(inWp(anchor, axis), 'posOffset')?.textContent ?? 0) / EMU_PER_POINT || 0
+  const extent = inWp(anchor, 'extent')
+  boxCount += 1
+  return {
+    id: boxCount,
+    x: offset('positionH'),
+    y: offset('positionV'),
+    width: Number(extent?.getAttribute('cx') ?? 0) / EMU_PER_POINT || 0,
+  }
+}
+
+function readParagraph(
+  paragraph: Element,
+  styles: Styles,
+  nested: Nested[],
+  box?: Box,
+): BoxedLine[] {
   const properties = child(paragraph, 'pPr')
   const styleId = attribute(properties && child(properties, 'pStyle'), 'val')
   const paragraphSize = (styleId && styles.sizes.get(styleId)) || styles.defaultSize
@@ -112,7 +163,7 @@ function readParagraph(paragraph: Element, styles: Styles, nested: Element[]): L
 
   const lines: { text: string; size: number }[] = [{ text: '', size: 0 }]
 
-  const visit = (node: Node, runSize: number) => {
+  const visit = (node: Node, runSize: number, within: Box | undefined) => {
     for (const current of node.childNodes) {
       if (current.nodeType !== 1) continue
       const element = current as Element
@@ -121,12 +172,15 @@ function readParagraph(paragraph: Element, styles: Styles, nested: Element[]): L
       // old readers. Reading both doubles every text box.
       if (element.namespaceURI === MC && element.localName === 'Fallback') continue
 
-      if (isW(element, 'txbxContent')) {
-        nested.push(element)
+      // A floating drawing: its text boxes are placed on the page by position,
+      // not by where they sit in the document.
+      if (element.namespaceURI === WP && element.localName === 'anchor') {
+        visit(element, runSize, readAnchor(element))
         continue
       }
-      if (isW(element, 'p')) {
-        nested.push(element)
+
+      if (isW(element, 'txbxContent') || isW(element, 'p')) {
+        nested.push({ element, box: within })
         continue
       }
 
@@ -135,7 +189,7 @@ function readParagraph(paragraph: Element, styles: Styles, nested: Element[]): L
         const runStyle = attribute(runProperties && child(runProperties, 'rStyle'), 'val')
         const size =
           sizeOf(runProperties) ?? (runStyle ? styles.sizes.get(runStyle) : undefined) ?? paragraphSize
-        visit(element, size)
+        visit(element, size, within)
         continue
       }
 
@@ -150,12 +204,12 @@ function readParagraph(paragraph: Element, styles: Styles, nested: Element[]): L
       } else if (isW(element, 'br') || isW(element, 'cr')) {
         lines.push({ text: '', size: 0 })
       } else if (!isW(element, 'delText') && !isW(element, 'instrText')) {
-        visit(element, runSize)
+        visit(element, runSize, within)
       }
     }
   }
 
-  visit(paragraph, paragraphSize)
+  visit(paragraph, paragraphSize, box)
 
   return lines.flatMap((line) => {
     let text = line.text
@@ -167,15 +221,17 @@ function readParagraph(paragraph: Element, styles: Styles, nested: Element[]): L
     const typed = /^[•▪◦‣](?:\s*·)?\s*/.exec(text)
     if (typed) text = text.slice(typed[0].length)
     if (!text) return []
-    return [{ text: listed || typed ? `• ${text}` : text, size: line.size || paragraphSize }]
+    const read: BoxedLine = { text: listed || typed ? `• ${text}` : text, size: line.size || paragraphSize }
+    if (box) read.box = box
+    return [read]
   })
 }
 
 /** Every paragraph under `root`, in document order, tables included. */
-function readBody(root: Element, styles: Styles): Line[] {
-  const lines: Line[] = []
+function readBody(root: Element, styles: Styles): BoxedLine[] {
+  const lines: BoxedLine[] = []
 
-  const walk = (node: Element) => {
+  const walk = (node: Element, box?: Box) => {
     for (const current of node.childNodes) {
       if (current.nodeType !== 1) continue
       const element = current as Element
@@ -187,15 +243,19 @@ function readBody(root: Element, styles: Styles): Line[] {
       }
 
       if (isW(element, 'p')) {
-        const nested: Element[] = []
-        lines.push(...readParagraph(element, styles, nested))
+        const nested: Nested[] = []
+        lines.push(...readParagraph(element, styles, nested, box))
         for (const inner of nested) {
-          if (isW(inner, 'p')) lines.push(...readParagraph(inner, styles, nested))
-          else walk(inner)
+          const within = inner.box ?? box
+          if (isW(inner.element, 'p')) {
+            lines.push(...readParagraph(inner.element, styles, nested, within))
+          } else {
+            walk(inner.element, within)
+          }
         }
         continue
       }
-      walk(element)
+      walk(element, box)
     }
   }
 
@@ -229,6 +289,63 @@ function parseXml(bytes: Uint8Array | undefined): Document | null {
   if (!bytes) return null
   const xml = new DOMParser().parseFromString(new TextDecoder().decode(bytes), 'application/xml')
   return xml.getElementsByTagName('parsererror').length > 0 ? null : xml
+}
+
+/**
+ * Puts a page built from floating text boxes back into reading order.
+ *
+ * Some Word templates are nothing but text boxes placed on the page, and the
+ * document stores them in whatever order they were drawn: the name last, a
+ * job's dates before its title. Their positions are all that says how the
+ * page reads, which makes it the same problem as a PDF - so each box becomes
+ * one positioned fragment and the PDF reader's row and column logic orders
+ * them. Each fragment stands for its whole box, so a box's paragraphs stay
+ * together however tall it really is.
+ */
+function layOutBoxes(lines: BoxedLine[]): Line[] {
+  const flowing = lines.filter((line) => !line.box).map(unboxed)
+
+  const boxes = new Map<number, { box: Box; lines: Line[] }>()
+  for (const line of lines) {
+    const box = line.box
+    if (!box) continue
+    const entry = boxes.get(box.id) ?? { box, lines: [] }
+    entry.lines.push(unboxed(line))
+    boxes.set(box.id, entry)
+  }
+  const placed = [...boxes.values()]
+  const left = Math.min(...placed.map(({ box }) => box.x))
+  const right = Math.max(...placed.map(({ box }) => box.x + box.width))
+
+  const fragments: Fragment[] = placed.map(({ box, lines: boxLines }, index) => ({
+    text: `\u0000${index}\u0000`,
+    x: box.x - left,
+    // Drawing offsets grow downwards, PDF coordinates upwards.
+    y: -box.y,
+    size: Math.max(...boxLines.map((line) => line.size ?? 0)),
+    width: box.width,
+  }))
+
+  const ordered = pageToLines({ width: right - left, fragments }, { blocks: true }).flatMap((line) => {
+    const inRow = [...line.text.matchAll(/\u0000(\d+)\u0000/g)].map(
+      (match) => placed[Number(match[1])]!.lines,
+    )
+    // Boxes side by side holding a line each - a title and its dates - are
+    // one line, as a table row would be.
+    const expanded: Line[] =
+      inRow.length > 1 && inRow.every((boxLines) => boxLines.length === 1)
+        ? [
+            {
+              text: inRow.map((boxLines) => boxLines[0]!.text).join(' · '),
+              size: Math.max(...inRow.map((boxLines) => boxLines[0]!.size ?? 0)),
+            },
+          ]
+        : inRow.flat()
+    if (line.columnStart && expanded[0]) expanded[0] = { ...expanded[0], columnStart: true }
+    return expanded
+  })
+
+  return [...flowing, ...ordered]
 }
 
 /** Whether these bytes are a zip archive, which a .docx always is. */
@@ -273,7 +390,17 @@ export function docxToLines(file: ArrayBuffer): DocxExtraction {
       return true
     })
 
-    return unique.length > 0 ? { ok: true, lines: unique } : { ok: false, reason: 'no-text' }
+    if (unique.length === 0) return { ok: false, reason: 'no-text' }
+
+    // Laid out by position only when the boxes are the document. A normal
+    // CV with a text box or two keeps its reading order, with each box read
+    // where it is anchored.
+    const boxed = unique.filter((line) => line.box)
+    const boxCount = new Set(boxed.map((line) => line.box!.id)).size
+    if (boxCount >= 3 && boxed.length * 2 >= unique.length) {
+      return { ok: true, lines: layOutBoxes(unique) }
+    }
+    return { ok: true, lines: unique.map(unboxed) }
   } catch {
     return { ok: false, reason: 'unreadable' }
   }

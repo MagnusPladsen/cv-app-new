@@ -20,6 +20,7 @@ test('the dashboard says where the CVs are stored', async ({ page }) => {
 test('signing in is offered, but never required to build a CV', async ({ page }) => {
   await page.goto('/no/templates')
   await page.locator('button[data-template="oslo"]').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/.+/)
 
   await page.getByLabel(/Fornavn/).first().fill('Testperson')
@@ -99,6 +100,7 @@ test('a signed-out download offers sign-in, and guest mode always gets the file'
 
   await page.goto('/no/templates')
   await page.locator('button[data-template="oslo"]').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/.+/)
 
   const download = page.getByRole('button', { name: 'Last ned PDF' })
@@ -174,6 +176,7 @@ test('the new-password page renders for someone arriving from the email link', a
 test('a signed-out editor offers to save, and comes back to the same CV', async ({ page }) => {
   await page.goto('/no/templates')
   await page.locator('button[data-template="oslo"]').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/(.+)/)
   const id = page.url().split('/cv/')[1]!
 

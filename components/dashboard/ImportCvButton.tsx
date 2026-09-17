@@ -32,10 +32,26 @@ const FAILURE_MESSAGE = {
  * Nothing is imported without being shown first. A parse of somebody's real CV
  * is a guess, and the review step is what turns a guess into a choice.
  */
+const PILL =
+  'inline-flex w-fit cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-within:ring-2 focus-within:ring-brand'
+
 export function ImportCvButton({
   onImport,
+  mode = 'new',
+  label,
+  showNote = true,
+  triggerClassName = PILL,
 }: {
   onImport: (parsed: ParsedCv, choice: ImportChoice) => void
+  /** A new CV from the file, or the file added to the CV that is open. */
+  mode?: 'new' | 'merge'
+  label?: string
+  /**
+   * The "read on your machine" line under the button. Where there is no room
+   * for it, it is shown in the review instead.
+   */
+  showNote?: boolean
+  triggerClassName?: string
 }) {
   const t = useTranslations('import')
   const locale = useLocale()
@@ -95,16 +111,13 @@ export function ImportCvButton({
 
   return (
     <div className="flex flex-col gap-2">
-      <label
-        className="inline-flex w-fit cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-within:ring-2 focus-within:ring-brand"
-        htmlFor={inputId}
-      >
+      <label className={triggerClassName} htmlFor={inputId}>
         {stage.kind === 'reading' ? (
           <Loader2 aria-hidden="true" className="size-4 animate-spin" />
         ) : (
           <FileUp aria-hidden="true" className="size-4" />
         )}
-        {t('button')}
+        {label ?? t('button')}
       </label>
       <input
         accept={IMPORT_ACCEPT}
@@ -117,7 +130,7 @@ export function ImportCvButton({
         }}
         type="file"
       />
-      <p className="text-xs text-muted-foreground">{t('local')}</p>
+      {showNote ? <p className="text-xs text-muted-foreground">{t('local')}</p> : null}
 
       {stage.kind === 'failed' ? (
         <p className="text-sm text-destructive" role="alert">
@@ -146,7 +159,9 @@ export function ImportCvButton({
                 <h2 className="text-lg font-bold" id="import-review-title">
                   {t('reviewTitle')}
                 </h2>
-                <p className="text-sm text-muted-foreground">{t('reviewBody')}</p>
+                <p className="text-sm text-muted-foreground">
+                  {t(mode === 'merge' ? 'reviewBodyMerge' : 'reviewBody')}
+                </p>
               </div>
 
               {rows.length === 0 ? (
@@ -177,6 +192,8 @@ export function ImportCvButton({
                 </ul>
               )}
 
+              {showNote ? null : <p className="text-xs text-muted-foreground">{t('local')}</p>}
+
               {rows.length > 0 && missing.length > 0 ? (
                 <p className="rounded-xl bg-brand-soft/60 px-3 py-2.5 text-sm text-foreground/80">
                   {t('missing', {
@@ -204,7 +221,7 @@ export function ImportCvButton({
                   }}
                   type="button"
                 >
-                  {t('create')}
+                  {t(mode === 'merge' ? 'merge' : 'create')}
                 </button>
               </div>
             </div>

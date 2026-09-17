@@ -176,7 +176,10 @@
     "filterOneColumn": "One column",
     "empty": "No templates in this category.",
     "moreLabel": "Show {count} more templates",
-    "allTemplates": "All templates"
+    "allTemplates": "All templates",
+    "startNew": "Start a new CV",
+    "chooseBody": "Start from a blank CV, or import one you already have. You can change template at any time.",
+    "close": "Close"
   },
   "landing": {
     "lead": "Free. Never a watermark.",
@@ -370,6 +373,9 @@
     "unreadable": "We could not read that file.",
     "oldWord": "This is an older Word file (.doc). Open it in Word, save it as .docx or PDF, and try again.",
     "unsupported": "We can read PDF and Word (.docx). This file is neither.",
-    "missing": "Not found: {sections}. You can fill those in afterwards."
+    "missing": "Not found: {sections}. You can fill those in afterwards.",
+    "buttonShort": "Import…",
+    "merge": "Add to this CV",
+    "reviewBodyMerge": "Tick what you want to keep. It is added to the CV you are writing — nothing you have written is overwritten."
   }
 }

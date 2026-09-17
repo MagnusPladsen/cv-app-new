@@ -5,7 +5,11 @@ import { useState } from 'react'
 
 import { getTemplate, TEMPLATES } from '@/components/cv/templates'
 import type { TemplateTag } from '@/components/cv/types'
+import type { Template } from '@/components/cv/types'
 import { TemplateCard } from '@/components/gallery/TemplateCard'
+import { TemplateStartDialog } from '@/components/gallery/TemplateStartDialog'
+import type { ParsedCv } from '@/lib/import/parse-cv'
+import type { ImportChoice } from '@/lib/import/to-document'
 import { Link, useRouter } from '@/i18n/navigation'
 
 type Filter = TemplateTag | 'all'
@@ -24,6 +28,7 @@ export default function TemplateGalleryPage() {
   const t = useTranslations('gallery')
   const router = useRouter()
   const [filter, setFilter] = useState<Filter>('all')
+  const [chosen, setChosen] = useState<Template | null>(null)
 
 
   const visible = TEMPLATES.filter(
@@ -34,15 +39,29 @@ export default function TemplateGalleryPage() {
   // only thing on the landing page that needs the document store, and a
   // static import put the store, immer and zod into the first JavaScript
   // every visitor downloads - to serve a button most of them never press.
-  async function handleChoose(templateId: string) {
+  const lookOf = (template: Template) => ({
+    templateId: template.id,
+    accent: template.defaultAccent,
+    fontPairId: template.defaultFontPairId,
+  })
+
+  async function handleStart(template: Template) {
     const { useDocuments } = await import('@/lib/store/documents')
-    const template = getTemplate(templateId)
-    const id = useDocuments.getState().createDocument({
-      templateId: template.id,
-      accent: template.defaultAccent,
-      fontPairId: template.defaultFontPairId,
-    })
+    const id = useDocuments.getState().createDocument(lookOf(template))
     router.push(`/cv/${id}`)
+  }
+
+  // The same validated path the dashboard's import takes, with the look the
+  // person just picked instead of the default one.
+  async function handleImport(template: Template, parsed: ParsedCv, choice: ImportChoice) {
+    const [{ useDocuments }, { documentFromParse }] = await Promise.all([
+      import('@/lib/store/documents'),
+      import('@/lib/import/to-document'),
+    ])
+    const result = useDocuments
+      .getState()
+      .importDocument(documentFromParse(parsed, choice, lookOf(template)))
+    if (result.ok) router.push(`/cv/${result.id}`)
   }
 
   return (
@@ -88,10 +107,23 @@ export default function TemplateGalleryPage() {
            bigger thumbnails, which are harder to compare, not easier. */
         <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
           {visible.map((template) => (
-            <TemplateCard key={template.id} onChoose={handleChoose} template={template} />
+            <TemplateCard
+              key={template.id}
+              onChoose={(id) => setChosen(getTemplate(id))}
+              template={template}
+            />
           ))}
         </ul>
       )}
+
+      {chosen ? (
+        <TemplateStartDialog
+          onClose={() => setChosen(null)}
+          onImport={(parsed, choice) => void handleImport(chosen, parsed, choice)}
+          onStart={() => void handleStart(chosen)}
+          template={chosen}
+        />
+      ) : null}
 
       <div>
         <Link

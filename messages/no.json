@@ -22,7 +22,7 @@
     "rename": "Gi nytt navn",
     "renamePrompt": "Nytt navn på CV-en",
     "export": "Last ned sikkerhetskopi",
-    "import": "Hent inn fra fil",
+    "import": "Importer fra fil",
     "confirmDelete": "Slette «{name}»? CV-en finnes bare i denne nettleseren og kan ikke hentes tilbake.",
     "confirm": "Slett",
     "cancel": "Avbryt",
@@ -176,7 +176,10 @@
     "filterOneColumn": "Én kolonne",
     "empty": "Ingen maler i denne kategorien.",
     "moreLabel": "Vis {count} maler til",
-    "allTemplates": "Alle maler"
+    "allTemplates": "Alle maler",
+    "startNew": "Start ny CV",
+    "chooseBody": "Start med en tom CV, eller importer en du har fra før. Du kan bytte mal når som helst.",
+    "close": "Lukk"
   },
   "landing": {
     "lead": "Gratis. Alltid uten vannmerke.",
@@ -351,7 +354,7 @@
     "previewLetter": "Søknad"
   },
   "import": {
-    "button": "Hent inn CV fra PDF eller Word",
+    "button": "Importer CV fra PDF eller Word",
     "local": "Filen leses her på maskinen din og lastes aldri opp.",
     "reviewTitle": "Dette fant vi",
     "reviewBody": "Huk av det du vil ta med. Resten fyller du ut selv etterpå — ingenting blir overskrevet.",
@@ -370,6 +373,9 @@
     "unreadable": "Vi klarte ikke å lese filen.",
     "oldWord": "Dette er en eldre Word-fil (.doc). Åpne den i Word, lagre som .docx eller PDF, og prøv igjen.",
     "unsupported": "Vi kan lese PDF og Word (.docx). Denne filen er ingen av delene.",
-    "missing": "Fant ikke {sections}. Det fyller du inn selv etterpå."
+    "missing": "Fant ikke {sections}. Det fyller du inn selv etterpå.",
+    "buttonShort": "Importer…",
+    "merge": "Legg til i CV-en",
+    "reviewBodyMerge": "Huk av det du vil ta med. Det legges til i CV-en du skriver på — ingenting du har skrevet blir overskrevet."
   }
 }

@@ -4,6 +4,7 @@ import { Eye } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 
+import { ImportCvButton } from '@/components/dashboard/ImportCvButton'
 import { seedSection } from '@/lib/editor/seed-section'
 import { getCvLabels } from '@/lib/cv-labels'
 import { useDocuments, useDocumentsTemporal } from '@/lib/store/documents'
@@ -38,6 +39,7 @@ export function EditorSplit({
   handlers: DocumentEditorHandlers
 }) {
   const t = useTranslations('editor')
+  const tImport = useTranslations('import')
   const previewRef = useRef<HTMLDivElement | null>(null)
   const isDesktop = useMediaQuery(DESKTOP_QUERY)
   const [sheetOpen, setSheetOpen] = useState(false)
@@ -113,6 +115,15 @@ export function EditorSplit({
           <div className="flex flex-wrap items-center gap-3">
             <SaveState documentId={document.id} />
             {isDesktop ? <ExportButton document={document} getNodes={getNodes} /> : null}
+            {/* Adds to this CV rather than starting another: somebody who
+                opens an old CV halfway through writing wants the rest of it
+                here, not in a second document. */}
+            <ImportCvButton
+              label={tImport('buttonShort')}
+              mode="merge"
+              onImport={handlers.onImport}
+              showNote={false}
+            />
           </div>
 
           <HistoryControls

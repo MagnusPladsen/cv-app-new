@@ -16,6 +16,8 @@ import type {
   SkillItem,
   TimelineEntry,
 } from '@/lib/schema/cv'
+import type { ParsedCv } from '@/lib/import/parse-cv'
+import { mergeParse, type ImportChoice } from '@/lib/import/to-document'
 import * as actions from '@/lib/store/document-actions'
 import { useDocuments, type DocumentsStoreApi } from '@/lib/store/documents'
 
@@ -30,6 +32,7 @@ export type DocumentEditorHandlers = SectionEditorHandlers & {
   onCustomShapeChange: (sectionId: string, shape: 'entries' | 'bullets' | 'text') => void
   onThemeChange: (patch: Partial<CvTheme>) => void
   onPaperChange: (paper: PaperId) => void
+  onImport: (parsed: ParsedCv, choice: ImportChoice) => void
 }
 
 export type DocumentEditor = {
@@ -161,6 +164,9 @@ export function useDocumentEditor(
         edit((draft) => void Object.assign(draft.theme, patch)),
 
       onPaperChange: (paper) => edit((draft) => void (draft.paper = paper)),
+
+      // One edit, so one undo takes the whole import back out.
+      onImport: (parsed, choice) => edit((draft) => mergeParse(draft, parsed, choice)),
     }),
     [edit],
   )

@@ -129,7 +129,7 @@ describe('BackupControls', () => {
     wrap(<BackupControls onImportText={onImportText} />)
 
     const file = new File(['{"a":1}'], 'cv.json', { type: 'application/json' })
-    await userEvent.upload(screen.getByLabelText('Hent inn fra fil'), file)
+    await userEvent.upload(screen.getByLabelText('Importer fra fil'), file)
 
     expect(onImportText).toHaveBeenCalledWith('{"a":1}')
   })
@@ -139,7 +139,7 @@ describe('BackupControls', () => {
     wrap(<BackupControls onImportText={onImportText} />)
 
     const file = new File(['nope'], 'cv.json', { type: 'application/json' })
-    await userEvent.upload(screen.getByLabelText('Hent inn fra fil'), file)
+    await userEvent.upload(screen.getByLabelText('Importer fra fil'), file)
 
     expect(await screen.findByText('Filen kunne ikke leses som en CV.')).toBeInTheDocument()
   })

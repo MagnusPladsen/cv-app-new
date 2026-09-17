@@ -74,6 +74,7 @@ test('the filter chips scroll rather than wrapping into a wall', async ({ page }
 test('the editor fits, with the template picker one tap away', async ({ page }) => {
   await page.goto('/no/templates')
   await templateCard(page, 'bergen').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/.+/)
   await page.evaluate(() => document.fonts.ready)
 
@@ -95,6 +96,7 @@ test('the editor fits, with the template picker one tap away', async ({ page }) 
 test('the editor shows a preview button rather than a side-by-side preview', async ({ page }) => {
   await page.goto('/no/templates')
   await templateCard(page, 'oslo').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/.+/)
 
   await expect(page.getByRole('button', { name: 'Forhåndsvis' })).toBeVisible()
@@ -109,6 +111,7 @@ test('the editor shows a preview button rather than a side-by-side preview', asy
 test('opening the preview sheet mounts exactly one CV to export', async ({ page }) => {
   await page.goto('/no/templates')
   await templateCard(page, 'oslo').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/.+/)
 
   await page.getByRole('button', { name: 'Forhåndsvis' }).click()
@@ -133,6 +136,7 @@ test('the editor offers exactly one download button', async ({ page }) => {
   // the same accessible name, and two places to look for the same thing.
   await page.goto('/no/templates')
   await templateCard(page, 'oslo').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/.+/)
 
   await expect(page.getByRole('button', { name: 'Last ned PDF' })).toHaveCount(1)
@@ -152,6 +156,7 @@ test('a dialog opened from the bottom bar is laid out against the viewport', asy
   await page.setViewportSize({ width: 900, height: 800 })
   await page.goto('/no/templates')
   await templateCard(page, 'oslo').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/.+/)
 
   await page.getByRole('button', { name: 'Last ned PDF' }).click()
@@ -229,6 +234,7 @@ test('every switched-on section keeps its form, in CV order', async ({ page }) =
   await page.setViewportSize({ width: 1280, height: 900 })
   await page.goto('/no/templates')
   await templateCard(page, 'oslo').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/.+/)
 
   const forms = page.locator('[id^=section-form-]')
@@ -260,6 +266,7 @@ test('Last ned works on a phone without opening the preview first', async ({ pag
   // there was none - and it returned silently.
   await page.goto('/no/templates')
   await templateCard(page, 'oslo').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/.+/)
   await page.getByLabel(/Fornavn/).first().fill('Testperson')
 

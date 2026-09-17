@@ -89,6 +89,7 @@ test('the preview reserves room for the whole sheet, not just its content box', 
 }) => {
   await page.goto('/no/templates')
   await page.locator('button[data-template="fjord"]').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/.+/)
 
   // A CV long enough to run past one page.

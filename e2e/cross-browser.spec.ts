@@ -130,6 +130,7 @@ test('the editor preview keeps the name as a real heading', async ({ page }) => 
   // is the title of the page and must stay an h1.
   await page.goto('/no/templates')
   await page.locator('button[data-template="oslo"]').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/.+/)
   await page.getByLabel(/Fornavn/).first().fill('Ola')
 
@@ -195,6 +196,7 @@ test('the export puts the CV, and only the CV, on the paper', async ({ page }) =
   // because that refusal was invisible in Chromium.
   await page.goto('/no/templates')
   await page.locator('button[data-template="fjord"]').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/.+/)
   await page.getByLabel(/Fornavn/).first().fill('Testperson')
   await page.getByRole('button', { name: /Legg til stilling/ }).first().click()
@@ -255,6 +257,7 @@ test('a søknad prints as the first page of the same PDF', async ({ page }) => {
   // order of them is the whole feature.
   await page.goto('/no/templates')
   await page.locator('button[data-template="oslo"]').click()
+  await page.getByRole('button', { name: 'Start ny CV' }).click()
   await page.waitForURL(/\/no\/cv\/.+/)
   await page.getByLabel(/Fornavn/).first().fill('Ingrid')
 

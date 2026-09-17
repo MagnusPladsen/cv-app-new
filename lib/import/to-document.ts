@@ -134,12 +134,17 @@ export function documentFromParse(
   return document
 }
 
+/**
+ * The lines an import could not place. Named as a job still to do, because it
+ * prints on the CV like any other section until somebody deletes it.
+ */
 function leftoverSection(document: CvDocument, bullets: string[]): Section {
   return {
     id: nextId(),
     type: 'custom',
     enabled: true,
-    title: document.language === 'en' ? 'From the old CV' : 'Fra den gamle CV-en',
+    imported: true,
+    title: document.language === 'en' ? 'To sort: text from the import' : 'Å sortere: tekst fra importen',
     shape: 'bullets',
     bullets,
   }
@@ -253,5 +258,16 @@ export function mergeParse(document: CvDocument, parsed: ParsedCv, choice: Impor
   }
 
   const leftovers = choice.unrecognised ? parsed.unrecognised.filter(Boolean) : []
-  if (leftovers.length > 0) document.sections.push(leftoverSection(document, leftovers))
+  if (leftovers.length === 0) return
+  // A second import adds to the pile already waiting, rather than starting
+  // another one.
+  const waiting = document.sections.find(
+    (section) => section.type === 'custom' && section.imported,
+  )
+  if (waiting?.type === 'custom') {
+    waiting.bullets = [...(waiting.bullets ?? []), ...leftovers]
+    waiting.enabled = true
+  } else {
+    document.sections.push(leftoverSection(document, leftovers))
+  }
 }

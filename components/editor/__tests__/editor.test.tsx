@@ -153,6 +153,44 @@ describe('EditorSplit', () => {
   })
 })
 
+describe('the section an import could not sort', () => {
+  it('explains itself, and deletes itself when done', async () => {
+    const doc = fixture()
+    doc.sections.push({
+      id: 'pile',
+      type: 'custom',
+      enabled: true,
+      imported: true,
+      title: 'Å sortere: tekst fra importen',
+      shape: 'bullets',
+      bullets: ['Husk!'],
+    })
+    const props = splitProps(doc)
+    wrap(<EditorSplit {...props} />)
+
+    expect(screen.getByText('Tekst fra filen du importerte')).toBeInTheDocument()
+    // The layout picker means nothing for a pile of lines to sort.
+    expect(screen.queryByLabelText('Innhold')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Ferdig – slett seksjonen' }))
+    expect(props.handlers.onRemoveSection).toHaveBeenCalledWith('pile')
+  })
+
+  it('stays out of an ordinary custom section', () => {
+    const doc = fixture()
+    doc.sections.push({
+      id: 'mine',
+      type: 'custom',
+      enabled: true,
+      title: 'Verv',
+      shape: 'bullets',
+      bullets: ['Styreleder'],
+    })
+    wrap(<EditorSplit {...splitProps(doc)} />)
+    expect(screen.queryByText('Tekst fra filen du importerte')).not.toBeInTheDocument()
+  })
+})
+
 describe('ExportButton', () => {
   it('prints the node it is given, with a name-derived title', async () => {
     const print = vi.fn(async (options: PrintCvNodeOptions) => void options)

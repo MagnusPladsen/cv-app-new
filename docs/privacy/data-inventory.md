@@ -73,6 +73,7 @@ for all of them.
 | `sections.text` | Free text | Summary prose. **May contain anything the user types** — see below |
 | `sections.title` | Preference | A custom section's heading |
 | `sections.shape` | Technical | Which layout a custom section uses |
+| `sections.imported` | Technical | Marks the section holding lines an import could not place, so the editor can explain it |
 | `sections.bullets` | Free text | A custom section's bullet points |
 | `sections.entries.id` | Identifier | Addressing an entry |
 | `sections.entries.role` | Employment/education | Job or course title |

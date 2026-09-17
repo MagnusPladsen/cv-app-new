@@ -182,7 +182,14 @@ export function ImportCvButton({
                           }
                           type="checkbox"
                         />
-                        <span className="flex-1">{row.label}</span>
+                        <span className="flex flex-1 flex-col gap-0.5">
+                          {row.label}
+                          {row.key === 'unrecognised' ? (
+                            <span className="text-xs text-muted-foreground">
+                              {t('unrecognisedHint')}
+                            </span>
+                          ) : null}
+                        </span>
                         <span className="text-xs text-muted-foreground tabular-nums">
                           {row.found}
                         </span>

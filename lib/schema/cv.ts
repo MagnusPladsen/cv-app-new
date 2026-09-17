@@ -145,6 +145,11 @@ export const sectionSchema = z.discriminatedUnion('type', [
     ...sectionBase,
     type: z.literal('custom'),
     title: z.string(),
+    /**
+     * Holds the lines an import could not place. The editor explains it and
+     * the quality check asks for it to be sorted, until it is deleted.
+     */
+    imported: z.boolean().optional(),
     shape: z.enum(['entries', 'bullets', 'text']),
     entries: z.array(timelineEntrySchema).optional(),
     bullets: z.array(z.string()).optional(),

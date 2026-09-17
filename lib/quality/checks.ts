@@ -248,6 +248,19 @@ export function checkDocument(document: CvDocument, context: CheckContext): Find
     }
   }
 
+  // --- Leftovers from an import --------------------------------------------
+
+  for (const section of document.sections) {
+    if (section.type === 'custom' && section.imported && section.enabled) {
+      findings.push({
+        id: 'importedLeftovers',
+        severity: 'warning',
+        sectionId: section.id,
+        values: { section: section.title },
+      })
+    }
+  }
+
   // --- Norwegian convention ------------------------------------------------
 
   const references = document.sections.find((section) => section.type === 'references')

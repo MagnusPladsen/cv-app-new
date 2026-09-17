@@ -1,6 +1,7 @@
 'use client'
 
 import { Eye } from 'lucide-react'
+import { Inbox, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
 
@@ -26,6 +27,32 @@ import { QualityPanel } from './QualityPanel'
 import { SectionHelp } from './SectionHelp'
 import { SectionList } from './SectionList'
 import { SectionSettings } from './SectionSettings'
+
+/**
+ * Said on the section itself, because its title alone - printed on the CV -
+ * cannot explain that it is a pile to sort rather than part of the CV.
+ */
+function ImportedNotice({ onDelete }: { onDelete: () => void }) {
+  const t = useTranslations('sections')
+  return (
+    <div className="flex flex-col gap-2.5 rounded-xl border border-amber-300/70 bg-amber-50 p-4 pr-10 text-sm text-amber-950">
+      <p className="flex items-center gap-2 font-semibold">
+        <Inbox aria-hidden="true" className="size-4 shrink-0" />
+        {t('importedTitle')}
+      </p>
+      <p>{t('importedBody1')}</p>
+      <p>{t('importedBody2')}</p>
+      <button
+        className="inline-flex w-fit items-center gap-2 rounded-full border border-amber-400 bg-white px-3.5 py-1.5 text-xs font-semibold transition hover:border-destructive hover:text-destructive focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+        onClick={onDelete}
+        type="button"
+      >
+        <Trash2 aria-hidden="true" className="size-3.5" />
+        {t('importedDelete')}
+      </button>
+    </div>
+  )
+}
 
 export function EditorSplit({
   document,
@@ -202,7 +229,11 @@ export function EditorSplit({
               <SectionHelp topic={section.type} />
             </div>
 
-            {section.type === 'custom' ? (
+            {section.type === 'custom' && section.imported ? (
+              <ImportedNotice onDelete={() => handlers.onRemoveSection(section.id)} />
+            ) : null}
+
+            {section.type === 'custom' && !section.imported ? (
               <div className="pr-9">
                 <SectionSettings onShapeChange={handlers.onCustomShapeChange} section={section} />
               </div>

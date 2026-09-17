@@ -189,7 +189,18 @@ describe('adding an import to a CV already being written', () => {
     document.language = 'en'
     mergeParse(document, SAMPLE, ACCEPT_ALL)
     const custom = document.sections.find((s) => s.type === 'custom')
-    expect(custom).toMatchObject({ title: 'From the old CV' })
+    expect(custom).toMatchObject({ title: 'To sort: text from the import', imported: true })
+  })
+
+  it('adds a second import’s leftovers to the pile already waiting', () => {
+    const document = inProgress()
+    mergeParse(document, SAMPLE, ACCEPT_ALL)
+    mergeParse(document, SAMPLE, ACCEPT_ALL)
+    const piles = document.sections.filter((s) => s.type === 'custom')
+    expect(piles).toHaveLength(1)
+    expect(piles[0]?.type === 'custom' && piles[0].bullets).toHaveLength(
+      SAMPLE.unrecognised.length * 2,
+    )
   })
 
   it('leaves a CV the schema still accepts', () => {

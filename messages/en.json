@@ -85,7 +85,11 @@
     "shapeText": "Free text",
     "edit": "Edit",
     "sectionsHint": "Tick what you want to include. Tap a name to jump to it, or the pencil to rename the section.",
-    "rename": "Rename"
+    "rename": "Rename",
+    "importedTitle": "Text from the file you imported",
+    "importedBody1": "This is text we could not find a place for. It shows on the CV until you delete it.",
+    "importedBody2": "Copy what you want to keep into the right section above, such as Work experience. Delete the rest.",
+    "importedDelete": "Done – delete this section"
   },
   "forms": {
     "onePerLine": "One per line.",
@@ -314,7 +318,8 @@
     "tooLong": "The CV runs to {pages} pages. Two is the usual ceiling; under ten years of experience, one is plenty.",
     "letterEmpty": "The cover letter is switched on but empty. It goes out as the first page of the PDF.",
     "letterLong": "The cover letter is long enough to run past one page. Three or four paragraphs is the norm.",
-    "letterNoPosition": "The cover letter does not say which job it is for. That is the first thing a reader looks for."
+    "letterNoPosition": "The cover letter does not say which job it is for. That is the first thing a reader looks for.",
+    "importedLeftovers": "\"{section}\" is still on the CV. Move what you want to keep to the right section, and delete the rest before you send it."
   },
   "help": {
     "open": "Tips for this section",
@@ -366,7 +371,7 @@
     "skills": "Skills",
     "languages": "Languages",
     "interests": "Interests",
-    "unrecognised": "Lines we could not place",
+    "unrecognised": "Text we could not place",
     "create": "Create the CV",
     "cancel": "Cancel",
     "scanned": "We found no text in this file. A scanned PDF is a picture, so there is no text in it to read.",
@@ -376,6 +381,7 @@
     "missing": "Not found: {sections}. You can fill those in afterwards.",
     "buttonShort": "Import…",
     "merge": "Add to this CV",
-    "reviewBodyMerge": "Tick what you want to keep. It is added to the CV you are writing — nothing you have written is overwritten."
+    "reviewBodyMerge": "Tick what you want to keep. It is added to the CV you are writing — nothing you have written is overwritten.",
+    "unrecognisedHint": "Goes into a section of its own, \"To sort\". Move what you want to keep from there, and delete the rest."
   }
 }

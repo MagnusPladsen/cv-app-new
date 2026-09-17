@@ -85,7 +85,11 @@
     "shapeText": "Fritekst",
     "edit": "Rediger",
     "sectionsHint": "Huk av det du vil ha med. Trykk på navnet for å hoppe dit, eller på blyanten for å gi seksjonen et nytt navn.",
-    "rename": "Gi nytt navn"
+    "rename": "Gi nytt navn",
+    "importedTitle": "Tekst fra filen du importerte",
+    "importedBody1": "Dette er tekst vi ikke visste hvor skulle stå. Den vises på CV-en helt til du sletter den.",
+    "importedBody2": "Kopier det du vil beholde inn i riktig seksjon over, for eksempel Arbeidserfaring. Slett resten.",
+    "importedDelete": "Ferdig – slett seksjonen"
   },
   "forms": {
     "onePerLine": "Én per linje.",
@@ -314,7 +318,8 @@
     "tooLong": "CV-en er på {pages} sider. To er normalt taket; har du under ti års erfaring holder én.",
     "letterEmpty": "Søknaden er slått på, men tom. Den blir med som første side i PDF-en.",
     "letterLong": "Søknaden er lang nok til å gå over én side. Tre–fire avsnitt er normen.",
-    "letterNoPosition": "Søknaden mangler hvilken stilling den gjelder. Det er det første den som leser ser etter."
+    "letterNoPosition": "Søknaden mangler hvilken stilling den gjelder. Det er det første den som leser ser etter.",
+    "importedLeftovers": "«{section}» står fortsatt på CV-en. Flytt det du vil beholde til riktig seksjon, og slett resten før du sender."
   },
   "help": {
     "open": "Tips til denne delen",
@@ -366,7 +371,7 @@
     "skills": "Ferdigheter",
     "languages": "Språk",
     "interests": "Interesser",
-    "unrecognised": "Linjer vi ikke plasserte",
+    "unrecognised": "Tekst vi ikke visste hvor skulle stå",
     "create": "Lag CV-en",
     "cancel": "Avbryt",
     "scanned": "Vi fant ingen tekst i filen. En skannet PDF er et bilde, og da finnes det ingen tekst å hente ut.",
@@ -376,6 +381,7 @@
     "missing": "Fant ikke {sections}. Det fyller du inn selv etterpå.",
     "buttonShort": "Importer…",
     "merge": "Legg til i CV-en",
-    "reviewBodyMerge": "Huk av det du vil ta med. Det legges til i CV-en du skriver på — ingenting du har skrevet blir overskrevet."
+    "reviewBodyMerge": "Huk av det du vil ta med. Det legges til i CV-en du skriver på — ingenting du har skrevet blir overskrevet.",
+    "unrecognisedHint": "Legges i en egen seksjon, «Å sortere». Der flytter du det du vil beholde, og sletter resten."
   }
 }

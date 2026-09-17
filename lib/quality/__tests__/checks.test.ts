@@ -210,3 +210,30 @@ describe('ordering', () => {
     expect(sorted[0]?.severity).toBe('error')
   })
 })
+
+describe('leftovers from an import', () => {
+  const pile = (enabled: boolean, imported?: boolean): Section => ({
+    id: 'pile',
+    type: 'custom',
+    enabled,
+    imported,
+    title: 'Å sortere: tekst fra importen',
+    shape: 'bullets',
+    bullets: ['Husk! En god CV er ryddig'],
+  })
+
+  it('asks for them to be sorted while they are still on the CV', () => {
+    const doc = sound()
+    doc.sections.push(pile(true, true))
+    const finding = checkDocument(doc, { pages: 1 }).find((f) => f.id === 'importedLeftovers')
+    expect(finding).toMatchObject({ severity: 'warning', sectionId: 'pile' })
+  })
+
+  it('says nothing once they are switched off, or about an ordinary custom section', () => {
+    for (const section of [pile(false, true), pile(true)]) {
+      const doc = sound()
+      doc.sections.push(section)
+      expect(checkDocument(doc, { pages: 1 }).map((f) => f.id)).not.toContain('importedLeftovers')
+    }
+  })
+})

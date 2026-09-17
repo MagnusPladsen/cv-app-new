@@ -15,6 +15,11 @@ export type Line = {
   /** Point size, where the extractor knows it. Headings are usually larger. */
   size?: number
   bold?: boolean
+  /**
+   * The first line of a column on a page set in two. Whatever section the
+   * previous column ended in does not continue here.
+   */
+  columnStart?: boolean
 }
 
 export type ParsedEntry = {
@@ -72,6 +77,12 @@ const HEADINGS: { type: keyof typeof SECTION_KEYS; words: string[] }[] = [
       'arbeidspraksis',
       'praksis',
       'arbeid',
+      'relevant erfaring',
+      'annen erfaring',
+      'relevant arbeidserfaring',
+      'annen arbeidserfaring',
+      'relevant experience',
+      'other experience',
       'work experience',
       'experience',
       'employment',
@@ -98,6 +109,8 @@ const HEADINGS: { type: keyof typeof SECTION_KEYS; words: string[] }[] = [
       'kvalifikasjoner',
       'it-kunnskaper',
       'datakunnskaper',
+      'it-ferdigheter',
+      'digitale ferdigheter',
       'skills',
       'key skills',
       'competencies',
@@ -131,6 +144,11 @@ const HEADINGS: { type: keyof typeof SECTION_KEYS; words: string[] }[] = [
       'volunteering',
       'publications',
       'awards',
+      'resultater',
+      'nøkkelresultater',
+      'prestasjoner',
+      'achievements',
+      'key achievements',
     ],
   },
 ]
@@ -147,6 +165,7 @@ const SECTION_KEYS = {
 
 type SectionType = keyof typeof SECTION_KEYS
 
+// prettier-ignore
 const MONTHS: Record<string, number> = {
   januar: 1, jan: 1, january: 1,
   februar: 2, feb: 2, february: 2,
@@ -214,7 +233,13 @@ function headingType(line: Line): SectionType | null {
 
 /** "mai 2021" / "05/2021" / "2021" as "YYYY-MM", or "" for a bare year. */
 function monthToken(raw: string): string | null {
-  const text = raw.toLowerCase().replace(/\./g, '').trim()
+  // Only the full stop that ends an abbreviated month goes. Stripping every
+  // dot turned "08.2019", the most common way to write a date on a Norwegian
+  // CV, into "082019", and no date written that way was ever found.
+  const text = raw
+    .toLowerCase()
+    .replace(/([a-zæøå])\./g, '$1')
+    .trim()
 
   const named = /^([a-zæøå]+)\s+(\d{4})$/.exec(text)
   if (named && MONTHS[named[1]!]) {
@@ -244,14 +269,20 @@ export function findDateRange(text: string): DateRange | null {
   const datePart = String.raw`(?:[A-Za-zæøåÆØÅ]+\.?\s+\d{4}|\d{1,2}[/.\-]\d{4}|\d{4})`
   const pattern = new RegExp(
     `(${datePart})${separator.source}(${datePart}|nå|no|na|d\\.?d\\.?|i dag|present|current|now|ongoing|pågående)`,
-    'i',
+    'gi',
   )
 
-  const match = pattern.exec(text)
-  if (!match) return null
-
-  const from = monthToken(match[1]!)
-  if (from === null) return null
+  // A word before a year looks like a month to the pattern: in "NTNU 2010 –
+  // 2013" the first candidate is "NTNU 2010". When a candidate is not a date,
+  // try again one character on rather than giving up on the line.
+  let match: RegExpExecArray | null = null
+  let from: string | null = null
+  while ((match = pattern.exec(text))) {
+    from = monthToken(match[1]!)
+    if (from !== null) break
+    pattern.lastIndex = match.index + 1
+  }
+  if (!match || from === null) return null
 
   const tail = match[2]!.trim()
   const current = PRESENT.test(tail.replace(/\./g, ''))
@@ -269,7 +300,32 @@ export function findDateRange(text: string): DateRange | null {
   }
 }
 
-const BULLET = /^\s*[•·▪◦*–—-]\s+/
+const BULLET = /^\s*[•·▪◦*–—◆◇■□●○►▸✓✔-]\s+/
+
+/** A line that is nothing but a bullet: the glyph was set apart from its text. */
+const LONE_BULLET = /^[•·▪◦*–—◆◇■□●○►▸✓✔-]$/
+
+/**
+ * Splits "ARBEIDSERFARING Senior utvikler" into its heading and the rest.
+ *
+ * Templates that set section names in a column of their own, beside the
+ * content, put the heading on the same baseline as the first entry, and the
+ * two come out as one line. Only a heading in capitals is split off, so that
+ * "Erfaring med React" stays a sentence.
+ */
+function splitHeading(line: Line): Line[] {
+  const words = line.text.split(' ')
+  for (let count = Math.min(3, words.length - 1); count >= 1; count -= 1) {
+    const head = words.slice(0, count).join(' ')
+    if (head !== head.toUpperCase() || !/\p{L}{2}/u.test(head)) continue
+    if (!headingType({ text: head })) continue
+    return [
+      { ...line, text: head },
+      { ...line, text: words.slice(count).join(' '), columnStart: false },
+    ]
+  }
+  return [line]
+}
 
 const EMAIL = /[\w.+-]+@[\w-]+\.[\w.]{2,}/
 
@@ -306,55 +362,151 @@ function splitList(text: string): string[] {
     .filter((part) => part.length > 1 && part.length < 60)
 }
 
-function buildEntries(lines: string[]): { entries: ParsedEntry[]; leftovers: string[] } {
+/**
+ * Joins the lines of a wrapped paragraph back together. A line that starts in
+ * lower case continues the one before it; anything else - a capital, a digit,
+ * a bullet - starts something new.
+ */
+function unwrap(lines: string[]): string[] {
+  const joined: string[] = []
+  for (const line of lines) {
+    const previous = joined[joined.length - 1]
+    if (previous !== undefined && /^\p{Ll}/u.test(line) && !/[.!?]$/.test(previous)) {
+      joined[joined.length - 1] = `${previous} ${line}`
+    } else {
+      joined.push(line)
+    }
+  }
+  return joined
+}
+
+/** The size most of a block is set in, which is the size of its body text. */
+function bodySize(lines: Line[]): number | undefined {
+  const counts = new Map<number, number>()
+  for (const line of lines) {
+    if (line.size === undefined) continue
+    const size = Math.round(line.size * 2) / 2
+    counts.set(size, (counts.get(size) ?? 0) + 1)
+  }
+  let body: number | undefined
+  let most = 0
+  for (const [size, count] of counts) {
+    if (count > most) {
+      body = size
+      most = count
+    }
+  }
+  return body
+}
+
+/**
+ * Turns a block of lines into jobs or degrees, keyed on the date ranges.
+ *
+ * CVs put the dates in one of two places, and a block is read one way or the
+ * other depending on which it is:
+ *
+ * - **Dates first**, on the job's own line or just above it. The lines after
+ *   the date are the role, the employer, then the description.
+ * - **Dates under the title**, which is how most Word and Canva templates are
+ *   set: role, employer, then a small line of dates. Read the first way, every
+ *   job would take the next job's title as its last bullet. Here the lines
+ *   just above each date belong to it - the ones set larger than the body
+ *   text when sizes are known, otherwise as many as preceded the first date.
+ */
+function buildEntries(block: Line[]): { entries: ParsedEntry[]; leftovers: string[] } {
+  const lines = block.map((line) => ({ ...line, range: findDateRange(line.text) }))
+  const dated = lines.flatMap((line, index) => (line.range ? [index] : []))
+  const first = dated[0]
+
+  if (first === undefined) return { entries: [], leftovers: lines.map((line) => line.text) }
+
   const entries: ParsedEntry[] = []
   const leftovers: string[] = []
 
-  let current: ParsedEntry | null = null
-  let pending: string[] = []
+  const newEntry = (range: DateRange): ParsedEntry => ({
+    role: range.rest,
+    organisation: '',
+    from: range.from,
+    to: range.to,
+    current: range.current,
+    bullets: [],
+  })
 
-  const flushPending = () => {
-    if (!current) {
-      leftovers.push(...pending)
-      pending = []
-      return
+  // Fills an entry's empty fields from a run of lines, then the description.
+  const fill = (entry: ParsedEntry, run: string[]) => {
+    const description: string[] = []
+    for (const line of run) {
+      if (BULLET.test(line)) description.push(line.replace(BULLET, '').trim())
+      else if (!entry.role) entry.role = line
+      else if (!entry.organisation) entry.organisation = line
+      else description.push(line)
     }
-    // The lines around the date: the first is the role, the next the
-    // employer. Anything after that is description.
-    for (const line of pending) {
-      if (!current.role) current.role = line
-      else if (!current.organisation) current.organisation = line
-      else current.bullets.push(line.replace(BULLET, '').trim())
-    }
-    pending = []
+    entry.bullets.push(...unwrap(description))
   }
 
-  for (const line of lines) {
-    const range = findDateRange(line)
+  const titleFirst = lines.slice(0, first).some((line) => !BULLET.test(line.text))
 
-    if (range) {
-      flushPending()
-      current = {
-        role: range.rest,
-        organisation: '',
-        from: range.from,
-        to: range.to,
-        current: range.current,
-        bullets: [],
-      }
-      entries.push(current)
-      continue
+  if (!titleFirst) {
+    // Dates first: everything between two dates belongs to the first, and
+    // stray bullets above the first date to nobody.
+    leftovers.push(...lines.slice(0, first).map((line) => line.text))
+    for (const [position, index] of dated.entries()) {
+      const entry = newEntry(lines[index]!.range!)
+      const end = dated[position + 1] ?? lines.length
+      fill(entry, lines.slice(index + 1, end).map((line) => line.text))
+      entries.push(entry)
     }
-
-    if (BULLET.test(line) && current) {
-      current.bullets.push(line.replace(BULLET, '').trim())
-      continue
-    }
-
-    pending.push(line)
+    return { entries, leftovers }
   }
 
-  flushPending()
+  const body = bodySize(lines)
+  const leading = first
+
+  for (const [position, index] of dated.entries()) {
+    const start = position === 0 ? 0 : dated[position - 1]! + 1
+    const before = lines.slice(start, index)
+
+    // How many of the lines above this date are its title.
+    let take: number
+    if (body !== undefined && before.every((line) => line.size !== undefined)) {
+      take = 0
+      for (let i = before.length - 1; i >= 0 && before[i]!.size! > body; i -= 1) take += 1
+      // Titles set in bold at body size, as Word documents mostly are, are
+      // not told apart by size at all.
+      if (take === 0) take = Math.min(leading, before.length)
+    } else {
+      take = Math.min(leading, before.length)
+    }
+    take = Math.min(take, 3)
+    // A title is what directly precedes the date, and a bullet is
+    // description, never a title.
+    let plain = 0
+    while (plain < before.length && !BULLET.test(before[before.length - 1 - plain]!.text)) plain += 1
+    take = Math.min(take, plain)
+
+    const spill = before.slice(0, before.length - take).map((line) => line.text)
+    const title = before.slice(before.length - take).map((line) => line.text)
+
+    const previous = entries[entries.length - 1]
+    if (previous) fill(previous, spill)
+    else leftovers.push(...spill)
+
+    const range = lines[index]!.range!
+    const entry = newEntry(range)
+    entry.role = ''
+    fill(entry, title)
+    // What shared the date's line - "Gj.snittskarakter:", a place - is kept
+    // as description rather than lost.
+    if (range.rest) {
+      if (!entry.role) entry.role = range.rest
+      else entry.bullets.push(range.rest)
+    }
+    entries.push(entry)
+  }
+
+  const last = entries[entries.length - 1]!
+  fill(last, lines.slice(dated[dated.length - 1]! + 1).map((line) => line.text))
+
   return { entries, leftovers }
 }
 
@@ -366,9 +518,18 @@ function buildEntries(lines: string[]): { entries: ParsedEntry[]; leftovers: str
  * thing on the first page.
  */
 export function parseCv(lines: Line[]): ParsedCv {
-  const clean = lines
-    .map((line) => ({ ...line, text: line.text.replace(/\s+/g, ' ').trim() }))
-    .filter((line) => line.text.length > 0)
+  const clean: Line[] = []
+  for (const line of lines) {
+    const text = line.text.replace(/\s+/g, ' ').trim()
+    if (!text) continue
+    const previous = clean[clean.length - 1]
+    // A bullet glyph on a line of its own belongs to the line after it.
+    if (previous && LONE_BULLET.test(previous.text)) {
+      clean[clean.length - 1] = { ...line, text: `• ${text}` }
+      continue
+    }
+    clean.push(...splitHeading({ ...line, text }))
+  }
 
   const result: ParsedCv = {
     personalia: { firstName: '', lastName: '', title: '', email: '', phone: '', links: [] },
@@ -399,27 +560,51 @@ export function parseCv(lines: Line[]): ParsedCv {
 
   // --- the name, by type size ----------------------------------------------
 
+  const NAME_SHAPE = /^[\p{Lu}][\p{L}'’-]+(?:\s+[\p{Lu}][\p{L}'’-]+){1,3}$/u
+  const nameShaped = (line: Line) =>
+    NAME_SHAPE.test(line.text) &&
+    !EMAIL.test(line.text) &&
+    !findPhone(line.text) &&
+    !headingType(line)
+
   const header = clean.slice(0, 12)
-  const sized = header.filter((line) => typeof line.size === 'number')
+  // Wider when sizes are known: on a page read in columns the name can come
+  // after a whole sidebar, and size tells it apart from everything there.
+  const sized = clean.slice(0, 40).filter((line) => typeof line.size === 'number')
   const biggest = sized.reduce<Line | null>(
     (best, line) => (best === null || line.size! > best.size! ? line : best),
     null,
   )
+  const biggestName = sized
+    .filter(nameShaped)
+    .reduce<Line | null>(
+      (best, line) => (best === null || line.size! > best.size! ? line : best),
+      null,
+    )
 
   const nameLine =
-    biggest ??
+    // The largest name-shaped line, when it is also the largest line or
+    // close to it. A name set smaller than the body text is not a name.
+    (biggestName && biggest && biggestName.size! >= biggest.size! * 0.8 ? biggestName : null) ??
+    (sized.length > 0 && biggest && clean.indexOf(biggest) < 12 && !headingType(biggest)
+      ? biggest
+      : null) ??
     // No type information: fall back to the first line that reads like a name
     // and carries no contact details.
-    header.find(
-      (line) =>
-        !EMAIL.test(line.text) &&
-        !findPhone(line.text) &&
-        /^[\p{Lu}][\p{L}'’-]+(?:\s+[\p{Lu}][\p{L}'’-]+){1,3}$/u.test(line.text),
-    ) ??
+    header.find(nameShaped) ??
     null
 
   if (nameLine) {
-    const parts = nameLine.text.split(' ').filter(Boolean)
+    // "ANDERS NILSEN" is typography, not the spelling of the name.
+    const name =
+      nameLine.text === nameLine.text.toUpperCase()
+        ? nameLine.text
+            .toLowerCase()
+            .replace(/(^|[\s'’-])(\p{L})/gu, (_, before: string, letter: string) =>
+              before + letter.toUpperCase(),
+            )
+        : nameLine.text
+    const parts = name.split(' ').filter(Boolean)
     result.personalia.firstName = parts[0] ?? ''
     result.personalia.lastName = parts.slice(1).join(' ')
 
@@ -439,7 +624,7 @@ export function parseCv(lines: Line[]): ParsedCv {
 
   // --- split into sections --------------------------------------------------
 
-  const blocks: { type: SectionType | null; lines: string[] }[] = [{ type: null, lines: [] }]
+  const blocks: { type: SectionType | null; lines: Line[] }[] = [{ type: null, lines: [] }]
   const preamble = new Set<string>()
 
   for (const line of clean) {
@@ -448,33 +633,50 @@ export function parseCv(lines: Line[]): ParsedCv {
       blocks.push({ type, lines: [] })
       continue
     }
+    // A new column with no heading of its own belongs to no section we know.
+    if (line.columnStart && blocks.length > 1) blocks.push({ type: null, lines: [] })
     if (blocks.length === 1) preamble.add(line.text)
-    blocks[blocks.length - 1]!.lines.push(line.text)
+    blocks[blocks.length - 1]!.lines.push(line)
   }
 
   for (const block of blocks) {
+    const texts = block.lines.map((line) => line.text)
+
     if (block.type === null || block.type === 'other') {
       // The preamble holds the name and contact details already taken, and
       // "other" is a section this app has no home for. Both go back to the
       // user rather than being guessed at.
-      result.unrecognised.push(...block.lines)
+      result.unrecognised.push(...texts)
       continue
     }
 
     if (block.type === 'summary') {
-      result.summary = block.lines.join('\n')
+      result.summary = texts.join('\n')
       continue
     }
 
     if (block.type === 'experience' || block.type === 'education') {
       const { entries, leftovers } = buildEntries(block.lines)
-      result[block.type] = entries
+      // Added to, not replaced: "Relevant erfaring" and "Annen erfaring" are
+      // two blocks of the same kind.
+      result[block.type].push(...entries)
       result.unrecognised.push(...leftovers)
       continue
     }
 
-    const items = block.lines.flatMap(splitList)
-    result[block.type] = items
+    // A list is set in one size, and its items are short. Lines that are
+    // neither are most likely the next thing on the page - a quote, a referee
+    // - and are handed back rather than listed as a language someone speaks.
+    const limit = block.type === 'languages' ? 4 : 6
+    const listSize = block.lines[0]?.size
+    for (const line of block.lines) {
+      const sameSize =
+        listSize === undefined || line.size === undefined || Math.abs(line.size - listSize) < 0.5
+      for (const item of splitList(line.text)) {
+        if (sameSize && item.split(' ').length <= limit) result[block.type].push(item)
+        else result.unrecognised.push(item)
+      }
+    }
   }
 
   // The header lines already taken as contact details are noise in the

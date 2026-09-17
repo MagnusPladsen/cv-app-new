@@ -5,14 +5,22 @@ import { useTranslations } from 'next-intl'
 import { useId, useState } from 'react'
 
 import { DialogPortal } from '@/components/ui/DialogPortal'
+import { extractLines, IMPORT_ACCEPT, type ImportFailure } from '@/lib/import/extract'
 import type { ParsedCv } from '@/lib/import/parse-cv'
 import { ACCEPT_ALL, type ImportChoice } from '@/lib/import/to-document'
 
 type Stage =
   | { kind: 'idle' }
   | { kind: 'reading' }
-  | { kind: 'failed'; reason: 'no-text' | 'unreadable' }
+  | { kind: 'failed'; reason: ImportFailure }
   | { kind: 'review'; parsed: ParsedCv }
+
+const FAILURE_MESSAGE = {
+  'no-text': 'scanned',
+  unreadable: 'unreadable',
+  'old-word': 'oldWord',
+  unsupported: 'unsupported',
+} as const satisfies Record<ImportFailure, string>
 
 /**
  * Bringing in a CV written somewhere else.
@@ -39,14 +47,14 @@ export function ImportCvButton({
     setStage({ kind: 'reading' })
     setChoice(ACCEPT_ALL)
 
-    // Both modules are loaded here rather than imported at the top: pdf.js is
-    // about 400 KiB, and nobody who never imports a CV should pay for it.
-    const [{ pdfToLines }, { parseCv }] = await Promise.all([
-      import('@/lib/import/pdf-lines'),
+    // The parser is loaded here rather than at the top, and extractLines
+    // loads the reader for the format it finds: pdf.js alone is about
+    // 400 KiB, and nobody who never imports a CV should pay for it.
+    const [{ parseCv }, extracted] = await Promise.all([
       import('@/lib/import/parse-cv'),
+      file.arrayBuffer().then(extractLines),
     ])
 
-    const extracted = await pdfToLines(await file.arrayBuffer())
     if (!extracted.ok) {
       setStage({ kind: 'failed', reason: extracted.reason })
       return
@@ -93,7 +101,7 @@ export function ImportCvButton({
         {t('button')}
       </label>
       <input
-        accept="application/pdf,.pdf"
+        accept={IMPORT_ACCEPT}
         className="sr-only"
         id={inputId}
         onChange={(event) => {
@@ -107,7 +115,7 @@ export function ImportCvButton({
 
       {stage.kind === 'failed' ? (
         <p className="text-sm text-destructive" role="alert">
-          {t(stage.reason === 'no-text' ? 'scanned' : 'unreadable')}
+          {t(FAILURE_MESSAGE[stage.reason])}
         </p>
       ) : null}
 

@@ -351,11 +351,11 @@
     "previewLetter": "Letter"
   },
   "import": {
-    "button": "Import a CV from PDF",
+    "button": "Import a CV from PDF or Word",
     "local": "The file is read here on your machine and never uploaded.",
     "reviewTitle": "Here is what we found",
     "reviewBody": "Tick what you want to keep. You fill in the rest yourself — nothing is overwritten.",
-    "nothingFound": "We could not recognise anything in this file. It is most likely set in two columns, or is a picture.",
+    "nothingFound": "We could not recognise anything in this file.",
     "personalia": "Name and contact details",
     "summary": "Summary",
     "experience": "Jobs",
@@ -366,7 +366,9 @@
     "unrecognised": "Lines we could not place",
     "create": "Create the CV",
     "cancel": "Cancel",
-    "scanned": "This PDF is a picture rather than text — most likely a scan. There is no text in it to read.",
-    "unreadable": "We could not read that file. Is it a PDF?"
+    "scanned": "We found no text in this file. A scanned PDF is a picture, so there is no text in it to read.",
+    "unreadable": "We could not read that file.",
+    "oldWord": "This is an older Word file (.doc). Open it in Word, save it as .docx or PDF, and try again.",
+    "unsupported": "We can read PDF and Word (.docx). This file is neither."
   }
 }

@@ -226,3 +226,164 @@ describe('the name, when type size is known', () => {
     expect(parsed.personalia.title).toBe('Frontendutvikler')
   })
 })
+
+describe('dates as Norwegian CVs write them', () => {
+  it('reads month and year with a full stop between', () => {
+    // The most common format on a Norwegian CV, and one that was never found:
+    // the full stops were stripped before matching, leaving "082019".
+    expect(findDateRange('08.2019 – 06.2023')).toMatchObject({ from: '2019-08', to: '2023-06' })
+    expect(findDateRange('08.2019–d.d.')).toMatchObject({ from: '2019-08', current: true })
+  })
+
+  it('looks past a word that sits in front of a year', () => {
+    // "NTNU 2010" has the shape of "mai 2010". It is not a date, and the real
+    // range starts one word later.
+    expect(findDateRange('Master i bygg, NTNU 2010 – 2013')).toMatchObject({
+      rest: 'Master i bygg, NTNU',
+    })
+  })
+})
+
+describe('jobs whose dates come under the title', () => {
+  it('gives each job the title above its dates, not the next job’s', () => {
+    // How most Word and Canva templates are set: title, employer, then a
+    // small line of dates, then the description.
+    const parsed = parseCv([
+      { text: 'Erfaring', size: 18 },
+      { text: 'Prosjektmedarbeider, Groruddalssatsingen', size: 9 },
+      { text: 'Oslo kommune', size: 8 },
+      { text: '08.2019 – 06.2021', size: 6 },
+      { text: 'Utarbeide og holde presentasjoner.', size: 7 },
+      { text: 'Deltidsstilling ved siden av studier.', size: 7 },
+      { text: 'Redaktør, Zoon Politikon', size: 9 },
+      { text: 'Universitetet i Oslo', size: 8 },
+      { text: '01.2017 – 06.2019', size: 6 },
+      { text: 'Tre utgivelser i semesteret.', size: 7 },
+    ])
+
+    expect(parsed.experience).toHaveLength(2)
+    expect(parsed.experience[0]).toMatchObject({
+      role: 'Prosjektmedarbeider, Groruddalssatsingen',
+      organisation: 'Oslo kommune',
+      from: '2019-08',
+      bullets: ['Utarbeide og holde presentasjoner.', 'Deltidsstilling ved siden av studier.'],
+    })
+    expect(parsed.experience[1]).toMatchObject({
+      role: 'Redaktør, Zoon Politikon',
+      organisation: 'Universitetet i Oslo',
+      bullets: ['Tre utgivelser i semesteret.'],
+    })
+  })
+
+  it('manages without sizes, taking as many title lines as the first job had', () => {
+    const parsed = parseCv(
+      lines(`
+Arbeidserfaring
+Prosjektleder
+Veidekke
+08.2019 – nå
+• Ledet bygging av ny skole
+Byggeleder
+Skanska
+01.2014 – 07.2019
+• Ansvar for HMS
+`),
+    )
+    expect(parsed.experience.map((job) => [job.role, job.organisation, job.bullets])).toEqual([
+      ['Prosjektleder', 'Veidekke', ['Ledet bygging av ny skole']],
+      ['Byggeleder', 'Skanska', ['Ansvar for HMS']],
+    ])
+  })
+
+  it('never takes a bullet for a title', () => {
+    const parsed = parseCv(
+      lines(`
+Arbeidserfaring
+Prosjektleder
+08.2019 – nå
+• Ledet bygging av ny skole
+• Levert før frist
+Byggeleder
+01.2014 – 07.2019
+`),
+    )
+    expect(parsed.experience[0]?.bullets).toEqual(['Ledet bygging av ny skole', 'Levert før frist'])
+    expect(parsed.experience[1]?.role).toBe('Byggeleder')
+  })
+
+  it('joins a paragraph the page had wrapped', () => {
+    const parsed = parseCv(
+      lines(`
+Arbeidserfaring
+Utvikler · 2019 – 2021
+Acme
+Bygde en løsning som ble brukt av
+alle kommunene i fylket.
+`),
+    )
+    expect(parsed.experience[0]?.bullets).toEqual([
+      'Bygde en løsning som ble brukt av alle kommunene i fylket.',
+    ])
+  })
+})
+
+describe('CVs with more than one experience heading', () => {
+  it('keeps the jobs from every one of them', () => {
+    const parsed = parseCv(
+      lines(`
+Relevant erfaring
+Utvikler, Acme · 2019 – 2021
+Annen erfaring
+Butikkmedarbeider, Rema · 2015 – 2018
+`),
+    )
+    expect(parsed.experience.map((job) => job.role)).toEqual(['Utvikler, Acme', 'Butikkmedarbeider, Rema'])
+  })
+})
+
+describe('pages read in two columns', () => {
+  it('does not carry a section across into the next column', () => {
+    const parsed = parseCv([
+      { text: 'Arbeidserfaring' },
+      { text: 'Utvikler, Acme · 2019 – 2021' },
+      { text: 'Resultatene mine', columnStart: true },
+      { text: 'Økte salget med en tredjedel' },
+    ])
+    expect(parsed.experience[0]?.bullets).toEqual([])
+    expect(parsed.unrecognised).toContain('Økte salget med en tredjedel')
+  })
+
+  it('keeps a quote under the languages out of the languages', () => {
+    const parsed = parseCv([
+      { text: 'Anders Nilsen', size: 48 },
+      { text: 'Språk', size: 18 },
+      { text: 'Norsk', size: 12 },
+      { text: 'Engelsk', size: 12 },
+      { text: 'Astrid Børresen', size: 11 },
+      { text: '“Anders er en god lagspiller med øye for detaljer”', size: 11 },
+    ])
+    expect(parsed.languages).toEqual(['Norsk', 'Engelsk'])
+    expect(parsed.unrecognised).toContain('Astrid Børresen')
+  })
+})
+
+describe('the name, further down or in capitals', () => {
+  it('writes a name set in capitals the way it is spelt', () => {
+    const parsed = parseCv([{ text: 'ANNE-LISE ØSTBY HANSEN', size: 30 }])
+    expect(parsed.personalia).toMatchObject({ firstName: 'Anne-Lise', lastName: 'Østby Hansen' })
+  })
+
+  it('finds the name after a sidebar, by its size', () => {
+    const sidebar = Array.from({ length: 14 }, (_, index) => ({ text: `Ferdighet ${index}`, size: 9 }))
+    const parsed = parseCv([...sidebar, { text: 'Kari Nordmann', size: 28 }])
+    expect(parsed.personalia.firstName).toBe('Kari')
+  })
+
+  it('does not take a section heading for a name', () => {
+    const parsed = parseCv([
+      { text: 'Kari Nordmann', size: 20 },
+      { text: 'Relevant erfaring', size: 22 },
+    ])
+    expect(parsed.personalia.firstName).toBe('Kari')
+  })
+})

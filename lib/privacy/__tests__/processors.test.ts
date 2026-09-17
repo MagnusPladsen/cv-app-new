@@ -27,6 +27,9 @@ describe('the processor list', () => {
       // here rather than by loosening the pattern, so a real request to
       // w3.org would still have to be justified.
       'www.w3.org',
+      // The same for Word documents: the namespaces the .docx reader matches
+      // elements against, read from a file already on the user's machine.
+      'schemas.openxmlformats.org',
     ]
 
     // Sample CV content, not network calls: the demo document contains a

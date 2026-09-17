@@ -56,3 +56,6 @@ next-env.d.ts
 # thing the rest of the app goes to some trouble never to hold.
 /import examples/
 /test-cvs/
+
+# Local Claude Code settings. Plugins tried out here stay on this machine.
+/.claude/

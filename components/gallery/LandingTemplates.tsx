@@ -3,9 +3,10 @@
 import { LayoutGrid } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
-import { getTemplate, TEMPLATES } from '@/components/cv/templates'
+import { TEMPLATES } from '@/components/cv/templates'
 import { TemplateCard } from '@/components/gallery/TemplateCard'
-import { Link, useRouter } from '@/i18n/navigation'
+import { useTemplateStart } from '@/components/gallery/use-template-start'
+import { Link } from '@/i18n/navigation'
 import { PAPER, mmToPx } from '@/lib/print/paper'
 
 /**
@@ -41,24 +42,9 @@ const VISIBILITY = [
 
 export function LandingTemplates() {
   const t = useTranslations('gallery')
-  const router = useRouter()
+  const { choose, dialog } = useTemplateStart()
 
   const shown = TEMPLATES.slice(0, SHOWN)
-
-  // Imported on the click rather than at the top of the file. This is the
-  // only thing on the landing page that needs the document store, and a
-  // static import put the store, immer and zod into the first JavaScript
-  // every visitor downloads - to serve a button most of them never press.
-  async function handleChoose(templateId: string) {
-    const { useDocuments } = await import('@/lib/store/documents')
-    const template = getTemplate(templateId)
-    const id = useDocuments.getState().createDocument({
-      templateId: template.id,
-      accent: template.defaultAccent,
-      fontPairId: template.defaultFontPairId,
-    })
-    router.push(`/cv/${id}`)
-  }
 
   return (
     <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-6 lg:grid-cols-4 xl:grid-cols-5">
@@ -66,7 +52,7 @@ export function LandingTemplates() {
         <TemplateCard
           className={VISIBILITY[index]}
           key={template.id}
-          onChoose={handleChoose}
+          onChoose={choose}
           template={template}
         />
       ))}
@@ -100,6 +86,8 @@ export function LandingTemplates() {
           </span>
         </li>
       ) : null}
+
+      {dialog}
     </ul>
   )
 }

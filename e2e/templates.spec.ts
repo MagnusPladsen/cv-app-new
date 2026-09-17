@@ -116,3 +116,18 @@ test('the preview reserves room for the whole sheet, not just its content box', 
   // instead leaves it short by both page margins and clips the page.
   expect(docBottom).toBeLessThanOrEqual(frameBottom + 2)
 })
+
+test('a template picked on the landing page asks how to start, then opens in that template', async ({
+  page,
+}) => {
+  await page.goto('/no')
+  await page.locator('button[data-template="fjord"]').click()
+
+  const dialog = page.getByRole('dialog')
+  await expect(dialog).toBeVisible()
+  await expect(dialog.getByLabel('Importer…')).toBeAttached()
+
+  await dialog.getByRole('button', { name: 'Start ny CV' }).click()
+  await page.waitForURL(/\/no\/cv\/.+/)
+  await expect(page.locator('.cv-doc').first()).toHaveClass(/fjord/)
+})

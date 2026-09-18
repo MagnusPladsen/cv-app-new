@@ -575,11 +575,23 @@ export function parseCv(lines: Line[]): ParsedCv {
   // --- the name, by type size ----------------------------------------------
 
   const NAME_SHAPE = /^[\p{Lu}][\p{L}'’-]+(?:\s+[\p{Lu}][\p{L}'’-]+){1,3}$/u
+  /** Words a CV sets in large type that are labels, not somebody's name. */
+  const LABELS =
+    /^(e-?post|email|mail|telefon|mobil|tlf|adresse|kontakt|profil|portefølje|portfolio|cv|curriculum|vitae|resume|résumé)$/i
   const nameShaped = (line: Line) =>
     NAME_SHAPE.test(line.text) &&
     !EMAIL.test(line.text) &&
     !findPhone(line.text) &&
     !headingType(line)
+
+  /**
+   * A single large word can be a name: templates that set the given name on
+   * its own line, and OCR, which reads a name a word at a time. A label set
+   * in the same type is not, however large it is.
+   */
+  const couldBeName = (line: Line) =>
+    nameShaped(line) ||
+    (/^[\p{Lu}][\p{L}'’-]+$/u.test(line.text) && !LABELS.test(line.text) && !headingType(line))
 
   const header = clean.slice(0, 12)
   // Wider when sizes are known: on a page read in columns the name can come
@@ -600,7 +612,10 @@ export function parseCv(lines: Line[]): ParsedCv {
     // The largest name-shaped line, when it is also the largest line or
     // close to it. A name set smaller than the body text is not a name.
     (biggestName && biggest && biggestName.size! >= biggest.size! * 0.8 ? biggestName : null) ??
-    (sized.length > 0 && biggest && clean.indexOf(biggest) < 12 && !headingType(biggest)
+    // The largest line near the top, as long as it reads like a name at all.
+    // Without the shape check a scanned CV whose biggest words are the
+    // labels "Email" or "Telefon" was imported with Email as a first name.
+    (sized.length > 0 && biggest && clean.indexOf(biggest) < 12 && couldBeName(biggest)
       ? biggest
       : null) ??
     // No type information: fall back to the first line that reads like a name
@@ -609,15 +624,29 @@ export function parseCv(lines: Line[]): ParsedCv {
     null
 
   if (nameLine) {
+    // A name broken across lines - one word per line, all set the same size,
+    // which both sidebar templates and OCR produce - is one name. Only where
+    // the sizes are known: without them every line is "the same size" as the
+    // name, and the job title below it would be swallowed.
+    const rest: string[] = []
+    if (nameLine.size !== undefined) {
+      for (let index = clean.indexOf(nameLine) + 1; index < clean.length; index += 1) {
+        const next = clean[index]!
+        if (next.size !== nameLine.size || !couldBeName(next) || rest.length >= 3) break
+        rest.push(next.text)
+      }
+    }
+
     // "ANDERS NILSEN" is typography, not the spelling of the name.
+    const whole = [nameLine.text, ...rest].join(' ')
     const name =
-      nameLine.text === nameLine.text.toUpperCase()
-        ? nameLine.text
+      whole === whole.toUpperCase()
+        ? whole
             .toLowerCase()
             .replace(/(^|[\s'’-])(\p{L})/gu, (_, before: string, letter: string) =>
               before + letter.toUpperCase(),
             )
-        : nameLine.text
+        : whole
     const parts = name.split(' ').filter(Boolean)
     result.personalia.firstName = parts[0] ?? ''
     result.personalia.lastName = parts.slice(1).join(' ')

@@ -59,3 +59,6 @@ next-env.d.ts
 
 # Local Claude Code settings. Plugins tried out here stay on this machine.
 /.claude/
+
+# The OCR engine and its language models, fetched by scripts/fetch-ocr-assets.mjs.
+/public/ocr/

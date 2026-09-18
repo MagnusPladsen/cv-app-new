@@ -19,9 +19,13 @@ const nextConfig: NextConfig = {
     // needs none of it, and must not have it: 'unsafe-eval' is one of the
     // things a CSP exists to forbid.
     const isDev = process.env.NODE_ENV === 'development'
+    // 'wasm-unsafe-eval' and nothing more: Tesseract reads a scanned CV with
+    // a WebAssembly build served from this origin, and compiling any wasm at
+    // all is forbidden without it. It permits WebAssembly only - eval() and
+    // new Function() stay blocked.
     const script = isDev
       ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
-      : "script-src 'self' 'unsafe-inline'"
+      : "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'"
 
     // Hot reload injects inline <style> blocks, which the production policy
     // forbids. Left strict in development the console fills with expected

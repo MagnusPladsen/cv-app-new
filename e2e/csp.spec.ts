@@ -29,7 +29,11 @@ test('production never ships the development relaxations', async ({ request }) =
   // is for, and both are one environment check away from doing so.
   const csp = (await request.get('/no')).headers()['content-security-policy']!
 
-  expect(csp).not.toContain('unsafe-eval')
+  // Not a substring check: production carries 'wasm-unsafe-eval', which
+  // permits WebAssembly - the OCR engine - and nothing else. Plain
+  // 'unsafe-eval' would permit eval() and new Function() with it.
+  expect(csp).not.toMatch(/(^|[ '])'unsafe-eval'/)
+  expect(csp).toContain("'wasm-unsafe-eval'")
   expect(csp).toContain("style-src 'self'; style-src-attr 'unsafe-inline'")
   expect(csp, 'style-src must not allow inline blocks in production').not.toMatch(
     /style-src 'self' 'unsafe-inline'/,

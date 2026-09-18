@@ -39,6 +39,13 @@ lovdata.no.
 
 ## Open items
 
+- **Content-Security-Policy `script-src` allows `'wasm-unsafe-eval'`.** It
+  permits WebAssembly and nothing else - `eval()` and `new Function()` stay
+  blocked. Tesseract, which reads a scanned CV, is a WebAssembly build served
+  from this origin; without this the browser refuses to compile it. The engine
+  and its language models are self-hosted precisely so that reading a scan
+  asks nothing of a third party.
+
 - **Content-Security-Policy `script-src` allows `'unsafe-inline'`.** This is
   the weakest part of the policy and is deliberate, not an oversight. Next's
   framework bootstrap is an inline script, so `'self'` alone blocks hydration:

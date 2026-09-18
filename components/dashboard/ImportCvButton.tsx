@@ -1,26 +1,30 @@
 'use client'
 
-import { FileUp, Loader2 } from 'lucide-react'
+import { FileUp, Loader2, ScanText } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useId, useState } from 'react'
 
 import { DialogPortal } from '@/components/ui/DialogPortal'
-import { extractLines, IMPORT_ACCEPT, type ImportFailure } from '@/lib/import/extract'
+import { detectKind, extractLines, IMPORT_ACCEPT, type ImportFailure } from '@/lib/import/extract'
 import type { ParsedCv } from '@/lib/import/parse-cv'
 import { ACCEPT_ALL, type ImportChoice } from '@/lib/import/to-document'
 
 type Stage =
   | { kind: 'idle' }
   | { kind: 'reading' }
-  | { kind: 'failed'; reason: ImportFailure }
-  | { kind: 'review'; parsed: ParsedCv }
+  | { kind: 'failed'; reason: ImportFailure | 'ocr' }
+  /** A scan: no text to read, but an image the OCR could be pointed at. */
+  | { kind: 'scanned'; file: File }
+  | { kind: 'ocr'; percent: number }
+  | { kind: 'review'; parsed: ParsedCv; fromImage?: boolean }
 
 const FAILURE_MESSAGE = {
+  ocr: 'ocrFailed',
   'no-text': 'scanned',
   unreadable: 'unreadable',
   'old-word': 'oldWord',
   unsupported: 'unsupported',
-} as const satisfies Record<ImportFailure, string>
+} as const satisfies Record<ImportFailure | 'ocr', string>
 
 /**
  * Bringing in a CV written somewhere else.
@@ -67,17 +71,46 @@ export function ImportCvButton({
     // The parser is loaded here rather than at the top, and extractLines
     // loads the reader for the format it finds: pdf.js alone is about
     // 400 KiB, and nobody who never imports a CV should pay for it.
+    const bytes = await file.arrayBuffer()
+    // Read before extraction: pdf.js hands the buffer to its worker, which
+    // detaches it, and a detached buffer cannot even be looked at.
+    const kind = detectKind(new Uint8Array(bytes))
     const [{ parseCv }, extracted] = await Promise.all([
       import('@/lib/import/parse-cv'),
-      file.arrayBuffer().then(extractLines),
+      extractLines(bytes),
     ])
 
     if (!extracted.ok) {
-      setStage({ kind: 'failed', reason: extracted.reason })
+      // A scan is the one failure with a way forward, so it is offered
+      // rather than reported: the OCR is 7 MB and a minute of somebody's
+      // laptop, which is theirs to spend or not.
+      // Only a PDF can be a scan worth pointing the OCR at. An empty Word
+      // document reports the same reason and there is nothing to read.
+      if (extracted.reason === 'no-text' && kind === 'pdf') setStage({ kind: 'scanned', file })
+      else setStage({ kind: 'failed', reason: extracted.reason })
       return
     }
 
     setStage({ kind: 'review', parsed: parseCv(extracted.lines) })
+  }
+
+  async function readImage(file: File) {
+    setStage({ kind: 'ocr', percent: 0 })
+    const [{ parseCv }, { ocrPdf }] = await Promise.all([
+      import('@/lib/import/parse-cv'),
+      import('@/lib/import/ocr'),
+    ])
+
+    // Read again rather than kept: pdf.js hands the buffer to its worker,
+    // which detaches it, and a detached buffer cannot be rendered.
+    const result = await ocrPdf(await file.arrayBuffer(), ({ ratio }) =>
+      setStage({ kind: 'ocr', percent: Math.round(ratio * 100) }),
+    )
+    if (!result.ok) {
+      setStage({ kind: 'failed', reason: 'ocr' })
+      return
+    }
+    setStage({ kind: 'review', parsed: parseCv(result.lines), fromImage: true })
   }
 
   const counts = stage.kind === 'review' ? stage.parsed : null
@@ -112,7 +145,7 @@ export function ImportCvButton({
   return (
     <div className="flex flex-col gap-2">
       <label className={triggerClassName} htmlFor={inputId}>
-        {stage.kind === 'reading' ? (
+        {stage.kind === 'reading' || stage.kind === 'ocr' ? (
           <Loader2 aria-hidden="true" className="size-4 animate-spin" />
         ) : (
           <FileUp aria-hidden="true" className="size-4" />
@@ -135,6 +168,28 @@ export function ImportCvButton({
       {stage.kind === 'failed' ? (
         <p className="text-sm text-destructive" role="alert">
           {t(FAILURE_MESSAGE[stage.reason])}
+        </p>
+      ) : null}
+
+      {stage.kind === 'scanned' ? (
+        <div className="flex flex-col items-start gap-2 rounded-xl border border-border bg-card p-3">
+          <p className="text-sm">{t('scanned')}</p>
+          <button
+            className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-1.5 text-sm font-semibold transition hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+            onClick={() => void readImage(stage.file)}
+            type="button"
+          >
+            <ScanText aria-hidden="true" className="size-4" />
+            {t('ocrStart')}
+          </button>
+          <p className="text-xs text-muted-foreground">{t('ocrNote')}</p>
+        </div>
+      ) : null}
+
+      {stage.kind === 'ocr' ? (
+        <p className="flex items-center gap-2 text-sm" role="status">
+          <Loader2 aria-hidden="true" className="size-4 animate-spin" />
+          {t('ocrBusy', { percent: stage.percent })}
         </p>
       ) : null}
 
@@ -162,6 +217,9 @@ export function ImportCvButton({
                 <p className="text-sm text-muted-foreground">
                   {t(mode === 'merge' ? 'reviewBodyMerge' : 'reviewBody')}
                 </p>
+                {stage.fromImage ? (
+                  <p className="text-sm text-amber-800">{t('ocrRough')}</p>
+                ) : null}
               </div>
 
               {rows.length === 0 ? (

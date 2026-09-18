@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The OCR engine, copied in by scripts/fetch-ocr-assets.mjs. Somebody
+    // else's compiled WebAssembly glue, not ours to lint.
+    "public/ocr/**",
   ]),
 ]);
 

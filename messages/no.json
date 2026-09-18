@@ -377,7 +377,7 @@
     "unrecognised": "Tekst vi ikke visste hvor skulle stå",
     "create": "Lag CV-en",
     "cancel": "Avbryt",
-    "scanned": "Vi fant ingen tekst i filen. En skannet PDF er et bilde, og da finnes det ingen tekst å hente ut.",
+    "scanned": "Vi fant ingen tekst i filen. En skannet PDF er et bilde, og da må teksten tydes fra bildet.",
     "unreadable": "Vi klarte ikke å lese filen.",
     "oldWord": "Dette er en eldre Word-fil (.doc). Åpne den i Word, lagre som .docx eller PDF, og prøv igjen.",
     "unsupported": "Vi kan lese PDF og Word (.docx). Denne filen er ingen av delene.",
@@ -385,6 +385,11 @@
     "buttonShort": "Importer…",
     "merge": "Legg til i CV-en",
     "reviewBodyMerge": "Huk av det du vil ta med. Det legges til i CV-en du skriver på — ingenting du har skrevet blir overskrevet.",
-    "unrecognisedHint": "Legges i en egen seksjon, «Å sortere». Der flytter du det du vil beholde, og sletter resten."
+    "unrecognisedHint": "Legges i en egen seksjon, «Å sortere». Der flytter du det du vil beholde, og sletter resten.",
+    "ocrStart": "Prøv å lese bildet",
+    "ocrNote": "Tar 20–60 sekunder og laster ned 7 MB første gang. Filen blir fortsatt liggende på maskinen din.",
+    "ocrBusy": "Leser bildet … {percent} %",
+    "ocrFailed": "Vi klarte ikke å tyde teksten i bildet. Et skarpere skann, eller en PDF med ekte tekst, gir et bedre resultat.",
+    "ocrRough": "Teksten er tydet fra et bilde, så den kan ha feil. Les gjennom alt før du sender CV-en."
   }
 }

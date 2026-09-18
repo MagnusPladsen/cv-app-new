@@ -377,7 +377,7 @@
     "unrecognised": "Text we could not place",
     "create": "Create the CV",
     "cancel": "Cancel",
-    "scanned": "We found no text in this file. A scanned PDF is a picture, so there is no text in it to read.",
+    "scanned": "We found no text in this file. A scanned PDF is a picture, so the text has to be read out of the image.",
     "unreadable": "We could not read that file.",
     "oldWord": "This is an older Word file (.doc). Open it in Word, save it as .docx or PDF, and try again.",
     "unsupported": "We can read PDF and Word (.docx). This file is neither.",
@@ -385,6 +385,11 @@
     "buttonShort": "Import…",
     "merge": "Add to this CV",
     "reviewBodyMerge": "Tick what you want to keep. It is added to the CV you are writing — nothing you have written is overwritten.",
-    "unrecognisedHint": "Goes into a section of its own, \"To sort\". Move what you want to keep from there, and delete the rest."
+    "unrecognisedHint": "Goes into a section of its own, \"To sort\". Move what you want to keep from there, and delete the rest.",
+    "ocrStart": "Try reading the image",
+    "ocrNote": "Takes 20–60 seconds and downloads 7 MB the first time. The file still never leaves your machine.",
+    "ocrBusy": "Reading the image … {percent}%",
+    "ocrFailed": "We could not make out the text in this image. A sharper scan, or a PDF with real text, gives a better result.",
+    "ocrRough": "The text was read out of an image, so it can be wrong. Read it through before you send the CV."
   }
 }

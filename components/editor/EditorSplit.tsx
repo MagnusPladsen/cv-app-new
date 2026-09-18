@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { ImportCvButton } from '@/components/dashboard/ImportCvButton'
 import { seedSection } from '@/lib/editor/seed-section'
+import { isImportPile } from '@/lib/import/pile'
 import { getCvLabels } from '@/lib/cv-labels'
 import { useDocuments, useDocumentsTemporal } from '@/lib/store/documents'
 import type { DocumentEditorHandlers } from '@/lib/hooks/use-document-editor'
@@ -229,11 +230,11 @@ export function EditorSplit({
               <SectionHelp topic={section.type} />
             </div>
 
-            {section.type === 'custom' && section.imported ? (
+            {isImportPile(section) ? (
               <ImportedNotice onDelete={() => handlers.onRemoveSection(section.id)} />
             ) : null}
 
-            {section.type === 'custom' && !section.imported ? (
+            {section.type === 'custom' && !isImportPile(section) ? (
               <div className="pr-9">
                 <SectionSettings onShapeChange={handlers.onCustomShapeChange} section={section} />
               </div>

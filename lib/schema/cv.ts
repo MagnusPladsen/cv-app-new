@@ -1,5 +1,11 @@
 import { z } from 'zod'
 
+// Zod checks whether `Function("")` is allowed before compiling a faster
+// validator. The production CSP has no 'unsafe-eval', so the probe always
+// fails - harmlessly, but Firefox reports the refusal in every user's
+// console. Telling Zod up front skips the probe and the report.
+z.config({ jitless: true })
+
 export const CURRENT_SCHEMA_VERSION = 1
 
 export const cvLanguageSchema = z.enum(['no', 'en'])

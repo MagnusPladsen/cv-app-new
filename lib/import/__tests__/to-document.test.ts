@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { parseCv, type Line } from '@/lib/import/parse-cv'
+import { isImportPile } from '@/lib/import/pile'
 import { ACCEPT_ALL, documentFromParse, mergeParse } from '@/lib/import/to-document'
 import { cvDocumentSchema, type CvDocument } from '@/lib/schema/cv'
 import { createEmptyDocument } from '@/lib/schema/defaults'
@@ -223,5 +224,33 @@ describe('adding an import to a CV already being written', () => {
       unrecognised: false,
     })
     expect(JSON.stringify(document)).toBe(before)
+  })
+})
+
+describe('a CV imported before the section carried a flag', () => {
+  it('is recognised by the name it was given then', () => {
+    const document = createEmptyDocument()
+    document.sections.push({
+      id: 'old',
+      type: 'custom',
+      enabled: true,
+      title: 'Fra den gamle CV-en',
+      shape: 'bullets',
+      bullets: ['Husk!'],
+    })
+    expect(isImportPile(document.sections.at(-1)!)).toBe(true)
+  })
+
+  it('leaves a section somebody named themselves alone', () => {
+    const document = createEmptyDocument()
+    document.sections.push({
+      id: 'mine',
+      type: 'custom',
+      enabled: true,
+      title: 'Verv',
+      shape: 'bullets',
+      bullets: ['Styreleder'],
+    })
+    expect(isImportPile(document.sections.at(-1)!)).toBe(false)
   })
 })

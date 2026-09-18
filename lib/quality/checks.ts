@@ -1,3 +1,4 @@
+import { isImportPile } from '@/lib/import/pile'
 import type { CvDocument, Section, TimelineEntry } from '@/lib/schema/cv'
 
 export type Severity = 'error' | 'warning' | 'info'
@@ -251,7 +252,7 @@ export function checkDocument(document: CvDocument, context: CheckContext): Find
   // --- Leftovers from an import --------------------------------------------
 
   for (const section of document.sections) {
-    if (section.type === 'custom' && section.imported && section.enabled) {
+    if (section.enabled && isImportPile(section)) {
       findings.push({
         id: 'importedLeftovers',
         severity: 'warning',

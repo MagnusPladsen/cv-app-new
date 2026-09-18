@@ -1,6 +1,7 @@
 import type { CreateDocumentInput } from '@/lib/schema/defaults'
 import { createEmptyDocument } from '@/lib/schema/defaults'
 import type { CvDocument, Section } from '@/lib/schema/cv'
+import { isImportPile } from './pile'
 import type { ParsedCv, ParsedEntry } from './parse-cv'
 
 /** Which parts of a parse the person accepted. */
@@ -261,9 +262,7 @@ export function mergeParse(document: CvDocument, parsed: ParsedCv, choice: Impor
   if (leftovers.length === 0) return
   // A second import adds to the pile already waiting, rather than starting
   // another one.
-  const waiting = document.sections.find(
-    (section) => section.type === 'custom' && section.imported,
-  )
+  const waiting = document.sections.find(isImportPile)
   if (waiting?.type === 'custom') {
     waiting.bullets = [...(waiting.bullets ?? []), ...leftovers]
     waiting.enabled = true

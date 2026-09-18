@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server'
 
 import { EmailAuthForm } from '@/components/auth/EmailAuthForm'
 import { SignInButtons } from '@/components/auth/SignInButtons'
+import { isSupabaseConfigured } from '@/lib/supabase/env'
 
 export default async function LoginPage({
   params,
@@ -20,11 +21,25 @@ export default async function LoginPage({
         <h1 className="text-3xl font-bold tracking-tight">{t('signInTitle')}</h1>
         <p className="text-muted-foreground">{t('signInLead')}</p>
       </div>
-      <EmailAuthForm next={next ?? `/${locale}/cv`} />
+      {/* A deployment without the Supabase keys has no way to sign anyone
+          in. Saying so beats a form that accepts a password and then does
+          nothing at all, which is what it did. */}
+      {isSupabaseConfigured() ? (
+        <>
+          <EmailAuthForm next={next ?? `/${locale}/cv`} />
 
-      {/* Only rendered when a provider is actually configured. Email and
-          password is the way in; OAuth is additive. */}
-      <SignInButtons next={next ?? `/${locale}/cv`} />
+          {/* Only rendered when a provider is actually configured. Email and
+              password is the way in; OAuth is additive. */}
+          <SignInButtons next={next ?? `/${locale}/cv`} />
+        </>
+      ) : (
+        <p
+          className="rounded-xl border border-border bg-card p-4 text-center text-sm text-muted-foreground"
+          role="status"
+        >
+          {t('unavailable')}
+        </p>
+      )}
     </main>
   )
 }

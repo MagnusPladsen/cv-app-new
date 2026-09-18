@@ -196,7 +196,10 @@
     "point3Body": "Not now in beta, and not later. Your CV is yours, not an advertisement.",
     "point4Title": "Stays on your machine",
     "point4Body": "Your CV is stored in the browser. Sign in and it syncs straight to a database in Germany — never through our servers.",
-    "templatesTitle": "{count} templates to choose from"
+    "templatesTitle": "{count} templates to choose from",
+    "importTitle": "Already have a CV?",
+    "importBody": "Upload the PDF or Word file. We read it here in your browser — the file is never uploaded — and fill in what we recognise.",
+    "importCta": "Import your CV"
   },
   "beta": {
     "badge": "Beta",

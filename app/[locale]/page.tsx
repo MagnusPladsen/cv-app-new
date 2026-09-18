@@ -1,4 +1,4 @@
-import { ArrowRight, BadgeCheck, FileText, Infinity, Laptop, LayoutGrid, Sparkles } from 'lucide-react'
+import { ArrowRight, BadgeCheck, FileText, FileUp, Infinity, Laptop, LayoutGrid, Sparkles } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { TEMPLATES } from '@/components/cv/templates'
@@ -86,6 +86,26 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <p className="text-sm text-muted-foreground">{t(`landing.${point}Body`)}</p>
           </div>
         ))}
+      </section>
+
+      {/* Given a band of its own rather than a fifth tile: the other four
+          are properties of the product, this is something to go and do - and
+          it is the one thing here no other free Norwegian CV builder offers,
+          because they all parse the file on a server. */}
+      <section className="flex flex-col items-start gap-4 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-center sm:justify-between sm:gap-8">
+        <div className="flex items-start gap-3">
+          <FileUp aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-brand" />
+          <div className="flex flex-col gap-1">
+            <h2 className="text-base font-bold text-brand-strong">{t('landing.importTitle')}</h2>
+            <p className="text-sm text-muted-foreground">{t('landing.importBody')}</p>
+          </div>
+        </div>
+        <Link
+          className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+          href="/cv"
+        >
+          {t('landing.importCta')}
+        </Link>
       </section>
 
       <section className="flex flex-col gap-6">

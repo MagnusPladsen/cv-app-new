@@ -35,7 +35,11 @@ export function EmailAuthForm({ next }: { next: string }) {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault()
     const supabase = getBrowserSupabase()
-    if (!supabase) return
+    // Belt and braces: the page does not render this form without the keys.
+    if (!supabase) {
+      setError(t('unavailable'))
+      return
+    }
 
     if (mode === 'sign-up' && password.length < MIN_PASSWORD_LENGTH) {
       setError(t('errorWeak'))

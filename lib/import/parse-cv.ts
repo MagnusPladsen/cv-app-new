@@ -191,28 +191,6 @@ const normalise = (value: string) =>
     .replace(/\s+/g, ' ')
     .trim()
 
-/**
- * Whether a line is letter-spaced display type, and its letters if so.
- *
- * CV templates set tracking on section headings, and a PDF records that as
- * real spaces: "OM MEG" comes back as "O M M E G", with the word boundary
- * gone. Every heading in every template in this app is written that way, so
- * without this no section is recognised at all - and with no sections there
- * are no jobs and no education either.
- *
- * Detected by shape rather than by a list: three or more tokens, nearly all
- * of them one character long.
- */
-function letterSpaced(text: string): string | null {
-  const tokens = text.trim().split(/\s+/)
-  if (tokens.length < 3) return null
-
-  const singles = tokens.filter((token) => token.length === 1).length
-  if (singles / tokens.length < 0.7) return null
-
-  return tokens.join('').toLowerCase()
-}
-
 /** A heading if it names a section and is short enough to be one. */
 function headingType(line: Line): SectionType | null {
   // "Referanser (2-4)", "Interesser (valgfritt)": a note in brackets is not
@@ -220,15 +198,16 @@ function headingType(line: Line): SectionType | null {
   const text = normalise(line.text.replace(/\s*\([^)]*\)\s*$/, ''))
   if (!text || text.length > 40) return null
 
-  const spaced = letterSpaced(text)
+  // Tracking a heading spreads it out, and a PDF records that as real
+  // spaces - "OM MEG" as "O M M E G", or, where the producer only broke it
+  // at some pairs, "A RBEIDSERFA RING". Comparing with every space removed
+  // catches both, and a line this short that spells a section name with its
+  // spaces taken out is that section name.
+  const squashed = text.replace(/\s+/g, '')
 
   for (const heading of HEADINGS) {
     if (heading.words.includes(text)) return heading.type
-    // The word boundary does not survive tracking, so both sides are
-    // compared with their spaces taken out.
-    if (spaced && heading.words.some((word) => word.replace(/\s+/g, '') === spaced)) {
-      return heading.type
-    }
+    if (heading.words.some((word) => word.replace(/\s+/g, '') === squashed)) return heading.type
   }
   return null
 }
@@ -311,6 +290,15 @@ export function findDateRange(text: string): DateRange | null {
 
 const BULLET = /^\s*[•·▪◦*–—◆◇■□●○►▸✓✔-]\s+/
 
+/**
+ * A date range whose closing year wrapped onto the line below: "jan. 2018 -
+ * jul." with "2021" underneath, which a narrow column of dates produces. The
+ * month may be followed by the job title on the same line, so the year is put
+ * back where it belongs rather than appended.
+ */
+const HALF_RANGE =
+  /((?:\d{4}|nå)\s*(?:–|—|-|til|to|until)\s*(?:[A-Za-zæøåÆØÅ]{3,}\.?|\d{1,2}[/.\-]))(?=\s|$)/i
+
 /** A line that is nothing but a bullet: the glyph was set apart from its text. */
 const LONE_BULLET = /^[•·▪◦*–—◆◇■□●○►▸✓✔-]$/
 
@@ -320,13 +308,18 @@ const LONE_BULLET = /^[•·▪◦*–—◆◇■□●○►▸✓✔-]$/
  * Templates that set section names in a column of their own, beside the
  * content, put the heading on the same baseline as the first entry, and the
  * two come out as one line. Only a heading in capitals is split off, so that
- * "Erfaring med React" stays a sentence.
+ * "Erfaring med React" stays a sentence - and a letter-spaced one counts,
+ * since tracking arrives as one word per letter.
  */
 function splitHeading(line: Line): Line[] {
   const words = line.text.split(' ')
-  for (let count = Math.min(3, words.length - 1); count >= 1; count -= 1) {
+  // Up to fifteen, because a letter-spaced heading is one word per letter:
+  // "F E R D I G H E T E R TypeScript" is a heading and a skill on one line.
+  for (let count = Math.min(15, words.length - 1); count >= 1; count -= 1) {
     const head = words.slice(0, count).join(' ')
-    if (head !== head.toUpperCase() || !/\p{L}{2}/u.test(head)) continue
+    // Two letters, wherever the spaces fall: a letter-spaced heading has
+    // none of them next to each other.
+    if (head !== head.toUpperCase() || head.replace(/[^\p{L}]/gu, '').length < 2) continue
     if (!headingType({ text: head })) continue
     return [
       { ...line, text: head },
@@ -539,6 +532,14 @@ export function parseCv(lines: Line[]): ParsedCv {
     // A bullet glyph on a line of its own belongs to the line after it.
     if (previous && LONE_BULLET.test(previous.text)) {
       clean[clean.length - 1] = { ...line, text: `• ${text}` }
+      continue
+    }
+    // The year that wrapped away from its date range goes back into it.
+    if (previous && /^\d{4}$/.test(text) && HALF_RANGE.test(previous.text)) {
+      clean[clean.length - 1] = {
+        ...previous,
+        text: previous.text.replace(HALF_RANGE, `$1 ${text}`),
+      }
       continue
     }
     clean.push(...splitHeading({ ...line, text }))

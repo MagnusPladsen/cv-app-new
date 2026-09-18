@@ -174,3 +174,27 @@ describe('narrow columns', () => {
     expect(lines.slice(0, 10)).toEqual(Array.from({ length: 10 }, (_, index) => `Venstre ${index}`))
   })
 })
+
+describe('a column of section names beside the content', () => {
+  it('reads each heading before the entry it names', () => {
+    // Bergen's shape: the heading sits a couple of points below the first
+    // line beside it, so sorting by height alone puts every heading inside
+    // the section above it.
+    const fragments: Fragment[] = []
+    const sections = ['Erfaring', 'Utdanning', 'Språk', 'Kurs', 'Interesser']
+    for (const [index, heading] of sections.entries()) {
+      const top = 780 - index * 150
+      fragments.push(text(heading, 57, top - 3, 10))
+      fragments.push(text(`${heading} første linje`, 170, top))
+      for (let line = 1; line < 8; line += 1) {
+        fragments.push(text(`${heading} linje ${line}`, 170, top - line * 14))
+      }
+    }
+
+    const lines = pageToLines({ width: WIDTH, fragments }).map((line) => line.text)
+    for (const heading of sections) {
+      expect(lines.indexOf(heading)).toBeLessThan(lines.indexOf(`${heading} første linje`))
+    }
+    expect(lines.filter((line) => sections.includes(line))).toEqual(sections)
+  })
+})

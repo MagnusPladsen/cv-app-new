@@ -396,3 +396,43 @@ describe('the name, further down or in capitals', () => {
     expect(parsed.personalia.firstName).toBe('Kari')
   })
 })
+
+describe('dates and headings that the layout broke apart', () => {
+  it('puts back a closing year that wrapped onto the next line', () => {
+    // A narrow column of dates wraps "jan. 2018 – jul. 2021", and the title
+    // beside it keeps the rest of the line company.
+    const parsed = parseCv(
+      lines(`
+Arbeidserfaring
+jan. 2018 – jul. Frontendutvikler
+2021
+Statens pensjonskasse
+• Bygde en selvbetjeningsløsning
+`),
+    )
+    expect(parsed.experience).toHaveLength(1)
+    expect(parsed.experience[0]).toMatchObject({
+      role: 'Frontendutvikler',
+      organisation: 'Statens pensjonskasse',
+      from: '2018-01',
+      to: '2021-07',
+    })
+  })
+
+  it('recognises a heading the producer broke at the wrong places', () => {
+    // Tracking does not always arrive one letter at a time: "A RBEIDSERFA
+    // RING" is the same heading with the spaces in odd places.
+    const parsed = parseCv(
+      lines(`
+A RBEIDSERFA RING
+Utvikler, Acme · 2019 – 2021
+`),
+    )
+    expect(parsed.experience).toHaveLength(1)
+  })
+
+  it('splits a letter-spaced heading off the line it shares', () => {
+    const parsed = parseCv(lines('F E R D I G H E T E R TypeScript'))
+    expect(parsed.skills).toEqual(['TypeScript'])
+  })
+})

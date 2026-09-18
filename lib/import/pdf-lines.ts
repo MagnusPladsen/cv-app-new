@@ -159,11 +159,21 @@ export type LayoutOptions = {
   blocks?: boolean
 }
 
-export function findGutter(
+export type Layout =
+  /** Two columns of content, read one after the other. */
+  | { kind: 'columns'; gutter: Gutter }
+  /**
+   * A narrow column of section names beside the content, as this app's own
+   * Register template sets it. Read as one column, but the labels are lifted
+   * back above the entry they belong to.
+   */
+  | { kind: 'labels'; gutter: Gutter }
+
+export function findLayout(
   rows: Fragment[][],
   width: number,
   options: LayoutOptions = {},
-): Gutter | null {
+): Layout | null {
   if (rows.length < 8 || width <= 0) return null
 
   const bins = new Array<number>(Math.ceil(width)).fill(0)
@@ -224,6 +234,8 @@ export function findGutter(
   const right = rightY.length
   if (left < MIN_COLUMN_ROWS || right < MIN_COLUMN_ROWS) return null
 
+  const labels = (): Layout => ({ kind: 'labels', gutter })
+
   // A column of section names beside the content is sparse: one label, then
   // a long way down to the next. Its lines sit far further apart than the
   // content's, which a sidebar's do not.
@@ -233,22 +245,64 @@ export function findGutter(
   }
   const leftSpacing = spacing(leftY)
   const rightSpacing = spacing(rightY)
-  if (!options.blocks && Math.max(leftSpacing, rightSpacing) > 3 * Math.min(leftSpacing, rightSpacing)) {
-    return null
+  if (
+    !options.blocks &&
+    Math.max(leftSpacing, rightSpacing) > 3 * Math.min(leftSpacing, rightSpacing)
+  ) {
+    return leftSpacing > rightSpacing ? labels() : null
   }
   // Independent columns still line up by chance - a sidebar on a 27pt rhythm
   // meets a main column on 16pt about every other line. A label column
   // lines up almost always.
   if (shared / Math.min(left, right) > 0.75) return null
 
-  return gutter
+  return { kind: 'columns', gutter }
+}
+
+/** How far a label may sit below the entry it names, in points. */
+const LABEL_REACH = 18
+
+/**
+ * Puts a column of section names back above what they name.
+ *
+ * A label is typeset to sit level with the first line beside it, and a couple
+ * of points lower as often as not - which sorts it *after* that line. Read
+ * that way, every section's heading lands inside the section above it, and
+ * the first job of each section goes with the wrong one.
+ */
+function liftLabels(rows: Fragment[][], gutter: Gutter): Fragment[][] {
+  const ordered: Fragment[][] = []
+
+  for (const row of rows) {
+    // Where it starts, not where it ends: a long label - a letter-spaced
+    // "A R B E I D S E R FA R I N G" - runs into the gutter without being
+    // anything but a label.
+    const isLabel = row.every((fragment) => fragment.x < gutter.middle)
+    if (!isLabel) {
+      ordered.push(row)
+      continue
+    }
+
+    // Take back the content rows this label belongs above.
+    const moved: Fragment[][] = []
+    while (ordered.length > 0) {
+      const last = ordered[ordered.length - 1]!
+      if (Math.abs(last[0]!.y - row[0]!.y) > LABEL_REACH) break
+      moved.unshift(ordered.pop()!)
+    }
+    ordered.push(row, ...moved)
+  }
+
+  return ordered
 }
 
 /** One page's lines in reading order. */
 export function pageToLines(page: PdfPage, options: LayoutOptions = {}): Line[] {
   const rows = toRows(page.fragments)
-  const gutter = findGutter(rows, page.width, options)
-  if (gutter === null) return rows.flatMap(rowToLines)
+  const layout = findLayout(rows, page.width, options)
+  if (layout === null) return rows.flatMap(rowToLines)
+  if (layout.kind === 'labels') return liftLabels(rows, layout.gutter).flatMap(rowToLines)
+  const { gutter } = layout
 
   const lines: Line[] = []
   let leftRows: Fragment[][] = []

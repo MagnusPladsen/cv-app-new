@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test'
 
+import { CV_DOCX, CV_PDF } from './import-fixtures'
+
 /**
  * Runs in Firefox and WebKit as well as Chromium.
  *
@@ -335,4 +337,30 @@ test('only the pages that render a CV pay for the CV stylesheets', async ({ page
   expect(await sheets('/no/templates'), 'the gallery loads CV stylesheets').toBe(0)
   // The proof sheet renders all eighteen templates, so it needs all of them.
   expect(await sheets('/no/preview')).toBeGreaterThan(15)
+})
+
+test('a CV imports from a PDF and from a Word file in this engine too', async ({ page }) => {
+  // pdf.js runs in a worker and fflate unzips in the page, both under a CSP
+  // with no 'unsafe-eval'. Chromium passing says nothing about Gecko, which
+  // is where the export was broken for a week.
+  await page.goto('/no/cv')
+  const picker = 'input[type=file][accept*="docx"]'
+
+  await page.setInputFiles(picker, { name: 'kari.pdf', mimeType: 'application/pdf', buffer: CV_PDF })
+  const review = page.getByRole('dialog', { name: 'Dette fant vi' })
+  await expect(review).toContainText('Jobber')
+  await review.getByRole('button', { name: 'Lag CV-en' }).click()
+  await page.waitForURL(/\/no\/cv\/.+/)
+  await expect(page.getByLabel('Fornavn')).toHaveValue('Kari')
+
+  await page.goto('/no/cv')
+  await page.setInputFiles(picker, {
+    name: 'ola.docx',
+    mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    buffer: CV_DOCX,
+  })
+  await expect(review).toContainText('Ferdigheter')
+  await review.getByRole('button', { name: 'Lag CV-en' }).click()
+  await page.waitForURL(/\/no\/cv\/.+/)
+  await expect(page.getByLabel('Fornavn')).toHaveValue('Ola')
 })

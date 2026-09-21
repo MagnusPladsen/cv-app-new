@@ -148,3 +148,61 @@ describe('persisted shape', () => {
     expect(store.getState().tombstones).toEqual({ gone: 900 })
   })
 })
+
+describe('what a signed-in browser keeps', () => {
+  const stored = (storage: ReturnType<typeof memoryStorage>) =>
+    JSON.parse(storage.getItem(DOCUMENTS_STORAGE_KEY) ?? '{}').state ?? {}
+
+  it('keeps nothing locally once the database has it all', () => {
+    // Signing in moves the CVs to the account. Leaving a second copy in this
+    // browser is a copy nobody asked for, on a machine that may be shared.
+    const storage = memoryStorage()
+    const store = createDocumentsStore({ storage, deps })
+    const id = store.getState().createDocument()
+    store.getState().adoptOwner('user-a')
+    expect(Object.keys(stored(storage).documents)).toEqual([id])
+
+    store.getState().markSynced()
+
+    expect(stored(storage).documents).toEqual({})
+    expect(stored(storage).order).toEqual([])
+    // Still in the session, and still the user's.
+    expect(Object.keys(store.getState().documents)).toEqual([id])
+    expect(stored(storage).ownerId).toBe('user-a')
+  })
+
+  it('keeps an edit that has not reached the database yet', () => {
+    const storage = memoryStorage()
+    const store = createDocumentsStore({ storage, deps })
+    const id = store.getState().createDocument()
+    store.getState().adoptOwner('user-a')
+    store.getState().markSynced()
+
+    store.getState().renameDocument(id, 'Ikke lagret ennå')
+
+    expect(stored(storage).documents[id]?.name).toBe('Ikke lagret ennå')
+  })
+
+  it('goes on keeping an anonymous browser’s CVs, which have nowhere else to be', () => {
+    const storage = memoryStorage()
+    const store = createDocumentsStore({ storage, deps })
+    const id = store.getState().createDocument()
+    store.getState().markSynced()
+
+    expect(Object.keys(stored(storage).documents)).toEqual([id])
+  })
+
+  it('forgets what it knew about the server when somebody signs out', () => {
+    const storage = memoryStorage()
+    const store = createDocumentsStore({ storage, deps })
+    store.getState().createDocument()
+    store.getState().adoptOwner('user-a')
+    store.getState().markSynced()
+
+    store.getState().releaseOwner()
+
+    expect(store.getState().documents).toEqual({})
+    expect(stored(storage).documents).toEqual({})
+    expect(stored(storage).ownerId).toBeNull()
+  })
+})

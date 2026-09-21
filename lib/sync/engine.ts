@@ -65,6 +65,9 @@ export function createSyncEngine({
     onStatus?.('syncing')
     running = runOnce()
       .then(() => {
+        // The server now has everything this store has, which is what lets
+        // the store stop keeping a copy in this browser's local storage.
+        store.getState().markSynced()
         if (!stopped) onStatus?.('idle')
       })
       .catch((error: unknown) => {

@@ -29,6 +29,20 @@ export type DocumentsState = {
   ownerId: string | null
   /** Deleted document id -> deletion time in ms. */
   tombstones: Record<string, number>
+  /**
+   * The documents as they stood when the last sync succeeded, by identity.
+   *
+   * A signed-in person's CVs live in the database; keeping a second copy in
+   * this browser is a copy nobody asked for, on a machine that may be shared.
+   * While these match the current state - that is, while the server has
+   * everything - nothing is written to local storage. An unsaved edit still
+   * is, because losing work to a flaky connection would be worse than the
+   * copy it avoids.
+   *
+   * Never persisted: on a fresh load nothing has been synced yet.
+   */
+  syncedDocuments: Record<string, CvDocument> | null
+  syncedOrder: string[] | null
 }
 
 export type ImportResult = { ok: true; id: string } | { ok: false; error: SchemaError }
@@ -45,6 +59,8 @@ export type DocumentsActions = {
   applyRemote(documents: CvDocument[]): void
   applyRemoteDeletes(ids: string[]): void
   forgetTombstones(ids: string[]): void
+  /** Called by the sync engine when the server has everything this store has. */
+  markSynced(): void
 }
 
 /**
@@ -90,7 +106,14 @@ function resolve(deps: FactoryDeps = {}) {
 
 /** Validates every stored document, silently dropping ones that no longer parse. */
 function reviveState(persisted: unknown): DocumentsState {
-  const empty: DocumentsState = { documents: {}, order: [], ownerId: null, tombstones: {} }
+  const empty: DocumentsState = {
+    documents: {},
+    order: [],
+    ownerId: null,
+    tombstones: {},
+    syncedDocuments: null,
+    syncedOrder: null,
+  }
   if (typeof persisted !== 'object' || persisted === null) return empty
 
   const candidate = persisted as Partial<DocumentsState>
@@ -125,7 +148,8 @@ function reviveState(persisted: unknown): DocumentsState {
     }
   }
 
-  return { documents, order, ownerId, tombstones }
+  // Nothing is known to be on the server until this session syncs.
+  return { documents, order, ownerId, tombstones, syncedDocuments: null, syncedOrder: null }
 }
 
 export type DocumentsHistory = Pick<DocumentsState, 'documents' | 'order'>
@@ -159,6 +183,8 @@ export function createDocumentsStore(options: DocumentsStoreOptions = {}): Docum
         order: [],
         ownerId: null,
         tombstones: {},
+        syncedDocuments: null,
+        syncedOrder: null,
 
         createDocument(input = {}) {
           const doc = createEmptyDocument(input, { newId, now })
@@ -256,6 +282,8 @@ export function createDocumentsStore(options: DocumentsStoreOptions = {}): Docum
             state.order = []
             state.tombstones = {}
             state.ownerId = null
+            state.syncedDocuments = null
+            state.syncedOrder = null
           })
         },
 
@@ -284,6 +312,13 @@ export function createDocumentsStore(options: DocumentsStoreOptions = {}): Docum
             for (const id of ids) delete state.tombstones[id]
           })
         },
+
+        markSynced() {
+          set((state) => {
+            state.syncedDocuments = state.documents
+            state.syncedOrder = state.order
+          })
+        },
         })),
         {
           limit: HISTORY_LIMIT,
@@ -298,12 +333,22 @@ export function createDocumentsStore(options: DocumentsStoreOptions = {}): Docum
         name: DOCUMENTS_STORAGE_KEY,
         version: 2,
         storage: createJSONStorage(() => stringStorage),
-        partialize: (state) => ({
-          documents: state.documents,
-          order: state.order,
-          ownerId: state.ownerId,
-          tombstones: state.tombstones,
-        }),
+        partialize: (state) => {
+          // Signed in and nothing waiting to be pushed: the database has it
+          // all, so this browser keeps none of it. Signing in is what moves
+          // the CVs; this is what stops them being left behind here.
+          const safeElsewhere =
+            state.ownerId !== null &&
+            state.documents === state.syncedDocuments &&
+            state.order === state.syncedOrder
+
+          return {
+            documents: safeElsewhere ? {} : state.documents,
+            order: safeElsewhere ? [] : state.order,
+            ownerId: state.ownerId,
+            tombstones: state.tombstones,
+          }
+        },
         // Mandatory, not decorative: zustand discards the entire persisted
         // state on a version bump when no migrate function is provided, which
         // would silently delete every CV a returning user has. v1 predates

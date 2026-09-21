@@ -27,7 +27,8 @@
     "confirm": "Slett",
     "cancel": "Avbryt",
     "importFailed": "Filen kunne ikke leses som en CV.",
-    "edited": "Sist endret"
+    "edited": "Sist endret",
+    "confirmDeleteAccount": "Slette «{name}»? Den forsvinner fra kontoen din og alle enhetene dine, og kan ikke hentes tilbake."
   },
   "editor": {
     "notFound": "Vi finner ikke denne CV-en.",

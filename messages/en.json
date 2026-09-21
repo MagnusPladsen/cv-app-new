@@ -27,7 +27,8 @@
     "confirm": "Delete",
     "cancel": "Cancel",
     "importFailed": "That file could not be read as a CV.",
-    "edited": "Last edited"
+    "edited": "Last edited",
+    "confirmDeleteAccount": "Delete “{name}”? It goes from your account and from every device you use, and cannot be brought back."
   },
   "editor": {
     "notFound": "We can't find that CV.",

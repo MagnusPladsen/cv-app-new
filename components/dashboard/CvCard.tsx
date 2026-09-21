@@ -4,6 +4,7 @@ import { Copy, Download, Pencil, Trash2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 
+import { useSessionUser } from '@/components/auth/SessionProvider'
 import { cvDisplayName } from '@/lib/cv-name'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 
@@ -24,6 +25,10 @@ export function CvCard({
 }) {
   const t = useTranslations('dashboard')
   const locale = useLocale()
+  // What deleting actually does depends on where the CV lives: one browser,
+  // or an account that every device reads. Saying the wrong one is worse
+  // than saying neither - this is the last warning before it is gone.
+  const signedIn = useSessionUser() !== null
   const [renaming, setRenaming] = useState(false)
   const [confirming, setConfirming] = useState(false)
   const [draftName, setDraftName] = useState(document.name)
@@ -71,7 +76,7 @@ export function CvCard({
       {confirming ? (
         <div className="flex flex-wrap items-center gap-3 rounded-xl bg-red-50 px-3 py-2">
           <p className="flex-1 text-sm text-red-900">
-            {t('confirmDelete', { name: displayName })}
+            {t(signedIn ? 'confirmDeleteAccount' : 'confirmDelete', { name: displayName })}
           </p>
           <button
             className="rounded-lg bg-red-600 px-3 py-1 text-sm font-semibold text-white"

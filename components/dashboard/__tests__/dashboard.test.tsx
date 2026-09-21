@@ -2,13 +2,23 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { NextIntlClientProvider } from 'next-intl'
 import type { ReactNode } from 'react'
-import { describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { BackupControls } from '@/components/dashboard/BackupControls'
 import { CvCard } from '@/components/dashboard/CvCard'
 import type { CvDocument as CvDocumentData } from '@/lib/schema/cv'
 import { createEmptyDocument } from '@/lib/schema/defaults'
 import messages from '@/messages/no.json'
+
+const session = vi.hoisted(() => ({ user: null as { id: string; email: string } | null }))
+
+vi.mock('@/components/auth/SessionProvider', () => ({
+  useSessionUser: () => session.user,
+}))
+
+beforeEach(() => {
+  session.user = null
+})
 
 function fixture(name = 'Frontend'): CvDocumentData {
   let counter = 0
@@ -142,5 +152,22 @@ describe('BackupControls', () => {
     await userEvent.upload(screen.getByLabelText('Importer fra fil'), file)
 
     expect(await screen.findByText('Filen kunne ikke leses som en CV.')).toBeInTheDocument()
+  })
+})
+
+describe('the delete warning', () => {
+  it('says the CV is only in this browser when nobody is signed in', async () => {
+    wrap(<CvCard document={fixture('Frontend')} {...handlers()} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Slett' }))
+    expect(screen.getByText(/bare i denne nettleseren/)).toBeInTheDocument()
+  })
+
+  it('says it goes from the account and every device when signed in', async () => {
+    // The badge above this list says "Lagret på kontoen din" at the same
+    // time, so the old warning contradicted it.
+    session.user = { id: 'user-a', email: 'ola@example.no' }
+    wrap(<CvCard document={fixture('Frontend')} {...handlers()} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Slett' }))
+    expect(screen.getByText(/kontoen din og alle enhetene dine/)).toBeInTheDocument()
   })
 })

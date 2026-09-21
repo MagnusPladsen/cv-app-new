@@ -141,3 +141,27 @@ describe('the sync engine', () => {
     expect(remote.calls.list).toBe(1)
   })
 })
+
+describe('what the browser keeps once the server has it', () => {
+  it('records a successful sync, so the store can stop persisting locally', async () => {
+    const { store, engine } = setup()
+    store.getState().createDocument()
+    store.getState().adoptOwner('user-a')
+
+    await engine.syncNow()
+
+    expect(store.getState().syncedDocuments).toBe(store.getState().documents)
+    expect(store.getState().syncedOrder).toBe(store.getState().order)
+  })
+
+  it('records nothing when the sync failed, so the work stays on this machine', async () => {
+    const { store, engine, remote } = setup()
+    store.getState().createDocument()
+    store.getState().adoptOwner('user-a')
+    remote.failNext()
+
+    await engine.syncNow()
+
+    expect(store.getState().syncedDocuments).toBeNull()
+  })
+})

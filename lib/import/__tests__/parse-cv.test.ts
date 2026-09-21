@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { findDateRange, parseCv, type Line } from '@/lib/import/parse-cv'
+import { findDateRange, HEADINGS, parseCv, type Line } from '@/lib/import/parse-cv'
 
 const lines = (text: string): Line[] =>
   text
@@ -434,5 +434,60 @@ Utvikler, Acme · 2019 – 2021
   it('splits a letter-spaced heading off the line it shares', () => {
     const parsed = parseCv(lines('F E R D I G H E T E R TypeScript'))
     expect(parsed.skills).toEqual(['TypeScript'])
+  })
+})
+
+describe('the words CVs actually use for their sections', () => {
+  const underHeading = (heading: string) =>
+    parseCv(
+      lines(`
+${heading}
+Utvikler, Acme · 2019 – 2021
+`),
+    )
+
+  it('reads the Norwegian names for work experience', () => {
+    for (const heading of [
+      'Arbeidshistorikk',
+      'Arbeidsbakgrunn',
+      'Yrkesbakgrunn',
+      'Jobberfaring',
+      'Tidligere stillinger',
+      'Ansettelser',
+      'Karrierehistorikk',
+      'ARBEIDSERFARING',
+    ]) {
+      expect(underHeading(heading).experience, heading).toHaveLength(1)
+    }
+  })
+
+  it('reads the English ones too', () => {
+    for (const heading of ['Work history', 'Professional experience', 'Career history', 'Roles']) {
+      expect(underHeading(heading).experience, heading).toHaveLength(1)
+    }
+  })
+
+  it('knows the other sections by more than one name each', () => {
+    const named = (heading: string, line: string) =>
+      parseCv(lines(`${heading}\n${line}`))
+
+    expect(named('Utdanningsbakgrunn', 'Master i informatikk, UiO · 2013 – 2015').education).toHaveLength(1)
+    expect(named('Nøkkelferdigheter', 'TypeScript, React').skills).toContain('React')
+    expect(named('Tekniske ferdigheter', 'TypeScript, React').skills).toContain('React')
+    expect(named('Språkferdigheter', 'Norsk, Engelsk').languages).toEqual(['Norsk', 'Engelsk'])
+    expect(named('Fritidsinteresser', 'Klatring, Langrenn').interests).toContain('Klatring')
+    expect(named('Personlig profil', 'Utvikler med ti års erfaring.').summary).toContain('ti års')
+  })
+
+  it('gives every heading word exactly one section', () => {
+    // A word in two lists would make which section it means depend on the
+    // order of the table, which is nobody's idea of a rule.
+    const seen = new Map<string, string>()
+    for (const heading of HEADINGS) {
+      for (const word of heading.words) {
+        expect(seen.get(word), `"${word}" is also under ${seen.get(word)}`).toBeUndefined()
+        seen.set(word, heading.type)
+      }
+    }
   })
 })

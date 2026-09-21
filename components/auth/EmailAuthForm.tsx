@@ -66,7 +66,12 @@ export function EmailAuthForm({ next }: { next: string }) {
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+        // flow=confirm marks this as an email confirmation rather than a
+        // sign-in round trip. The link is often opened in another browser -
+        // whichever one the mail app uses - where the code cannot be
+        // exchanged, and the callback needs to know that a failure there
+        // still means the address was confirmed.
+        emailRedirectTo: `${window.location.origin}/auth/callback?flow=confirm&next=${encodeURIComponent(next)}`,
       },
     })
     setBusy(false)

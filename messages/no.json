@@ -266,7 +266,8 @@
     "errorGeneric": "Noe gikk galt. Prøv igjen.",
     "working": "Vent litt …",
     "saveSignedOut": "Logg inn for å lagre",
-    "saveHintLocal": "CV-en ligger i denne nettleseren. Logg inn, så følger den deg – og alt du har laget nå blir med."
+    "saveHintLocal": "CV-en ligger i denne nettleseren. Logg inn, så følger den deg – og alt du har laget nå blir med.",
+    "confirmed": "E-postadressen er bekreftet. Logg inn, så er du i gang."
   },
   "legal": {
     "processorName": "Leverandør",

@@ -83,7 +83,14 @@ describe('EmailAuthForm', () => {
 
     expect(signUp).toHaveBeenCalledWith(
       expect.objectContaining({
-        options: { emailRedirectTo: expect.stringContaining('/auth/callback?next=%2Fno%2Fcv') },
+        options: {
+          // flow=confirm tells the callback that a failed code exchange here
+          // still means the address was confirmed - which is what happens
+          // when the link is opened in the phone's mail browser.
+          emailRedirectTo: expect.stringContaining(
+            '/auth/callback?flow=confirm&next=%2Fno%2Fcv',
+          ),
+        },
       }),
     )
   })

@@ -266,7 +266,8 @@
     "errorGeneric": "Something went wrong. Please try again.",
     "working": "One moment …",
     "saveSignedOut": "Sign in to save",
-    "saveHintLocal": "This CV lives in your browser. Sign in and it follows you — everything you have made comes with it."
+    "saveHintLocal": "This CV lives in your browser. Sign in and it follows you — everything you have made comes with it.",
+    "confirmed": "Your email address is confirmed. Sign in and you are ready to go."
   },
   "legal": {
     "processorName": "Provider",

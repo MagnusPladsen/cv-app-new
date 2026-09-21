@@ -193,3 +193,41 @@ test('a signed-out editor offers to save, and comes back to the same CV', async 
   await page.goto(`/no/cv/${id}`)
   await expect(page.getByLabel(/Fornavn/).first()).toHaveValue('Testperson')
 })
+
+test('confirming an address in another browser lands on sign-in, not an error', async ({
+  request,
+}) => {
+  // What actually happens on a phone: the mail app opens the link in its own
+  // browser, which never had the code's verifier, so the exchange fails -
+  // after Supabase has already confirmed the address. Telling that person
+  // sign-in was "avbrutt" is the opposite of what happened.
+  const response = await request.get(
+    '/auth/callback?flow=confirm&code=not-a-real-code&next=%2Fno%2Fcv',
+    { maxRedirects: 0 },
+  )
+  const location = response.headers()['location'] ?? ''
+  expect(location).toContain('/no/login')
+  expect(location).toContain('confirmed=1')
+  expect(location).not.toContain('auth-code-error')
+})
+
+test('the sign-in page says so when an address has just been confirmed', async ({ page }) => {
+  await page.goto('/no/login?confirmed=1')
+  await expect(page.getByText('E-postadressen er bekreftet. Logg inn, så er du i gang.')).toBeVisible()
+})
+
+test('a confirmation link with a token works without the browser that signed up', async ({
+  request,
+}) => {
+  // /auth/confirm takes a token_hash, which needs no verifier. Supabase's
+  // email templates can point here instead. A made-up token is refused, but
+  // the route has to exist and answer rather than 404.
+  const response = await request.get('/auth/confirm?token_hash=nope&type=email', {
+    maxRedirects: 0,
+  })
+  expect(response.status()).toBeLessThan(400)
+  expect(response.headers()['location'] ?? '').toContain('/auth/auth-code-error')
+
+  const missing = await request.get('/auth/confirm', { maxRedirects: 0 })
+  expect(missing.headers()['location'] ?? '').toContain('reason=no_token')
+})

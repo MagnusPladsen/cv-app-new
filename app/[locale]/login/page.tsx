@@ -9,10 +9,10 @@ export default async function LoginPage({
   searchParams,
 }: {
   params: Promise<{ locale: string }>
-  searchParams: Promise<{ next?: string }>
+  searchParams: Promise<{ next?: string; confirmed?: string }>
 }) {
   const { locale } = await params
-  const { next } = await searchParams
+  const { next, confirmed } = await searchParams
   const t = await getTranslations({ locale, namespace: 'auth' })
 
   return (
@@ -24,6 +24,15 @@ export default async function LoginPage({
       {/* A deployment without the Supabase keys has no way to sign anyone
           in. Saying so beats a form that accepts a password and then does
           nothing at all, which is what it did. */}
+      {confirmed ? (
+        <p
+          className="rounded-xl border border-brand/30 bg-brand-soft/60 p-4 text-center text-sm text-brand-strong"
+          role="status"
+        >
+          {t('confirmed')}
+        </p>
+      ) : null}
+
       {isSupabaseConfigured() ? (
         <>
           <EmailAuthForm next={next ?? `/${locale}/cv`} />

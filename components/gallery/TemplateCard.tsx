@@ -60,7 +60,6 @@ export function TemplateCard({
         style={{
           aspectRatio: `${PAGE_WIDTH} / ${PAGE_HEIGHT}`,
           transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-          ['--card-scale' as string]: '1',
         }}
       >
         {/* Two more sheets, fanned out on hover: a template is a stack of
@@ -75,7 +74,7 @@ export function TemplateCard({
         />
       <button
         aria-label={template.name}
-        className="relative block h-full w-full overflow-hidden rounded-xl bg-white shadow-[0_8px_18px_-14px_rgb(0_0_0/0.4)] transition duration-200 group-hover:shadow-[0_30px_54px_-22px_rgb(0_0_0/0.45)] focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+        className="relative block h-full w-full overflow-hidden rounded-xl bg-white shadow-[0_8px_18px_-14px_rgb(0_0_0/0.4)] transition duration-200 focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
         // A handle that survives a rename: the card used to be found by the
         // CV markup it rendered, and its display name is branding ("oslo" is
         // called Klassisk), so neither is something to select on.
@@ -101,13 +100,6 @@ export function TemplateCard({
           sizes="240px"
           src={`/templates/${template.id}.png`}
         />
-
-        <span className="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-foreground/70 via-foreground/10 to-transparent p-3 opacity-0 transition duration-200 group-hover:opacity-100 group-focus-within:opacity-100">
-          <span className="rounded-full bg-brand px-4 py-2 text-xs font-bold text-brand-ink shadow-lg transition duration-200 group-hover:scale-105 group-hover:bg-brand-strong group-hover:shadow-xl">
-            {t('choose')}
-          </span>
-        </span>
-
       </button>
       </div>
 

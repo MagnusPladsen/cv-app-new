@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --port 3001",
-    "build": "next build",
+    "build": "node scripts/fetch-ocr-assets.mjs && next build",
     "start": "next start --port 3001",
     "lint": "eslint",
     "test": "vitest run",
@@ -13,8 +13,7 @@
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
     "thumbnails": "bun scripts/generate-template-thumbnails.mjs",
-    "ocr-assets": "bun scripts/fetch-ocr-assets.mjs",
-    "prebuild": "bun scripts/fetch-ocr-assets.mjs"
+    "ocr-assets": "node scripts/fetch-ocr-assets.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

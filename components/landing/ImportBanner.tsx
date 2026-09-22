@@ -19,7 +19,7 @@ export async function ImportBanner({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'landing' })
 
   return (
-    <section className="relative mt-12 overflow-hidden rounded-3xl bg-brand-strong text-white shadow-[0_30px_60px_-30px_rgb(13_95_89/0.6)] sm:mt-24">
+    <section className="relative mt-8 overflow-hidden rounded-3xl bg-brand-strong text-white shadow-[0_30px_60px_-30px_rgb(13_95_89/0.6)] sm:mt-16">
       {/* Two washes of light rather than a flat fill, so the band has some
           depth behind the drawing without a background image. */}
       <div

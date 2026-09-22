@@ -1,8 +1,9 @@
 'use client'
 
+
 import { AlertTriangle, Download } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { useSessionUser } from '@/components/auth/SessionProvider'
 import { DESKTOP_QUERY, useMediaQuery } from '@/lib/hooks/use-media-query'
@@ -84,6 +85,25 @@ export function ExportButton({
     }
     void runExport()
   }
+
+  // Arriving from "Last ned PDF" in the CV list: the editor is where the CV
+  // is rendered, and the print path copies rendered nodes - so the list sends
+  // people here with ?print=1 rather than trying to render a CV of its own.
+  const started = useRef(false)
+  useEffect(() => {
+    // Read from the URL rather than through useSearchParams: this component
+    // is rendered in unit tests with no Next router around it, and the hook
+    // requires one.
+    const requested =
+      new URLSearchParams(globalThis.location?.search ?? '').get('print') === '1'
+    if (!requested || started.current) return
+    started.current = true
+    // After fonts, or the first page prints in a fallback face.
+    // globalThis.document: the prop in scope here is the CV, not the page.
+    void globalThis.document.fonts?.ready.then(() => proceed())
+    // Once, on arrival: re-running it would start a second print dialog.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   function handleClick() {
     // Only ask when signing in is actually on offer and would change

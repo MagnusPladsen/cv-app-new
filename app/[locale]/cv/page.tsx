@@ -6,12 +6,14 @@ import { useLocale, useTranslations } from 'next-intl'
 import { ClaimNotice } from '@/components/auth/ClaimNotice'
 import { SyncStatusBadge } from '@/components/auth/SyncStatusBadge'
 import { BackupControls } from '@/components/dashboard/BackupControls'
+import { EmptyCvList } from '@/components/dashboard/EmptyCvList'
 import { ImportCvButton } from '@/components/dashboard/ImportCvButton'
 import { CvCard } from '@/components/dashboard/CvCard'
 import { useRouter } from '@/i18n/navigation'
 import { cvDisplayName } from '@/lib/cv-name'
 import { useHydrated } from '@/lib/hooks/use-hydrated'
 import { backupFilename, parseBackup, serialiseDocument } from '@/lib/store/backup'
+import { useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
 import { selectOrderedDocuments, useDocuments } from '@/lib/store/documents'
@@ -30,6 +32,8 @@ export default function DashboardPage() {
   const locale = useLocale()
   const router = useRouter()
   const hydrated = useHydrated()
+  const [query, setQuery] = useState('')
+  const [order, setOrder] = useState<'edited' | 'name'>('edited')
 
   // useShallow keeps the reference stable across renders. selectOrderedDocuments
   // builds a new array each call, and zustand v5 reads through
@@ -39,6 +43,21 @@ export default function DashboardPage() {
   const renameDocument = useDocuments((state) => state.renameDocument)
   const deleteDocument = useDocuments((state) => state.deleteDocument)
   const importDocument = useDocuments((state) => state.importDocument)
+
+  // Sorting and searching only appear once a list is long enough to need
+  // them; below that they are two controls in the way of four CVs.
+  const SEARCHABLE_FROM = 5
+  const shown = documents
+    .filter((document) =>
+      query.trim() === ''
+        ? true
+        : cvDisplayName(document, locale).toLowerCase().includes(query.trim().toLowerCase()),
+    )
+    .sort((a, b) =>
+      order === 'name'
+        ? cvDisplayName(a, locale).localeCompare(cvDisplayName(b, locale), locale)
+        : b.updatedAt - a.updatedAt,
+    )
 
   // Template first: choosing a look is step one, then the editor.
   function handleCreate() {
@@ -98,15 +117,48 @@ export default function DashboardPage() {
 
       {!hydrated ? null : (
         <>
+          {documents.length >= SEARCHABLE_FROM ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <input
+                aria-label={t('search')}
+                className="min-w-0 flex-1 rounded-full border border-border bg-card px-4 py-1.5 text-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder={t('search')}
+                type="search"
+                value={query}
+              />
+              <div className="flex items-center gap-1" role="group">
+                {(['edited', 'name'] as const).map((option) => (
+                  <button
+                    aria-pressed={order === option}
+                    className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                      order === option
+                        ? 'bg-brand text-brand-ink'
+                        : 'text-muted-foreground hover:bg-brand-soft hover:text-brand-strong'
+                    }`}
+                    key={option}
+                    onClick={() => setOrder(option)}
+                    type="button"
+                  >
+                    {t(option === 'edited' ? 'sortEdited' : 'sortName')}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
           {documents.length === 0 ? (
-            <p className="text-muted-foreground">{t('empty')}</p>
+            <EmptyCvList onImport={handleImportParsed} onStart={handleCreate} />
+          ) : shown.length === 0 ? (
+            <p className="text-muted-foreground">{t('noMatches', { query })}</p>
           ) : (
             <ul className="flex flex-col gap-3">
-              {documents.map((document) => (
+              {shown.map((document) => (
                 <CvCard
                   document={document}
                   key={document.id}
                   onDelete={deleteDocument}
+                  onDownloadPdf={(id) => router.push(`/cv/${id}?print=1`)}
                   onDuplicate={handleDuplicate}
                   onExport={handleExport}
                   onOpen={(id) => router.push(`/cv/${id}`)}
@@ -116,10 +168,12 @@ export default function DashboardPage() {
             </ul>
           )}
 
-          <div className="flex flex-wrap items-start gap-4">
-            <ImportCvButton onImport={handleImportParsed} />
-            <BackupControls onImportText={handleImportText} />
-          </div>
+          {documents.length > 0 ? (
+            <div className="flex flex-wrap items-start gap-4">
+              <ImportCvButton onImport={handleImportParsed} />
+              <BackupControls onImportText={handleImportText} />
+            </div>
+          ) : null}
         </>
       )}
     </main>

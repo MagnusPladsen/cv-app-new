@@ -1,15 +1,18 @@
 'use client'
 
-import { Download, FileJson, LogOut, Trash2 } from 'lucide-react'
+import { Download, FileJson, FolderX, LogOut, Trash2 } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useId, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
+import { AccountSecurity } from '@/components/auth/AccountSecurity'
 import { SyncStatusBadge } from '@/components/auth/SyncStatusBadge'
 import type { SessionUserDto } from '@/lib/auth/dal'
 import { STORAGE_PREFIX } from '@/lib/app-meta'
 import { buildPrivacyExport, privacyExportFilename } from '@/lib/privacy/export'
 import { useHydrated } from '@/lib/hooks/use-hydrated'
+import { INACTIVE_MONTHS } from '@/lib/retention/policy'
+import { sinceWords } from '@/lib/since'
 import { bundleFilename, serialiseBundle } from '@/lib/store/backup'
 import { selectOrderedDocuments, useDocuments } from '@/lib/store/documents'
 
@@ -50,7 +53,9 @@ export function AccountPanel({ user }: { user: SessionUserDto }) {
   const [confirmation, setConfirmation] = useState('')
 
   const documents = useDocuments(useShallow(selectOrderedDocuments))
+  const deleteDocument = useDocuments((state) => state.deleteDocument)
   const confirmWord = t('deleteConfirmWord')
+  const [clearing, setClearing] = useState(false)
 
   const buttonClass =
     'inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none'
@@ -64,6 +69,28 @@ export function AccountPanel({ user }: { user: SessionUserDto }) {
             {t('signedInWith', { provider: user.provider })}
           </p>
         ) : null}
+        {/* When the account was made, when it was last used, and the rule
+            that eventually deletes it - which is this page's business, since
+            it is the page that owns the account. */}
+        <dl className="grid gap-x-6 gap-y-1 pt-1 text-sm sm:grid-cols-2">
+          {user.createdAt ? (
+            <div className="flex gap-2">
+              <dt className="text-muted-foreground">{t('created')}</dt>
+              <dd>{sinceWords(Date.parse(user.createdAt), locale)}</dd>
+            </div>
+          ) : null}
+          {user.lastSignInAt ? (
+            <div className="flex gap-2">
+              <dt className="text-muted-foreground">{t('lastSignIn')}</dt>
+              <dd>{sinceWords(Date.parse(user.lastSignInAt), locale)}</dd>
+            </div>
+          ) : null}
+        </dl>
+
+        <p className="text-xs text-muted-foreground">
+          {t('inactivityRule', { months: INACTIVE_MONTHS })}
+        </p>
+
         <div className="flex flex-wrap items-center gap-3 pt-1">
           <SyncStatusBadge />
           {/* Rendered only after hydration: the count comes from localStorage,
@@ -125,6 +152,43 @@ export function AccountPanel({ user }: { user: SessionUserDto }) {
             {t('signOut')}
           </button>
         </form>
+      </section>
+
+      <AccountSecurity email={user.email} provider={user.provider} />
+
+      {/* Between "download everything" and "delete the account": a way to
+          start over without losing the address you sign in with. */}
+      <section className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5">
+        <h2 className="text-base font-bold">{t('clearCvsTitle')}</h2>
+        <p className="text-sm text-muted-foreground">{t('clearCvsBody')}</p>
+        {clearing ? (
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="flex-1 text-sm">{t('clearCvsConfirm', { count: documents.length })}</p>
+            <button
+              className="rounded-lg bg-destructive px-3 py-1.5 text-sm font-semibold text-white"
+              onClick={() => {
+                for (const document of documents) deleteDocument(document.id)
+                setClearing(false)
+              }}
+              type="button"
+            >
+              {t('clearCvsAction')}
+            </button>
+            <button className={buttonClass} onClick={() => setClearing(false)} type="button">
+              {t('cancel')}
+            </button>
+          </div>
+        ) : (
+          <button
+            className={buttonClass}
+            disabled={!hydrated || documents.length === 0}
+            onClick={() => setClearing(true)}
+            type="button"
+          >
+            <FolderX aria-hidden="true" className="size-4" />
+            {t('clearCvs')}
+          </button>
+        )}
       </section>
 
       <section className="flex flex-col gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-5">

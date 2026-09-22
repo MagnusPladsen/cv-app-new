@@ -4,12 +4,19 @@ import { NextIntlClientProvider } from 'next-intl'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { AccountPanel } from '@/components/auth/AccountPanel'
+import { createEmptyDocument } from '@/lib/schema/defaults'
 import { useDocuments } from '@/lib/store/documents'
 import messages from '@/messages/no.json'
 
 vi.mock('@/lib/hooks/use-hydrated', () => ({ useHydrated: () => true }))
 
-const user = { id: 'user-a', email: 'ola@example.no', provider: 'google' }
+const user = {
+  id: 'user-a',
+  email: 'ola@example.no',
+  provider: 'google',
+  createdAt: '2026-01-05T09:00:00.000Z',
+  lastSignInAt: '2026-09-20T09:00:00.000Z',
+}
 
 function renderPanel() {
   return render(
@@ -20,7 +27,14 @@ function renderPanel() {
 }
 
 beforeEach(() => {
-  useDocuments.setState({ documents: {}, order: [], ownerId: 'user-a', tombstones: {} })
+  useDocuments.setState({
+    documents: {},
+    order: [],
+    ownerId: 'user-a',
+    tombstones: {},
+    syncedDocuments: null,
+    syncedOrder: null,
+  })
 })
 
 describe('AccountPanel', () => {
@@ -67,5 +81,49 @@ describe('AccountPanel', () => {
   it('warns what deletion costs before offering it', () => {
     renderPanel()
     expect(screen.getByText(messages.auth.deleteWarning)).toBeInTheDocument()
+  })
+})
+
+describe('what the account page now answers', () => {
+  it('says when the account was made and last used', () => {
+    renderPanel()
+    expect(screen.getByText('Opprettet')).toBeInTheDocument()
+    expect(screen.getByText('Sist innlogget')).toBeInTheDocument()
+  })
+
+  it('states the rule that eventually deletes the account', () => {
+    renderPanel()
+    expect(screen.getByText(/24 måneder/)).toBeInTheDocument()
+  })
+
+  it('offers a password to somebody who signs in with Google', () => {
+    // No password at all today: losing the Google account would lose this one.
+    renderPanel()
+    expect(screen.getByLabelText('Lag et passord')).toBeInTheDocument()
+    expect(screen.getByText(/Med et passord kommer du inn/)).toBeInTheDocument()
+  })
+
+  it('offers a new address, and says the change waits for a confirmation', () => {
+    renderPanel()
+    expect(screen.getByLabelText('Bytt e-postadresse')).toBeInTheDocument()
+    expect(screen.getByText(/bekreftelse til den nye adressen/)).toBeInTheDocument()
+  })
+
+  it('can end every other session', () => {
+    renderPanel()
+    expect(screen.getByRole('button', { name: 'Logg ut overalt' })).toBeInTheDocument()
+  })
+
+  it('clears the CVs without touching the account, and asks first', async () => {
+    const document = createEmptyDocument({ name: 'Frontend' })
+    useDocuments.setState({ documents: { [document.id]: document }, order: [document.id] })
+    renderPanel()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Slett alle CV-ene' }))
+    expect(screen.getByText(/Slette 1 CV\?/)).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Ja, slett alle' }))
+    expect(useDocuments.getState().order).toEqual([])
+    expect(useDocuments.getState().ownerId).toBe('user-a')
   })
 })

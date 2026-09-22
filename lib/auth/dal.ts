@@ -13,6 +13,9 @@ export type SessionUserDto = {
   id: string
   email: string | null
   provider: string | null
+  /** ISO timestamps, for the account page to say how old this account is. */
+  createdAt: string | null
+  lastSignInAt: string | null
 }
 
 export const getSessionUser = cache(async (): Promise<SessionUserDto | null> => {
@@ -28,5 +31,7 @@ export const getSessionUser = cache(async (): Promise<SessionUserDto | null> => 
     id: data.user.id,
     email: data.user.email ?? null,
     provider: (data.user.app_metadata?.provider as string | undefined) ?? null,
+    createdAt: data.user.created_at ?? null,
+    lastSignInAt: data.user.last_sign_in_at ?? null,
   }
 })

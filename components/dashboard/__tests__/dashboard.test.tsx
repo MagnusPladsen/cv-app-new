@@ -40,6 +40,7 @@ function handlers() {
     onRename: vi.fn(),
     onDelete: vi.fn(),
     onExport: vi.fn(),
+    onDownloadPdf: vi.fn(),
   }
 }
 
@@ -57,8 +58,9 @@ describe('CvCard', () => {
     doc.createdAt = Date.UTC(2026, 8, 15)
 
     wrap(<CvCard document={doc} {...handlers()} />)
-    expect(screen.getByRole('button', { name: /Ola Nordmann/ })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /15\.09\.2026/ })).toBeInTheDocument()
+    // The title button, not the thumbnail beside it, which is labelled
+    // "Åpne <name>" so screen readers do not hear the name twice.
+    expect(screen.getByRole('button', { name: /^Ola Nordmann · 15\.09\.2026$/ })).toBeInTheDocument()
   })
 
   it('falls back to the date alone before there is a name to use', () => {
@@ -169,5 +171,37 @@ describe('the delete warning', () => {
     wrap(<CvCard document={fixture('Frontend')} {...handlers()} />)
     await userEvent.click(screen.getByRole('button', { name: 'Slett' }))
     expect(screen.getByText(/kontoen din og alle enhetene dine/)).toBeInTheDocument()
+  })
+})
+
+describe('what a card says about its CV', () => {
+  it('shows when it was last touched, and how much is left to fix', () => {
+    const doc = fixture('Frontend')
+    doc.updatedAt = Date.now() - 2 * 24 * 60 * 60 * 1000
+    wrap(<CvCard document={doc} {...handlers()} />)
+
+    // A brand new CV has no name, no contact details and no history, so the
+    // check has plenty to say. The point is that it says it here.
+    // Intl says "i forgårs" for two days ago in Norwegian, which is the
+    // point of using it rather than printing a date.
+    expect(screen.getByText(/i forgårs/)).toBeInTheDocument()
+    expect(screen.getByText(/ting å fikse/)).toBeInTheDocument()
+  })
+
+  it('offers the PDF without a detour through the editor', async () => {
+    const all = handlers()
+    wrap(<CvCard document={fixture('Frontend')} {...all} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Last ned PDF' }))
+    expect(all.onDownloadPdf).toHaveBeenCalledWith(fixture('Frontend').id)
+  })
+
+  it('draws a thumbnail that carries the CV’s own accent', () => {
+    const doc = fixture('Frontend')
+    doc.theme = { ...doc.theme, accent: '#b91c1c' }
+    doc.personalia = { ...doc.personalia, firstName: 'Ola', lastName: 'Nordmann' }
+    const { container } = wrap(<CvCard document={doc} {...handlers()} />)
+
+    expect(container.innerHTML).toContain('ON')
+    expect(container.innerHTML).toContain('#b91c1c')
   })
 })

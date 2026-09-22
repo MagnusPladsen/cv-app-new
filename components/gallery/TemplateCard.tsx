@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
+import { useRef, useState } from 'react'
 
 import type { Template } from '@/components/cv/types'
 import { mmToPx, PAPER } from '@/lib/print/paper'
@@ -30,18 +31,55 @@ export function TemplateCard({
   className?: string
 }) {
   const t = useTranslations('gallery')
+  const frame = useRef<HTMLDivElement | null>(null)
+  const [tilt, setTilt] = useState({ x: 0, y: 0 })
+
+  /**
+   * The sheet leans toward the pointer. Read off the card's own box rather
+   * than the event's offset, which jumps as the pointer crosses the label and
+   * the overlay inside it.
+   */
+  function lean(event: React.PointerEvent<HTMLDivElement>) {
+    const box = frame.current?.getBoundingClientRect()
+    if (!box || event.pointerType !== 'mouse') return
+    setTilt({
+      x: ((event.clientY - box.top) / box.height - 0.5) * -8,
+      y: ((event.clientX - box.left) / box.width - 0.5) * 10,
+    })
+  }
 
   return (
-    <li className={`group flex flex-col gap-2.5 ${className}`}>
+    <li className={`group flex flex-col gap-2.5 [perspective:1200px] ${className}`}>
+      {/* The stack lives outside the button, which clips its own image to a
+          rounded corner; sheets fanned behind it would be clipped away. */}
+      <div
+        className="relative transition-transform duration-200 ease-out [transform-style:preserve-3d] motion-reduce:!transform-none"
+        onPointerLeave={() => setTilt({ x: 0, y: 0 })}
+        onPointerMove={lean}
+        ref={frame}
+        style={{
+          aspectRatio: `${PAGE_WIDTH} / ${PAGE_HEIGHT}`,
+          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+        }}
+      >
+        {/* Two more sheets, fanned out on hover: a template is a stack of
+            pages, and the fan is what says so before anything is clicked. */}
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 rounded-xl bg-white/70 ring-1 ring-border/70 transition duration-300 ease-out group-hover:translate-x-[5%] group-hover:-translate-y-[2.5%] group-hover:rotate-[2.5deg] group-focus-within:translate-x-[5%] group-focus-within:-translate-y-[2.5%] group-focus-within:rotate-[2.5deg] motion-reduce:!transform-none"
+        />
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 rounded-xl bg-white/85 ring-1 ring-border/70 transition duration-300 ease-out group-hover:translate-x-[2.5%] group-hover:-translate-y-[1.2%] group-hover:rotate-[1.2deg] group-focus-within:translate-x-[2.5%] group-focus-within:-translate-y-[1.2%] group-focus-within:rotate-[1.2deg] motion-reduce:!transform-none"
+        />
       <button
         aria-label={template.name}
-        className="relative block w-full overflow-hidden rounded-xl bg-white ring-1 ring-border transition duration-200 group-hover:-translate-y-1 group-hover:shadow-[0_18px_45px_-18px_rgb(0_0_0/0.4)] group-hover:ring-brand focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+        className="relative block h-full w-full overflow-hidden rounded-xl bg-white ring-1 ring-border transition duration-200 group-hover:shadow-[0_26px_50px_-22px_rgb(0_0_0/0.45)] group-hover:ring-brand focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
         // A handle that survives a rename: the card used to be found by the
         // CV markup it rendered, and its display name is branding ("oslo" is
         // called Klassisk), so neither is something to select on.
         data-template={template.id}
         onClick={() => onChoose(template.id)}
-        style={{ aspectRatio: `${PAGE_WIDTH} / ${PAGE_HEIGHT}` }}
         type="button"
       >
         {/* Empty alt: the button is labelled with the template's name, so a
@@ -68,7 +106,18 @@ export function TemplateCard({
             {t('choose')}
           </span>
         </span>
+
+        {/* A sheen that slides with the lean, so the paper reads as paper
+            rather than a picture of it. */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100 motion-reduce:!opacity-0"
+          style={{
+            background: `linear-gradient(${105 + tilt.y * 2}deg, transparent 38%, rgb(255 255 255 / 0.45) ${50 + tilt.y * 1.6}%, transparent 62%)`,
+          }}
+        />
       </button>
+      </div>
 
       <span className="text-sm font-semibold">{template.name}</span>
     </li>

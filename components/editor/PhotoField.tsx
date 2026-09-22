@@ -57,7 +57,20 @@ export function PhotoField({
             src={photo.dataUrl}
           />
         ) : (
-          <div className="size-16 shrink-0 rounded-full bg-sand-deep" />
+          // A silhouette rather than a grey disc: an empty circle reads as
+          // something that failed to load, and this is a slot waiting for a
+          // portrait.
+          <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-sand-deep text-muted-foreground/60">
+            <svg
+              aria-hidden="true"
+              className="size-16 translate-y-1"
+              fill="currentColor"
+              viewBox="0 0 64 64"
+            >
+              <circle cx="32" cy="24" r="11" />
+              <path d="M32 39c-10.5 0-19 6.8-19 15.2V60h38v-5.8C51 45.8 42.5 39 32 39z" />
+            </svg>
+          </div>
         )}
 
         <div className="flex flex-col gap-2">

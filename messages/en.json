@@ -21,7 +21,7 @@
     "copySuffix": "copy",
     "rename": "Rename",
     "renamePrompt": "New name for this CV",
-    "export": "Download backup",
+    "export": "Download",
     "import": "Import from file",
     "confirmDelete": "Delete \"{name}\"? This CV exists only in this browser and cannot be recovered.",
     "confirm": "Delete",

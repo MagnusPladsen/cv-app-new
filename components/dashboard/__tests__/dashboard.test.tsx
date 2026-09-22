@@ -84,7 +84,7 @@ describe('CvCard', () => {
     wrap(<CvCard document={doc} {...h} />)
     await userEvent.click(screen.getByRole('button', { name: 'Dupliser' }))
     expect(h.onDuplicate).toHaveBeenCalledWith(doc.id)
-    await userEvent.click(screen.getByRole('button', { name: 'Last ned sikkerhetskopi' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Last ned', exact: true }))
     expect(h.onExport).toHaveBeenCalledWith(doc.id)
   })
 

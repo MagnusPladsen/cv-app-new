@@ -180,7 +180,7 @@
   "gallery": {
     "title": "Choose a template",
     "subtitle": "You can switch template at any time without losing your content.",
-    "choose": "Use this one",
+    "choose": "Create CV →",
     "back": "Back to my CVs",
     "count": "{count} templates",
     "filterAll": "All",

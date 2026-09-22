@@ -100,6 +100,13 @@ export function TemplateCard({
           sizes="240px"
           src={`/templates/${template.id}.png`}
         />
+
+        {/* A flag in the corner rather than a bar over the page: the lean and
+            the fan already say the card is live, so this only has to name
+            what a click does - and it covers almost none of the CV. */}
+        <span className="absolute top-0 right-0 translate-x-1 -translate-y-1 rounded-tr-xl rounded-bl-lg bg-brand px-2.5 py-1.5 text-[0.64rem] font-bold text-brand-ink opacity-0 transition duration-200 group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-x-0 group-focus-within:translate-y-0 group-focus-within:opacity-100 motion-reduce:!transform-none">
+          {t('choose')}
+        </span>
       </button>
       </div>
 

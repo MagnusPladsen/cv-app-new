@@ -218,7 +218,7 @@ export function EditorSplit({
           // one ends and the next begins is obvious when they are all on
           // screen together.
           <div
-            className="relative flex scroll-mt-32 flex-col gap-4 rounded-xl border border-border/70 bg-card/40 p-4 sm:p-5"
+            className="relative flex scroll-mt-24 flex-col gap-4 rounded-xl border border-border/70 bg-card/40 p-4 sm:p-5"
             id={sectionFormId(section.id)}
             key={section.id}
           >
@@ -275,7 +275,7 @@ export function EditorSplit({
           top of the viewport slid its grey surround up against the navigation
           and the two appeared to merge. */}
       {isDesktop ? (
-        <div className="min-w-0 lg:sticky lg:top-[7rem] lg:self-start">
+        <div className="min-w-0 lg:sticky lg:top-[5.25rem] lg:self-start">
           <PreviewPane
             containerRef={previewRef}
             document={document}

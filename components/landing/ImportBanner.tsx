@@ -1,4 +1,4 @@
-import { ArrowRight, FileUp, Lock, Sparkles } from 'lucide-react'
+import { ArrowRight, FileUp, Lock } from 'lucide-react'
 import { getTranslations } from 'next-intl/server'
 
 import { Link } from '@/i18n/navigation'
@@ -29,8 +29,15 @@ export async function ImportBanner({ locale }: { locale: string }) {
 
       <div className="relative flex flex-col gap-8 p-7 sm:p-10 lg:flex-row lg:items-center lg:gap-12">
         <div className="flex max-w-2xl flex-col items-start gap-4">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-bold tracking-widest uppercase ring-1 ring-white/25 backdrop-blur-sm">
-            <Sparkles aria-hidden="true" className="size-3.5" />
+          {/* A lit dot rather than another box: the band is already a filled
+              panel with a button on it, and a third outlined shape on top of
+              that reads as clutter. The halo is what makes it carry at this
+              size. */}
+          <span className="inline-flex items-center gap-2 text-[0.68rem] font-semibold tracking-[0.2em] text-white/85 uppercase">
+            <span
+              aria-hidden="true"
+              className="size-1.5 rounded-full bg-[#7fe8d8] shadow-[0_0_0_4px_rgb(127_232_216/0.22)]"
+            />
             {t('importBadge')}
           </span>
 

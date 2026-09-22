@@ -1,5 +1,6 @@
 'use client'
 
+import { Sparkles } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 
 import { AccountMenu } from '@/components/auth/AccountMenu'
@@ -23,7 +24,8 @@ export function AppHeader() {
   // slow in a real browser, this is the first thing to try removing - but
   // measure against a production build first.
   return (
-    <header className="sticky top-0 z-30 border-b border-border/70 bg-sand/85 backdrop-blur">
+    <>
+      <header className="sticky top-0 z-30 border-b border-border/70 bg-sand/85 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-3 sm:gap-4 sm:px-6">
         <div className="flex items-center gap-2">
           <Link
@@ -78,19 +80,23 @@ export function AppHeader() {
           </span>
         </nav>
       </div>
+      </header>
 
-      {/* Hangs under the bar on every page, rather than being a card in the
-          middle of the landing page that only some people scroll to. What
-          this costs is the first question anybody has, and beta is the
-          answer until it is not - at which point this line goes. */}
-      <div className="bg-brand-strong text-brand-ink">
-        <p className="mx-auto flex max-w-6xl flex-wrap items-baseline gap-x-2 gap-y-0.5 px-3 py-1.5 text-xs sm:px-6">
-          <span className="font-bold">{tBeta('bannerTitle')}</span>
-          {/* One line on a phone: the whole sentence wrapped to three, and a
-              sticky header 135px deep eats the screen somebody is typing on. */}
-          <span className="hidden text-brand-ink/80 sm:inline">{tBeta('bannerShort')}</span>
-        </p>
-      </div>
-    </header>
+      {/* Below the sticky bar rather than inside it, and on the landing page
+          only: it is an answer to "what does this cost", which is a question
+          somebody asks once, on the way in - not something to carry down
+          every screen of the editor. */}
+      {pathname === '/' ? (
+        <div className="bg-brand-strong text-brand-ink">
+          <p className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-2 gap-y-0.5 px-3 py-1.5 text-xs sm:px-6">
+            <Sparkles aria-hidden="true" className="size-3.5 shrink-0" />
+            <span className="font-bold">{tBeta('bannerTitle')}</span>
+            {/* One line on a phone: the whole sentence wraps to three, and a
+                header that deep eats the screen. */}
+            <span className="hidden text-brand-ink/80 sm:inline">{tBeta('bannerShort')}</span>
+          </p>
+        </div>
+      ) : null}
+    </>
   )
 }

@@ -1,3 +1,5 @@
+import { isLinkedInExport, normaliseLinkedIn } from './linkedin'
+
 /**
  * Turning somebody else's CV into the beginnings of one of ours.
  *
@@ -25,6 +27,8 @@ export type Line = {
 export type ParsedEntry = {
   role: string
   organisation: string
+  /** Where the job was, when the CV gave a place of its own. */
+  location: string
   /** "YYYY-MM", or "" when the CV only gave a year or nothing. */
   from: string
   to: string
@@ -158,6 +162,7 @@ export const HEADINGS: { type: keyof typeof SECTION_KEYS; words: string[] }[] = 
       'praksisplass',
       'karriere',
       'karrierehistorikk',
+      'experience',
       'work experience',
       'work history',
       'work',
@@ -520,6 +525,8 @@ export function findDateRange(text: string): DateRange | null {
     to,
     current,
     rest: (text.slice(0, match.index) + ' ' + text.slice(match.index + match[0].length))
+      // "Master i informatikk · (2013 - 2015)" leaves "( )" behind.
+      .replace(/\(\s*\)/g, '')
       .replace(/\s*[|·•,–—-]\s*$/, '')
       .replace(/^\s*[|·•,–—-]\s*/, '')
       .replace(/\s+/g, ' ')
@@ -616,8 +623,12 @@ const EMAIL = /[\w.+-]+@[\w-]+\.[\w.]{2,}/
  */
 const PHONE_CANDIDATE = /\+?\d[\d\s-]{6,16}\d/g
 
+const YEAR_RANGE = /^(19|20)\d{2}\s*[-–—]\s*(19|20)\d{2}$/
+
 function findPhone(text: string): string | null {
   for (const match of text.match(PHONE_CANDIDATE) ?? []) {
+    // "2013 - 2015" is eight digits and a dash, and is not a number to ring.
+    if (YEAR_RANGE.test(match.trim())) continue
     const digits = match.replace(/\D/g, '')
     const national = digits.startsWith('47') ? digits.slice(2) : digits
     // Eight digits is a Norwegian number; the wider range covers the rest of
@@ -642,13 +653,13 @@ const SKILL_LEVELS: [RegExp, 1 | 2 | 3 | 4 | 5][] = [
 ]
 
 const LANGUAGE_LEVELS: [RegExp, 'a1' | 'a2' | 'b1' | 'b2' | 'c1' | 'c2' | 'native'][] = [
-  [/^(morsmål|morsmaal|native|native speaker|modersmål)$/i, 'native'],
-  [/^(flytende|fluent|svært god|meget god|c2)$/i, 'c2'],
-  [/^(veldig god|avansert|advanced|c1)$/i, 'c1'],
+  [/^(morsmål|morsmaal|native|native speaker|modersmål|native or bilingual)$/i, 'native'],
+  [/^(flytende|fluent|svært god|meget god|c2|full professional)$/i, 'c2'],
+  [/^(veldig god|avansert|advanced|c1|professional working)$/i, 'c1'],
   [/^(god|b2|profesjonell|professional)$/i, 'b2'],
-  [/^(middels|intermediate|b1)$/i, 'b1'],
+  [/^(middels|intermediate|b1|limited working)$/i, 'b1'],
   [/^(litt|noe|basic|grunnleggende|a2)$/i, 'a2'],
-  [/^(nybegynner|beginner|a1)$/i, 'a1'],
+  [/^(nybegynner|beginner|a1|elementary)$/i, 'a1'],
 ]
 
 /**
@@ -716,6 +727,9 @@ function bodySize(lines: Line[]): number | undefined {
 }
 
 
+/** "Oslo", "Oslo, Norway", "Bergen kommune": short, capitalised, no verb. */
+const PLACE_LINE = /^[A-ZÆØÅ][a-zæøå.-]+(?:[ -][A-ZÆØÅa-zæøå.-]+){0,2}(?:,\s*[A-ZÆØÅ][a-zæøå.-]+)?$/
+
 /** Entries for a block whose dates are single, not ranges. */
 function fromSingleDates(lines: { text: string }[]): {
   entries: ParsedEntry[]
@@ -739,6 +753,7 @@ function fromSingleDates(lines: { text: string }[]): {
     entries.push({
       role: dated.rest,
       organisation: '',
+      location: '',
       from: dated.date,
       to: '',
       current: false,
@@ -783,6 +798,7 @@ function buildEntries(block: Line[]): { entries: ParsedEntry[]; leftovers: strin
     return {
       role,
       organisation: organisation.join(' · '),
+      location: '',
       from: range.from,
       to: range.to,
       current: range.current,
@@ -797,6 +813,9 @@ function buildEntries(block: Line[]): { entries: ParsedEntry[]; leftovers: strin
       if (BULLET.test(line)) description.push(line.replace(BULLET, '').trim())
       else if (!entry.role) entry.role = line
       else if (!entry.organisation) entry.organisation = line
+      // "Oslo, Norway" under a job is where the job was, not a bullet about
+      // it. LinkedIn writes one under every entry.
+      else if (!entry.location && PLACE_LINE.test(line)) entry.location = line
       else description.push(line)
     }
     entry.bullets.push(...unwrap(description))
@@ -856,7 +875,13 @@ function buildEntries(block: Line[]): { entries: ParsedEntry[]; leftovers: strin
     // as description rather than lost.
     if (range.rest) {
       if (!entry.role) entry = { ...newEntry(range), bullets: entry.bullets }
-      else entry.bullets.push(range.rest)
+      else if (title.length === 1 && !entry.organisation) {
+        // "Universitetet i Oslo" above "Master i informatikk · 2013 - 2015":
+        // what shares the date's line is the thing, and the line above it is
+        // where it happened.
+        entry.organisation = entry.role
+        entry.role = range.rest
+      } else entry.bullets.push(range.rest)
     }
     entries.push(entry)
   }
@@ -980,7 +1005,13 @@ function licenceClasses(text: string): string[] {
  * type size it is used to find the name, which is almost always the largest
  * thing on the first page.
  */
-export function parseCv(lines: Line[]): ParsedCv {
+export function parseCv(input: Line[]): ParsedCv {
+  // LinkedIn's export is laid out unlike any other CV, so it is put into the
+  // ordinary order first rather than parsed by rules of its own.
+  const lines = isLinkedInExport(input)
+    ? normaliseLinkedIn(input, (text) => headingType({ text }) !== null)
+    : input
+
   const clean: Line[] = []
   for (const line of lines) {
     const text = line.text.replace(/\s+/g, ' ').trim()

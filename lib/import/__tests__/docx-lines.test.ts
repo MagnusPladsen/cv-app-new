@@ -255,6 +255,7 @@ describe('a Word CV, end to end', () => {
       {
         role: 'Prosjektleder',
         organisation: 'Veidekke ASA',
+        location: '',
         from: '2019-08',
         to: '',
         current: true,
@@ -263,6 +264,7 @@ describe('a Word CV, end to end', () => {
       {
         role: 'Byggeleder',
         organisation: 'Skanska',
+        location: '',
         from: '2014-01',
         to: '2019-07',
         current: false,

@@ -81,7 +81,7 @@ function toEntries(parsed: ParsedEntry[]) {
     id: nextId(),
     role: entry.role,
     organisation: entry.organisation,
-    location: '',
+    location: entry.location,
     from: entry.from,
     to: entry.to,
     current: entry.current,

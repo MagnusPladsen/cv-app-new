@@ -199,8 +199,10 @@
     "point4Body": "Your CV is stored in the browser. Sign in and it syncs straight to a database in Germany — never through our servers.",
     "templatesTitle": "{count} templates to choose from",
     "importTitle": "Already have a CV?",
-    "importBody": "Upload the PDF or Word file. We read it here in your browser — the file is never uploaded — and fill in what we recognise.",
-    "importCta": "Import your CV"
+    "importBody": "Drop the PDF or Word file straight in. We read it here in your browser, recognise jobs, education and skills, and you decide what comes across.",
+    "importCta": "Import your CV",
+    "importBadge": "New",
+    "importPrivacy": "The file is never uploaded"
   },
   "beta": {
     "badge": "Beta",

@@ -199,8 +199,10 @@
     "point4Body": "CV-en lagres i nettleseren. Logger du inn, synkes den rett til en database i Tyskland — aldri innom våre servere.",
     "templatesTitle": "{count} maler å velge mellom",
     "importTitle": "Har du en CV fra før?",
-    "importBody": "Last opp PDF-en eller Word-fila. Vi leser den her i nettleseren — filen lastes aldri opp — og fyller inn det vi kjenner igjen.",
-    "importCta": "Importer CV-en din"
+    "importBody": "Slipp PDF-en eller Word-fila rett inn. Vi leser den her i nettleseren, kjenner igjen jobber, utdanning og ferdigheter, og du velger selv hva som blir med videre.",
+    "importCta": "Importer CV-en din",
+    "importBadge": "Nytt",
+    "importPrivacy": "Filen lastes aldri opp"
   },
   "beta": {
     "badge": "Beta",

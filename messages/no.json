@@ -288,7 +288,7 @@
     "confirmed": "E-postadressen er bekreftet. Logg inn, så er du i gang.",
     "created": "Opprettet",
     "lastSignIn": "Sist innlogget",
-    "inactivityRule": "Konti uten innlogging på {months} måneder blir varslet på e-post og slettet 30 dager etter. Logger du inn, nullstilles klokka.",
+    "inactivityRule": "Kontoer uten innlogging på {months} måneder blir varslet på e-post og slettet 30 dager etter. Logger du inn, nullstilles klokka.",
     "securityTitle": "Innlogging",
     "changePassword": "Bytt passord",
     "setPassword": "Lag et passord",

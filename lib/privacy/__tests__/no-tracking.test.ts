@@ -5,6 +5,14 @@ import { describe, expect, it } from 'vitest'
 import packageJson from '../../../package.json'
 import { sourceFiles } from './source-files'
 
+/**
+ * Deliberately here, and only this one: Vercel Web Analytics counts page
+ * views without a cookie, without browser storage and without a profile, so
+ * it needs no consent banner under ekomloven § 3-15. The policy says what it
+ * collects - and the test below fails if it stops saying so.
+ */
+const ALLOWED = ['@vercel/analytics']
+
 const TRACKING_PACKAGES = [
   '@vercel/analytics',
   '@vercel/speed-insights',
@@ -34,8 +42,24 @@ describe('privacy posture', () => {
       ...packageJson.devDependencies,
     } as Record<string, string>
 
-    const present = TRACKING_PACKAGES.filter((name) => name in installed)
+    const present = TRACKING_PACKAGES.filter(
+      (name) => name in installed && !ALLOWED.includes(name),
+    )
     expect(present, `tracking dependency added: ${present.join(', ')}`).toEqual([])
+  })
+
+  it('says in the policy what the analytics it does ship collects', () => {
+    // An analytics package in the dependencies and a policy that says
+    // "no analytics" is the worst of both: a promise the code breaks. If
+    // Vercel Web Analytics is installed, both languages have to describe it.
+    const installed = { ...packageJson.dependencies } as Record<string, string>
+    if (!('@vercel/analytics' in installed)) return
+
+    for (const file of ['lib/legal/privacy-no.ts', 'lib/legal/privacy-en.ts']) {
+      expect(readFileSync(file, 'utf8'), `${file} does not mention it`).toContain(
+        'Vercel Web Analytics',
+      )
+    }
   })
 
   it('does not log CV content or personal data', () => {

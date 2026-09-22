@@ -92,8 +92,11 @@ CV, which is the thing the policy says never happens.
 Listing these matters: a record that only says what is collected invites the
 assumption that everything else is too.
 
-- **No analytics, of any kind.** No page views, no events, no fingerprinting.
-  `lib/privacy/__tests__/no-tracking.test.ts` fails if a tracker is added
+- **No analytics beyond a page count.** Vercel Web Analytics records the
+  page view, referrer, country, browser and device type - no cookie, no
+  browser storage, no profile, and nothing from a CV. Everything else is
+  still refused by `lib/privacy/__tests__/no-tracking.test.ts`, which also
+  fails if the policy stops describing what is collected
 - **No error tracker.** Same test
 - **No marketing email.** No newsletter, no list
 - **No profiling and no automated decision-making** within Art. 22

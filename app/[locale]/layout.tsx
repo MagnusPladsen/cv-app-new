@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
@@ -95,6 +96,12 @@ export default async function LocaleLayout({
             <AppHeader />
             {children}
             <AppFooter />
+            {/* Vercel Web Analytics: page views and where they came from,
+                nothing about the CV. It sets no cookie and writes nothing to
+                the browser, which is why there is still no consent banner -
+                see the "cookies" section of the privacy policy, which says
+                what it does collect. */}
+            <Analytics />
           </SessionProvider>
         </NextIntlClientProvider>
       </body>

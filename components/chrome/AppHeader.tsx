@@ -88,7 +88,7 @@ export function AppHeader() {
           every screen of the editor. */}
       {pathname === '/' ? (
         <div className="bg-brand-strong text-brand-ink">
-          <p className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-2 gap-y-0.5 px-3 py-1.5 text-xs sm:px-6">
+          <p className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-2 gap-y-0.5 px-3 py-3 text-xs sm:px-6 sm:py-3.5">
             <Sparkles aria-hidden="true" className="size-3.5 shrink-0" />
             <span className="font-bold">{tBeta('bannerTitle')}</span>
             {/* One line on a phone: the whole sentence wraps to three, and a

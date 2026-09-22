@@ -10,6 +10,7 @@ import { routing } from '@/i18n/routing'
 
 export function AppHeader() {
   const t = useTranslations('nav')
+  const tBeta = useTranslations('beta')
   const locale = useLocale()
   // The locale-aware pathname, so switching language keeps you on this page.
   const pathname = usePathname()
@@ -76,6 +77,19 @@ export function AppHeader() {
             ))}
           </span>
         </nav>
+      </div>
+
+      {/* Hangs under the bar on every page, rather than being a card in the
+          middle of the landing page that only some people scroll to. What
+          this costs is the first question anybody has, and beta is the
+          answer until it is not - at which point this line goes. */}
+      <div className="bg-brand-strong text-brand-ink">
+        <p className="mx-auto flex max-w-6xl flex-wrap items-baseline gap-x-2 gap-y-0.5 px-3 py-1.5 text-xs sm:px-6">
+          <span className="font-bold">{tBeta('bannerTitle')}</span>
+          {/* One line on a phone: the whole sentence wrapped to three, and a
+              sticky header 135px deep eats the screen somebody is typing on. */}
+          <span className="hidden text-brand-ink/80 sm:inline">{tBeta('bannerShort')}</span>
+        </p>
       </div>
     </header>
   )

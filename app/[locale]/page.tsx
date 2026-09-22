@@ -1,4 +1,4 @@
-import { BadgeCheck, FileText, Infinity, Laptop, LayoutGrid, Sparkles } from 'lucide-react'
+import { BadgeCheck, FileText, Infinity, Laptop, LayoutGrid } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { TEMPLATES } from '@/components/cv/templates'
@@ -18,14 +18,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <main className="mx-auto flex max-w-7xl flex-col gap-16 px-4 py-12 sm:px-6 sm:py-20">
-      {/* A slim line at the very top: what this costs is the first question
-          anybody has, and it is not worth a card in the middle of the page. */}
-      <p className="-mb-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-full border border-brand/20 bg-brand-soft/60 px-4 py-2 text-center text-xs text-foreground/75 sm:-mb-12">
-        <Sparkles aria-hidden="true" className="size-3.5 shrink-0 text-brand" />
-        <span className="font-bold text-brand-strong">{t('beta.bannerTitle')}</span>
-        <span>{t('beta.bannerShort')}</span>
-      </p>
-
       {/* Copy and fan side by side from lg, stacked below it. The fan is
           decorative, so it comes second in the DOM: a screen reader and a
           phone both get the headline and the call to action first. */}

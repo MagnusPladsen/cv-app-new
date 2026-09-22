@@ -21,7 +21,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {/* Copy and fan side by side from lg, stacked below it. The fan is
           decorative, so it comes second in the DOM: a screen reader and a
           phone both get the headline and the call to action first. */}
-      <section className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-12">
+      <section className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-12">
         <div className="flex flex-col gap-7">
         <p className="text-sm font-semibold tracking-widest text-brand-strong uppercase">
           {t('landing.lead')}

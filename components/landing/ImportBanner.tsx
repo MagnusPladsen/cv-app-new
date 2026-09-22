@@ -19,7 +19,7 @@ export async function ImportBanner({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: 'landing' })
 
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-brand-strong text-white shadow-[0_30px_60px_-30px_rgb(13_95_89/0.6)]">
+    <section className="relative mt-4 overflow-hidden rounded-3xl bg-brand-strong text-white shadow-[0_30px_60px_-30px_rgb(13_95_89/0.6)] sm:mt-8">
       {/* Two washes of light rather than a flat fill, so the band has some
           depth behind the drawing without a background image. */}
       <div
@@ -27,7 +27,7 @@ export async function ImportBanner({ locale }: { locale: string }) {
         className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_120%_at_85%_0%,rgb(94_234_212/0.35),transparent_55%),radial-gradient(90%_90%_at_0%_100%,rgb(15_118_110/0.55),transparent_60%)]"
       />
 
-      <div className="relative flex flex-col gap-8 p-7 sm:p-10 lg:flex-row lg:items-center lg:gap-12">
+      <div className="relative flex flex-col gap-8 p-7 sm:p-10 lg:flex-row lg:items-center lg:gap-10">
         <div className="flex max-w-2xl flex-col items-start gap-4">
           {/* A lit dot rather than another box: the band is already a filled
               panel with a button on it, and a third outlined shape on top of
@@ -78,7 +78,10 @@ function ImportDrawing() {
   return (
     <svg
       aria-hidden="true"
-      className="w-full max-w-sm shrink-0 self-center lg:ml-auto lg:max-w-none lg:w-[26rem]"
+      // Sized so the drawing does not set the band's height: it is taller
+      // than the text beside it, and every pixel it grows is white space
+      // above and below the words.
+      className="w-full max-w-[17rem] shrink-0 self-center lg:ml-auto lg:w-[21rem] lg:max-w-none"
       fill="none"
       role="presentation"
       viewBox="0 0 320 200"

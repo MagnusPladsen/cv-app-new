@@ -11,9 +11,9 @@ const PAGE_HEIGHT = mmToPx(PAPER.a4.heightMm)
 
 /** Where each sheet sits in the fan, as a share of the container. */
 const LAYOUT = [
-  { left: '0%', top: '6%', rotate: -6 },
+  { left: '0%', top: '4.5%', rotate: -6 },
   { left: '21%', top: '0%', rotate: -1 },
-  { left: '42%', top: '5%', rotate: 4 },
+  { left: '42%', top: '3.75%', rotate: 4 },
 ] as const
 
 /**

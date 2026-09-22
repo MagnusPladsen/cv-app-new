@@ -120,9 +120,9 @@ describe('parsing a plain Norwegian CV', () => {
   })
 
   it('splits the lists', () => {
-    expect(parsed.skills).toContain('TypeScript')
-    expect(parsed.skills).toContain('Tilgjengelighet (WCAG)')
-    expect(parsed.languages).toEqual(['Norsk', 'Engelsk', 'Tysk'])
+    expect(parsed.skills.map((skill) => skill.name)).toContain('TypeScript')
+    expect(parsed.skills.map((skill) => skill.name)).toContain('Tilgjengelighet (WCAG)')
+    expect(parsed.languages.map((language) => language.name)).toEqual(['Norsk', 'Engelsk', 'Tysk'])
     expect(parsed.interests).toContain('Klatring')
   })
 })
@@ -131,11 +131,11 @@ describe('what it refuses to guess', () => {
   it('hands back sections it has no home for, rather than dropping them', () => {
     const parsed = parseCv(
       lines(`
-Referanser
-Kari Solberg, Utviklingssjef · kari@example.no
+Militærtjeneste
+Ingeniørbataljonen, Skjold leir · 2011
 `),
     )
-    expect(parsed.unrecognised.join(' ')).toContain('Kari Solberg')
+    expect(parsed.unrecognised.join(' ')).toContain('Skjold leir')
   })
 
   it('returns empty rather than inventing anything from an empty document', () => {
@@ -177,8 +177,8 @@ Norsk, Engelsk
 
     expect(parsed.summary).toContain('ti års erfaring')
     expect(parsed.experience).toHaveLength(1)
-    expect(parsed.skills).toContain('TypeScript')
-    expect(parsed.languages).toEqual(['Norsk', 'Engelsk'])
+    expect(parsed.skills.map((skill) => skill.name)).toContain('TypeScript')
+    expect(parsed.languages.map((language) => language.name)).toEqual(['Norsk', 'Engelsk'])
   })
 
   it('does not mistake an ordinary short line for one', () => {
@@ -210,7 +210,7 @@ Figma, Prototyping, Design systems
     expect(parsed.experience).toHaveLength(1)
     expect(parsed.experience[0]?.current).toBe(true)
     expect(parsed.education).toHaveLength(1)
-    expect(parsed.skills).toContain('Figma')
+    expect(parsed.skills.map((skill) => skill.name)).toContain('Figma')
   })
 })
 
@@ -371,7 +371,7 @@ describe('pages read in two columns', () => {
       { text: 'Astrid Børresen', size: 11 },
       { text: '“Anders er en god lagspiller med øye for detaljer”', size: 11 },
     ])
-    expect(parsed.languages).toEqual(['Norsk', 'Engelsk'])
+    expect(parsed.languages.map((language) => language.name)).toEqual(['Norsk', 'Engelsk'])
     expect(parsed.unrecognised).toContain('Astrid Børresen')
   })
 })
@@ -433,7 +433,7 @@ Utvikler, Acme · 2019 – 2021
 
   it('splits a letter-spaced heading off the line it shares', () => {
     const parsed = parseCv(lines('F E R D I G H E T E R TypeScript'))
-    expect(parsed.skills).toEqual(['TypeScript'])
+    expect(parsed.skills.map((skill) => skill.name)).toEqual(['TypeScript'])
   })
 })
 
@@ -472,9 +472,9 @@ Utvikler, Acme · 2019 – 2021
       parseCv(lines(`${heading}\n${line}`))
 
     expect(named('Utdanningsbakgrunn', 'Master i informatikk, UiO · 2013 – 2015').education).toHaveLength(1)
-    expect(named('Nøkkelferdigheter', 'TypeScript, React').skills).toContain('React')
-    expect(named('Tekniske ferdigheter', 'TypeScript, React').skills).toContain('React')
-    expect(named('Språkferdigheter', 'Norsk, Engelsk').languages).toEqual(['Norsk', 'Engelsk'])
+    expect(named('Nøkkelferdigheter', 'TypeScript, React').skills.map((skill) => skill.name)).toContain('React')
+    expect(named('Tekniske ferdigheter', 'TypeScript, React').skills.map((skill) => skill.name)).toContain('React')
+    expect(named('Språkferdigheter', 'Norsk, Engelsk').languages.map((language) => language.name)).toEqual(['Norsk', 'Engelsk'])
     expect(named('Fritidsinteresser', 'Klatring, Langrenn').interests).toContain('Klatring')
     expect(named('Personlig profil', 'Utvikler med ti års erfaring.').summary).toContain('ti års')
   })
@@ -489,5 +489,168 @@ Utvikler, Acme · 2019 – 2021
         seen.set(word, heading.type)
       }
     }
+  })
+})
+
+describe('sections this app has a home for', () => {
+  const NORWEGIAN_EXTRAS = `
+Sertifiseringer
+AWS Certified Solutions Architect · Amazon Web Services · nov. 2021
+Certified Professional in Accessibility Core Competencies
+IAAP
+
+Kurs
+Prosjektledelse, BI · 2022
+
+Prosjekter
+Klatreloggen, eget prosjekt · 2021 – 2022
+• React Native-app for klatrere
+
+Frivillig arbeid
+Leksehjelp, Røde Kors · 2018 – 2020
+
+Førerkort
+Klasse B
+
+Referanser
+Kari Solberg, Utviklingssjef, Nordvest Digital · kari@example.no · +47 900 11 223
+Referanser oppgis gjerne på forespørsel
+`
+
+  const parsed = parseCv(lines(NORWEGIAN_EXTRAS))
+
+  it('reads certifications with their issuer and date', () => {
+    expect(parsed.certifications[0]).toEqual({
+      name: 'AWS Certified Solutions Architect',
+      issuer: 'Amazon Web Services',
+      date: '2021-11',
+    })
+    // The issuer on the line below the certification it belongs to.
+    expect(parsed.certifications[1]).toMatchObject({
+      name: 'Certified Professional in Accessibility Core Competencies',
+      issuer: 'IAAP',
+    })
+  })
+
+  it('reads courses, projects and volunteering as the entries they are', () => {
+    expect(parsed.courses[0]).toMatchObject({ role: 'Prosjektledelse, BI' })
+    expect(parsed.projects[0]).toMatchObject({
+      role: 'Klatreloggen, eget prosjekt',
+      bullets: ['React Native-app for klatrere'],
+    })
+    expect(parsed.volunteering[0]).toMatchObject({ role: 'Leksehjelp, Røde Kors' })
+  })
+
+  it('reads a referee, and leaves the standard sentence alone', () => {
+    expect(parsed.references).toHaveLength(1)
+    expect(parsed.references[0]).toMatchObject({
+      name: 'Kari Solberg',
+      role: 'Utviklingssjef',
+      organisation: 'Nordvest Digital',
+      email: 'kari@example.no',
+    })
+    expect(parsed.references[0]?.phone).toContain('900 11 223')
+    expect(parsed.unrecognised.join(' ')).toContain('på forespørsel')
+  })
+
+  it('reads the licence classes', () => {
+    expect(parsed.drivingLicence).toEqual(['B'])
+  })
+
+  it('does not read licence classes out of a sentence', () => {
+    const prose = parseCv(
+      lines(`
+Førerkort
+Jeg har hatt førerkort siden jeg var atten og kjører gjerne til kunder i hele fylket
+`),
+    )
+    expect(prose.drivingLicence).toEqual([])
+    expect(prose.unrecognised.join(' ')).toContain('atten')
+  })
+
+  it('reads the English names for the same sections', () => {
+    const english = parseCv(
+      lines(`
+Certifications
+AWS Certified Developer, Amazon, 2020
+
+Volunteering
+Mentor, Code Club · 2019 – 2021
+`),
+    )
+    expect(english.certifications[0]?.name).toBe('AWS Certified Developer')
+    expect(english.volunteering).toHaveLength(1)
+  })
+})
+
+describe('how good somebody says they are', () => {
+  it('reads a level written beside a skill', () => {
+    const parsed = parseCv(
+      lines(`
+Ferdigheter
+TypeScript (ekspert)
+React – avansert
+Figma: god
+Rust
+`),
+    )
+    expect(parsed.skills).toEqual([
+      { name: 'TypeScript', level: 5 },
+      { name: 'React', level: 4 },
+      { name: 'Figma', level: 3 },
+      { name: 'Rust' },
+    ])
+  })
+
+  it('reads a language level, Norwegian or English', () => {
+    const parsed = parseCv(
+      lines(`
+Språk
+Norsk – morsmål
+Engelsk (flytende)
+Tysk: grunnleggende
+Fransk
+`),
+    )
+    expect(parsed.languages).toEqual([
+      { name: 'Norsk', level: 'native' },
+      { name: 'Engelsk', level: 'c2' },
+      { name: 'Tysk', level: 'a2' },
+      { name: 'Fransk' },
+    ])
+  })
+
+  it('leaves a skill that merely has a dash in it alone', () => {
+    // "Node.js - og Deno" is not a level, and inventing one would put a
+    // rating on the CV that its owner never made.
+    const parsed = parseCv(lines('Ferdigheter\nNode.js - og Deno'))
+    expect(parsed.skills).toEqual([{ name: 'Node.js - og Deno' }])
+  })
+})
+
+describe('the contact line', () => {
+  it('takes the town and the country out of it', () => {
+    const parsed = parseCv(lines('Ola Nordmann\nola@example.no · +47 900 11 223 · Oslo, Norge'))
+    expect(parsed.personalia).toMatchObject({ city: 'Oslo', country: 'Norge' })
+  })
+
+  it('takes the town out of a street address, and leaves the street', () => {
+    // An employer needs the town. The street is more than they need, and the
+    // CV check tells people to leave it out.
+    const parsed = parseCv(lines('Ola Nordmann\nandersn@gmail.com · Arupsgate 4, 0656 Oslo'))
+    expect(parsed.personalia.city).toBe('Oslo')
+  })
+
+  it('does not take a town from a line that is not contact details', () => {
+    // "Bekk Consulting · Oslo" under a job is where the job was.
+    const parsed = parseCv(
+      lines(`
+Ola Nordmann
+Arbeidserfaring
+Utvikler · 2019 – 2021
+Bekk Consulting · Oslo
+`),
+    )
+    expect(parsed.personalia.city).toBe('')
   })
 })

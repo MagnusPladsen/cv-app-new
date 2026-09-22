@@ -132,6 +132,16 @@ export function ImportCvButton({
         { key: 'education', label: t('education'), found: counts.education.length },
         { key: 'skills', label: t('skills'), found: counts.skills.length },
         { key: 'languages', label: t('languages'), found: counts.languages.length },
+        { key: 'certifications', label: t('certifications'), found: counts.certifications.length },
+        { key: 'courses', label: t('courses'), found: counts.courses.length },
+        { key: 'projects', label: t('projects'), found: counts.projects.length },
+        { key: 'volunteering', label: t('volunteering'), found: counts.volunteering.length },
+        { key: 'references', label: t('references'), found: counts.references.length },
+        {
+          key: 'drivingLicence',
+          label: t('drivingLicence'),
+          found: counts.drivingLicence.length,
+        },
         { key: 'interests', label: t('interests'), found: counts.interests.length },
         { key: 'unrecognised', label: t('unrecognised'), found: counts.unrecognised.length },
       ]
@@ -140,7 +150,10 @@ export function ImportCvButton({
   // Said out loud rather than left out, so an import that found the jobs but
   // not the education does not read as if the CV had none. Leftover lines are
   // not a section anyone expects, so their absence is not news.
-  const missing = allRows.filter((row) => row.found === 0 && row.key !== 'unrecognised')
+  // Only the sections every CV is expected to have. Nobody reads "we did not
+  // find your driving licence" as useful.
+  const EXPECTED = ['personalia', 'summary', 'experience', 'education', 'skills', 'languages']
+  const missing = allRows.filter((row) => row.found === 0 && EXPECTED.includes(row.key))
 
   return (
     <div className="flex flex-col gap-2">

@@ -394,6 +394,12 @@
     "ocrNote": "Tar 20–60 sekunder og laster ned 7 MB første gang. Filen blir fortsatt liggende på maskinen din.",
     "ocrBusy": "Leser bildet … {percent} %",
     "ocrFailed": "Vi klarte ikke å tyde teksten i bildet. Et skarpere skann, eller en PDF med ekte tekst, gir et bedre resultat.",
-    "ocrRough": "Teksten er tydet fra et bilde, så den kan ha feil. Les gjennom alt før du sender CV-en."
+    "ocrRough": "Teksten er tydet fra et bilde, så den kan ha feil. Les gjennom alt før du sender CV-en.",
+    "certifications": "Sertifiseringer",
+    "courses": "Kurs",
+    "projects": "Prosjekter",
+    "volunteering": "Frivillig arbeid",
+    "references": "Referanser",
+    "drivingLicence": "Førerkort"
   }
 }

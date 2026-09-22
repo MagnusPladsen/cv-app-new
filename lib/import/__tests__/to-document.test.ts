@@ -62,10 +62,11 @@ describe('building a CV from a parse', () => {
   })
 
   it('keeps what it could not place, rather than dropping it', () => {
-    const document = documentFromParse(SAMPLE, ACCEPT_ALL)
+    const parsed = parseCv(lines('Militærtjeneste\nIngeniørbataljonen, Skjold leir'))
+    const document = documentFromParse(parsed, ACCEPT_ALL)
     const custom = document.sections.find((s) => s.type === 'custom')
     expect(custom).toBeDefined()
-    expect(JSON.stringify(custom)).toContain('Kari Solberg')
+    expect(JSON.stringify(custom)).toContain('Skjold leir')
   })
 
   it('honours a section being declined', () => {
@@ -213,16 +214,10 @@ describe('adding an import to a CV already being written', () => {
   it('adds nothing that was declined', () => {
     const document = inProgress()
     const before = JSON.stringify(document)
-    mergeParse(document, SAMPLE, {
-      personalia: false,
-      summary: false,
-      experience: false,
-      education: false,
-      skills: false,
-      languages: false,
-      interests: false,
-      unrecognised: false,
-    })
+    const nothing = Object.fromEntries(
+      Object.keys(ACCEPT_ALL).map((key) => [key, false]),
+    ) as typeof ACCEPT_ALL
+    mergeParse(document, SAMPLE, nothing)
     expect(JSON.stringify(document)).toBe(before)
   })
 })
@@ -252,5 +247,26 @@ describe('a CV imported before the section carried a flag', () => {
       bullets: ['Styreleder'],
     })
     expect(isImportPile(document.sections.at(-1)!)).toBe(false)
+  })
+})
+
+describe('links somebody can read', () => {
+  it('names the site rather than printing the path', () => {
+    const parsed = parseCv(
+      lines(`
+Ola Nordmann
+ola@example.no
+linkedin.com/in/olanordmann
+github.com/olanordmann
+https://ola.dev/portefolje
+`),
+    )
+    const document = documentFromParse(parsed, ACCEPT_ALL)
+    expect(document.personalia.links.map((link) => link.label)).toEqual([
+      'LinkedIn',
+      'GitHub',
+      'ola.dev',
+    ])
+    expect(document.personalia.links[0]?.url).toBe('https://linkedin.com/in/olanordmann')
   })
 })

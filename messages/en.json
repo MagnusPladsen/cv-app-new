@@ -394,6 +394,12 @@
     "ocrNote": "Takes 20–60 seconds and downloads 7 MB the first time. The file still never leaves your machine.",
     "ocrBusy": "Reading the image … {percent}%",
     "ocrFailed": "We could not make out the text in this image. A sharper scan, or a PDF with real text, gives a better result.",
-    "ocrRough": "The text was read out of an image, so it can be wrong. Read it through before you send the CV."
+    "ocrRough": "The text was read out of an image, so it can be wrong. Read it through before you send the CV.",
+    "certifications": "Certifications",
+    "courses": "Courses",
+    "projects": "Projects",
+    "volunteering": "Volunteering",
+    "references": "References",
+    "drivingLicence": "Driving licence"
   }
 }

@@ -32,6 +32,32 @@ export type ParsedEntry = {
   bullets: string[]
 }
 
+export type ParsedSkill = {
+  name: string
+  /** 1-5, where the CV said how good somebody is. */
+  level?: 1 | 2 | 3 | 4 | 5
+}
+
+export type ParsedLanguage = {
+  name: string
+  level?: 'a1' | 'a2' | 'b1' | 'b2' | 'c1' | 'c2' | 'native'
+}
+
+export type ParsedCert = {
+  name: string
+  issuer: string
+  /** "YYYY-MM", or "" when only a year was given. */
+  date: string
+}
+
+export type ParsedReference = {
+  name: string
+  role: string
+  organisation: string
+  email: string
+  phone: string
+}
+
 export type ParsedCv = {
   personalia: {
     firstName: string
@@ -39,14 +65,25 @@ export type ParsedCv = {
     title: string
     email: string
     phone: string
+    /** Postal town, where a contact line gave one. */
+    city: string
+    country: string
     links: string[]
   }
   summary: string
   experience: ParsedEntry[]
   education: ParsedEntry[]
-  skills: string[]
-  languages: string[]
+  skills: ParsedSkill[]
+  languages: ParsedLanguage[]
   interests: string[]
+  /** Sections this app has a home for, kept in their own shape. */
+  certifications: ParsedCert[]
+  courses: ParsedEntry[]
+  projects: ParsedEntry[]
+  volunteering: ParsedEntry[]
+  references: ParsedReference[]
+  /** Licence classes, as "B", "BE", "C1".  */
+  drivingLicence: string[]
   /** Everything not claimed, in order, so nothing is silently dropped. */
   unrecognised: string[]
 }
@@ -220,6 +257,87 @@ export const HEADINGS: { type: keyof typeof SECTION_KEYS; words: string[] }[] = 
     ],
   },
   {
+    type: 'certifications',
+    words: [
+      'sertifisering',
+      'sertifiseringer',
+      'sertifikater',
+      'kursbevis',
+      'lisenser',
+      'autorisasjoner',
+      'certifications',
+      'certification',
+      'certificates',
+      'licences',
+      'licenses',
+      'credentials',
+    ],
+  },
+  {
+    type: 'courses',
+    words: [
+      'kurs',
+      'kurs og sertifiseringer',
+      'etterutdanning',
+      'opplæring',
+      'videreutdanning',
+      'courses',
+      'training',
+      'professional development',
+    ],
+  },
+  {
+    type: 'projects',
+    words: [
+      'prosjekter',
+      'prosjekt',
+      'portefølje',
+      'egne prosjekter',
+      'projects',
+      'project work',
+      'portfolio',
+      'side projects',
+    ],
+  },
+  {
+    type: 'volunteering',
+    words: [
+      'frivillig arbeid',
+      'frivillig erfaring',
+      'frivillige verv',
+      'frivillighet',
+      'verv',
+      'tillitsverv',
+      'organisasjonserfaring',
+      'volunteering',
+      'volunteer experience',
+      'voluntary work',
+      'community work',
+    ],
+  },
+  {
+    type: 'references',
+    words: [
+      'referanser',
+      'referanse',
+      'anbefalinger',
+      'references',
+      'recommendations',
+      'referees',
+    ],
+  },
+  {
+    type: 'drivingLicence',
+    words: [
+      'førerkort',
+      'førerkortklasser',
+      'driving licence',
+      'driving license',
+      'drivers licence',
+      'driver’s license',
+    ],
+  },
+  {
     type: 'interests',
     words: [
       'interesser',
@@ -241,46 +359,18 @@ export const HEADINGS: { type: keyof typeof SECTION_KEYS; words: string[] }[] = 
   {
     type: 'other',
     words: [
-      'kurs',
-      'kurs og sertifiseringer',
-      'kursbevis',
-      'sertifisering',
-      'sertifiseringer',
-      'sertifikater',
-      'lisenser',
-      'verv',
-      'tillitsverv',
-      'frivillig arbeid',
-      'frivillig erfaring',
-      'frivillige verv',
-      'frivillighet',
       'militærtjeneste',
       'førstegangstjeneste',
-      'referanser',
-      'prosjekter',
-      'portefølje',
       'publikasjoner',
       'publiseringer',
       'priser',
       'utmerkelser',
-      'anbefalinger',
+      'presentasjoner',
+      'medlemskap',
       'vedlegg',
       'resultater',
       'nøkkelresultater',
       'prestasjoner',
-      'certifications',
-      'certification',
-      'certificates',
-      'licences',
-      'licenses',
-      'courses',
-      'training',
-      'projects',
-      'portfolio',
-      'references',
-      'volunteering',
-      'volunteer experience',
-      'voluntary work',
       'military service',
       'publications',
       'presentations',
@@ -291,7 +381,7 @@ export const HEADINGS: { type: keyof typeof SECTION_KEYS; words: string[] }[] = 
       'honors',
       'achievements',
       'key achievements',
-      'recommendations',
+      'patents',
     ],
   },
 ]
@@ -302,6 +392,12 @@ const SECTION_KEYS = {
   education: true,
   skills: true,
   languages: true,
+  certifications: true,
+  courses: true,
+  projects: true,
+  volunteering: true,
+  references: true,
+  drivingLicence: true,
   interests: true,
   other: true,
 } as const
@@ -442,6 +538,42 @@ const BULLET = /^\s*[•·▪◦*–—◆◇■□●○►▸✓✔-]\s+/
 const HALF_RANGE =
   /((?:\d{4}|nå)\s*(?:–|—|-|til|to|until)\s*(?:[A-Za-zæøåÆØÅ]{3,}\.?|\d{1,2}[/.\-]))(?=\s|$)/i
 
+
+/**
+ * The town somebody lives in, out of a contact line.
+ *
+ * Norwegian CVs write it as part of a run of details - "ola@example.no · +47
+ * 900 11 223 · Oslo, Norge" - or as a street address with a postcode. Only
+ * the town is taken: a street address is more than an employer needs, and the
+ * quality check tells people to leave it out.
+ */
+const COUNTRIES = /^(norge|noreg|norway|sverige|sweden|danmark|denmark|finland|island|iceland)$/i
+
+function findPlace(text: string): { city: string; country: string } | null {
+  // "0656 Oslo": a postcode and the town after it.
+  const postcode = /\b(\d{4})\s+([A-ZÆØÅ][a-zæøåA-ZÆØÅ.-]+(?:\s+[A-ZÆØÅ][a-zæøå.-]+)?)\b/.exec(text)
+  if (postcode) return { city: postcode[2]!.trim(), country: '' }
+
+  for (const part of text.split(/\s*[·|•]\s*/)) {
+    const pieces = part.split(',').map((piece) => piece.trim())
+    const country = pieces.find((piece) => COUNTRIES.test(piece))
+    const city = pieces.find(
+      (piece) =>
+        piece !== country &&
+        /^[A-ZÆØÅ][a-zæøå]+(?:[ -][A-ZÆØÅ]?[a-zæøå]+)?$/.test(piece) &&
+        piece.split(/\s+/).length <= 2,
+    )
+    if (country && city) return { city, country }
+    if (country && !city) return { city: '', country }
+    // A lone town only counts beside other contact details, never on its own
+    // line, where it is as likely to be an employer.
+    if (city && pieces.length === 1 && /@|\d{6,}|\+\d/.test(text)) {
+      return { city, country: '' }
+    }
+  }
+  return null
+}
+
 /** A line that is nothing but a bullet: the glyph was set apart from its text. */
 const LONE_BULLET = /^[•·▪◦*–—◆◇■□●○►▸✓✔-]$/
 
@@ -499,6 +631,45 @@ function findPhone(text: string): string | null {
 }
 const URL = /\b(?:https?:\/\/|www\.)[^\s,;]+|(?:github\.com|linkedin\.com)\/[^\s,;]+/gi
 
+
+/** How a CV writes "how good are you at this", and what it means as 1-5. */
+const SKILL_LEVELS: [RegExp, 1 | 2 | 3 | 4 | 5][] = [
+  [/^(nybegynner|grunnleggende|basic|beginner|novice|elementary)$/i, 1],
+  [/^(litt|noe|some|limited|working knowledge)$/i, 2],
+  [/^(god|middels|intermediate|competent|proficient|comfortable)$/i, 3],
+  [/^(veldig god|avansert|advanced|strong|erfaren|experienced)$/i, 4],
+  [/^(ekspert|expert|spesialist|specialist|master|svært god)$/i, 5],
+]
+
+const LANGUAGE_LEVELS: [RegExp, 'a1' | 'a2' | 'b1' | 'b2' | 'c1' | 'c2' | 'native'][] = [
+  [/^(morsmål|morsmaal|native|native speaker|modersmål)$/i, 'native'],
+  [/^(flytende|fluent|svært god|meget god|c2)$/i, 'c2'],
+  [/^(veldig god|avansert|advanced|c1)$/i, 'c1'],
+  [/^(god|b2|profesjonell|professional)$/i, 'b2'],
+  [/^(middels|intermediate|b1)$/i, 'b1'],
+  [/^(litt|noe|basic|grunnleggende|a2)$/i, 'a2'],
+  [/^(nybegynner|beginner|a1)$/i, 'a1'],
+]
+
+/**
+ * Splits "React (avansert)", "Norsk - morsmål", "Engelsk: flytende" into the
+ * thing and how well. A level the CV did not give stays undefined rather than
+ * being guessed at: an invented "middels" is worse than no rating.
+ */
+function splitLevel<T>(item: string, levels: [RegExp, T][]): { name: string; level?: T } {
+  const match = /^(.*?)\s*(?:[([]\s*([^)\]]+?)\s*[)\]]|[-–—:]\s*(.+))$/.exec(item.trim())
+  if (!match) return { name: item.trim() }
+
+  const name = match[1]!.trim()
+  const rest = (match[2] ?? match[3] ?? '').trim()
+  if (!name || !rest) return { name: item.trim() }
+
+  for (const [pattern, level] of levels) {
+    if (pattern.test(rest)) return { name, level }
+  }
+  return { name: item.trim() }
+}
+
 /** Splits a list written on one line: "React, Node.js · Figma". */
 function splitList(text: string): string[] {
   return text
@@ -544,6 +715,40 @@ function bodySize(lines: Line[]): number | undefined {
   return body
 }
 
+
+/** Entries for a block whose dates are single, not ranges. */
+function fromSingleDates(lines: { text: string }[]): {
+  entries: ParsedEntry[]
+  leftovers: string[]
+} {
+  const entries: ParsedEntry[] = []
+  const leftovers: string[] = []
+
+  for (const line of lines) {
+    const text = line.text
+    const dated = findSingleDate(text)
+    const current = entries[entries.length - 1]
+
+    if (!dated || !dated.rest) {
+      if (BULLET.test(text) && current) current.bullets.push(text.replace(BULLET, '').trim())
+      else if (current && !current.organisation) current.organisation = text
+      else leftovers.push(text)
+      continue
+    }
+
+    entries.push({
+      role: dated.rest,
+      organisation: '',
+      from: dated.date,
+      to: '',
+      current: false,
+      bullets: [],
+    })
+  }
+
+  return { entries, leftovers }
+}
+
 /**
  * Turns a block of lines into jobs or degrees, keyed on the date ranges.
  *
@@ -563,7 +768,10 @@ function buildEntries(block: Line[]): { entries: ParsedEntry[]; leftovers: strin
   const dated = lines.flatMap((line, index) => (line.range ? [index] : []))
   const first = dated[0]
 
-  if (first === undefined) return { entries: [], leftovers: lines.map((line) => line.text) }
+  // Nothing in this block is a range. A course or a project is often dated
+  // with a single year - "Prosjektledelse, BI · 2022" - so each line that
+  // carries one date becomes an entry that started then.
+  if (first === undefined) return fromSingleDates(lines)
 
   const entries: ParsedEntry[] = []
   const leftovers: string[] = []
@@ -659,6 +867,112 @@ function buildEntries(block: Line[]): { entries: ParsedEntry[]; leftovers: strin
   return { entries, leftovers }
 }
 
+
+/** A single date in a line - "mai 2023", "05.2023", "2023" - and what is left. */
+function findSingleDate(text: string): { date: string; rest: string } | null {
+  const pattern = /([A-Za-zæøåÆØÅ]+\.?\s+\d{4}|\d{1,2}[/.\-]\d{4}|\b\d{4}\b)/g
+  let match: RegExpExecArray | null = null
+  while ((match = pattern.exec(text))) {
+    const date = monthToken(match[1]!)
+    if (date === null) continue
+    const rest = (text.slice(0, match.index) + ' ' + text.slice(match.index + match[0].length))
+      .replace(/\s*[|·•,–—-]\s*$/, '')
+      .replace(/^\s*[|·•,–—-]\s*/, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+    return { date, rest }
+  }
+  return null
+}
+
+/**
+ * Certifications, which a CV writes as a name, an issuer and a date in
+ * whatever order it likes - sometimes on one line, sometimes with the issuer
+ * underneath. A line carrying a date starts a certification; a plain line
+ * after it is the issuer it was still missing.
+ */
+function buildCertifications(lines: string[]): ParsedCert[] {
+  const certifications: ParsedCert[] = []
+
+  for (const line of lines) {
+    const text = line.replace(BULLET, '').trim()
+    if (!text) continue
+
+    const dated = findSingleDate(text)
+    const previous = certifications[certifications.length - 1]
+
+    if (!dated) {
+      // No date: the issuer of the one above, or a certification whose date
+      // the CV never gave.
+      if (previous && !previous.issuer) previous.issuer = text
+      else certifications.push({ name: text, issuer: '', date: '' })
+      continue
+    }
+
+    const [name = '', ...issuer] = dated.rest.split(/\s*[·|]\s*|\s*,\s*/)
+    certifications.push({ name: name || dated.rest, issuer: issuer.join(', '), date: dated.date })
+  }
+
+  return certifications.filter((certification) => certification.name)
+}
+
+/**
+ * Referees. The contact details are what make one findable, so a line with an
+ * address or a number is what starts one; the rest of the line, and the line
+ * above it, are the name, the role and where they work.
+ */
+function buildReferences(lines: string[]): {
+  references: ParsedReference[]
+  leftovers: string[]
+} {
+  const references: ParsedReference[] = []
+  const leftovers: string[] = []
+  let pending: string[] = []
+
+  for (const line of lines) {
+    const text = line.replace(BULLET, '').trim()
+    if (!text) continue
+
+    const email = EMAIL.exec(text)?.[0] ?? ''
+    const phone = findPhone(text) ?? ''
+    if (!email && !phone) {
+      pending.push(text)
+      continue
+    }
+
+    const parts = [...pending, text.replace(email, '').replace(phone, '')]
+      .join(' · ')
+      .split(/\s*[·|]\s*|\s*,\s*/)
+      .map((part) => part.replace(/^(tlf\.?|telefon|e-?post|mail|epost)\s*:?\s*/i, '').trim())
+      .filter(Boolean)
+
+    const [name = '', role = '', ...organisation] = parts
+    references.push({
+      name,
+      role,
+      organisation: organisation.join(', '),
+      email,
+      phone,
+    })
+    pending = []
+  }
+
+  // "Referanser oppgis på forespørsel" and anything else with nobody in it.
+  leftovers.push(...pending)
+  return { references, leftovers }
+}
+
+/** The classes a Norwegian licence is written in: B, BE, C1, T. */
+function licenceClasses(text: string): string[] {
+  const found = text.toUpperCase().match(/\b(?:AM|A1|A2|A|B|BE|C1E|C1|CE|C|D1E|D1|DE|D|S|T)\b/g)
+  if (!found) return []
+  // "Førerkort klasse B" gives B; a sentence about a bachelor in Oslo must
+  // not give A and B, so a class only counts where nothing else is claimed.
+  const words = text.split(/\s+/).filter((word) => /[a-zæøå]{3,}/i.test(word))
+  if (words.length > 6) return []
+  return [...new Set(found)]
+}
+
 /**
  * Reads a CV that somebody else's tool produced.
  *
@@ -689,13 +1003,28 @@ export function parseCv(lines: Line[]): ParsedCv {
   }
 
   const result: ParsedCv = {
-    personalia: { firstName: '', lastName: '', title: '', email: '', phone: '', links: [] },
+    personalia: {
+      firstName: '',
+      lastName: '',
+      title: '',
+      email: '',
+      phone: '',
+      city: '',
+      country: '',
+      links: [],
+    },
     summary: '',
     experience: [],
     education: [],
     skills: [],
     languages: [],
     interests: [],
+    certifications: [],
+    courses: [],
+    projects: [],
+    volunteering: [],
+    references: [],
+    drivingLicence: [],
     unrecognised: [],
   }
 
@@ -712,6 +1041,15 @@ export function parseCv(lines: Line[]): ParsedCv {
     }
     for (const url of line.text.match(URL) ?? []) {
       if (!result.personalia.links.includes(url)) result.personalia.links.push(url)
+    }
+    // Only from a line that is plainly contact details, so a job's location
+    // does not become where the person lives.
+    if (!result.personalia.city && (EMAIL.test(line.text) || findPhone(line.text))) {
+      const place = findPlace(line.text)
+      if (place) {
+        result.personalia.city = place.city
+        result.personalia.country = place.country
+      }
     }
   }
 
@@ -843,12 +1181,37 @@ export function parseCv(lines: Line[]): ParsedCv {
       continue
     }
 
-    if (block.type === 'experience' || block.type === 'education') {
+    if (
+      block.type === 'experience' ||
+      block.type === 'education' ||
+      block.type === 'courses' ||
+      block.type === 'projects' ||
+      block.type === 'volunteering'
+    ) {
       const { entries, leftovers } = buildEntries(block.lines)
       // Added to, not replaced: "Relevant erfaring" and "Annen erfaring" are
       // two blocks of the same kind.
       result[block.type].push(...entries)
       result.unrecognised.push(...leftovers)
+      continue
+    }
+
+    if (block.type === 'certifications') {
+      result.certifications.push(...buildCertifications(texts))
+      continue
+    }
+
+    if (block.type === 'references') {
+      const { references, leftovers } = buildReferences(texts)
+      result.references.push(...references)
+      result.unrecognised.push(...leftovers)
+      continue
+    }
+
+    if (block.type === 'drivingLicence') {
+      const classes = licenceClasses(texts.join(' '))
+      if (classes.length > 0) result.drivingLicence.push(...classes)
+      else result.unrecognised.push(...texts)
       continue
     }
 
@@ -861,8 +1224,13 @@ export function parseCv(lines: Line[]): ParsedCv {
       const sameSize =
         listSize === undefined || line.size === undefined || Math.abs(line.size - listSize) < 0.5
       for (const item of splitList(line.text)) {
-        if (sameSize && item.split(' ').length <= limit) result[block.type].push(item)
-        else result.unrecognised.push(item)
+        if (!sameSize || item.split(' ').length > limit) {
+          result.unrecognised.push(item)
+          continue
+        }
+        if (block.type === 'skills') result.skills.push(splitLevel(item, SKILL_LEVELS))
+        else if (block.type === 'languages') result.languages.push(splitLevel(item, LANGUAGE_LEVELS))
+        else result.interests.push(item)
       }
     }
   }

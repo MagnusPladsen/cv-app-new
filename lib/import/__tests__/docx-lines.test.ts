@@ -269,6 +269,6 @@ describe('a Word CV, end to end', () => {
         bullets: ['Ansvar for HMS'],
       },
     ])
-    expect(parsed.languages).toEqual(['Norsk', 'Engelsk'])
+    expect(parsed.languages.map((language) => language.name)).toEqual(['Norsk', 'Engelsk'])
   })
 })

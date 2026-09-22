@@ -184,7 +184,10 @@
     "allTemplates": "All templates",
     "startNew": "Start a new CV",
     "chooseBody": "Start from a blank CV, or import one you already have. You can change template at any time.",
-    "close": "Close"
+    "close": "Close",
+    "startTitle": "Get started",
+    "startBody": "Start from a blank CV and pick a template, or bring in the one you already have.",
+    "startPick": "Pick a template"
   },
   "landing": {
     "lead": "Free. Never a watermark.",
@@ -216,7 +219,8 @@
     "skip": "Not now",
     "sent": "Thank you — that helps more than you think.",
     "noDestination": "Feedback is not wired to a destination yet.",
-    "close": "Close"
+    "close": "Close",
+    "bannerShort": "Make and download as many CVs as you like, free. Later a small sum for servers and database — what you have made comes with you."
   },
   "auth": {
     "signIn": "Sign in",

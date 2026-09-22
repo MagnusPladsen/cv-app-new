@@ -1,8 +1,9 @@
-import { ArrowRight, BadgeCheck, FileText, Infinity, Laptop, LayoutGrid, Sparkles } from 'lucide-react'
+import { BadgeCheck, FileText, Infinity, Laptop, LayoutGrid, Sparkles } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { TEMPLATES } from '@/components/cv/templates'
 import { LandingTemplates } from '@/components/gallery/LandingTemplates'
+import { GetStartedButton } from '@/components/landing/GetStartedButton'
 import { ImportBanner } from '@/components/landing/ImportBanner'
 import { HeroTemplates } from '@/components/landing/HeroTemplates'
 import { Link } from '@/i18n/navigation'
@@ -17,6 +18,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <main className="mx-auto flex max-w-7xl flex-col gap-16 px-4 py-12 sm:px-6 sm:py-20">
+      {/* A slim line at the very top: what this costs is the first question
+          anybody has, and it is not worth a card in the middle of the page. */}
+      <p className="-mb-8 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 rounded-full border border-brand/20 bg-brand-soft/60 px-4 py-2 text-center text-xs text-foreground/75 sm:-mb-12">
+        <Sparkles aria-hidden="true" className="size-3.5 shrink-0 text-brand" />
+        <span className="font-bold text-brand-strong">{t('beta.bannerTitle')}</span>
+        <span>{t('beta.bannerShort')}</span>
+      </p>
+
       {/* Copy and fan side by side from lg, stacked below it. The fan is
           decorative, so it comes second in the DOM: a screen reader and a
           phone both get the headline and the call to action first. */}
@@ -35,13 +44,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </h1>
 
         <div className="flex flex-wrap gap-3">
-          <Link
-            className="inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-brand-ink transition duration-200 hover:-translate-y-0.5 hover:bg-brand-strong hover:shadow-lg focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:outline-none"
-            href="/templates"
-          >
-            {t('landing.cta')}
-            <ArrowRight aria-hidden="true" className="size-4" />
-          </Link>
+          <GetStartedButton label={t('landing.cta')} />
           <Link
             className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-7 py-3.5 text-sm font-semibold transition duration-200 hover:-translate-y-0.5 hover:border-brand hover:text-brand-strong hover:shadow-sm focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
             href="/cv"
@@ -55,13 +58,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <HeroTemplates />
       </section>
 
-      <section className="flex items-start gap-3 rounded-xl border border-brand/25 bg-brand-soft/50 p-5">
-        <Sparkles aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-brand" />
-        <div className="flex flex-col gap-1">
-          <h2 className="text-sm font-bold text-brand-strong">{t('beta.bannerTitle')}</h2>
-          <p className="text-sm text-foreground/80">{t('beta.bannerBody')}</p>
-        </div>
-      </section>
+      <ImportBanner locale={locale} />
+
 
       {/* Four, not a wall. Each one is something a person weighing CV builders
           actually decides on, and each is true of CVApp today rather than
@@ -88,8 +86,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         ))}
       </section>
-
-      <ImportBanner locale={locale} />
 
       <section className="flex flex-col gap-6">
         <div className="flex items-baseline justify-between gap-4">

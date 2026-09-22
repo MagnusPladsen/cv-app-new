@@ -23,12 +23,13 @@ const SECONDARY =
  * likely to have an old CV they would rather not retype.
  */
 export function TemplateStartDialog({
-  template,
+  template = null,
   onStart,
   onImport,
   onClose,
 }: {
-  template: Template
+  /** The template picked, or null when somebody just said "get started". */
+  template?: Template | null
   onStart: () => void
   onImport: (parsed: ParsedCv, choice: ImportChoice) => void
   onClose: () => void
@@ -75,23 +76,27 @@ export function TemplateStartDialog({
             <X aria-hidden="true" className="size-4" />
           </button>
 
-          <div className="relative hidden aspect-[210/297] w-28 shrink-0 overflow-hidden rounded-lg ring-1 ring-border sm:block">
-            <Image
-              alt=""
-              className="object-cover"
-              fill
-              quality={65}
-              sizes="240px"
-              src={`/templates/${template.id}.png`}
-            />
-          </div>
+          {template ? (
+            <div className="relative hidden aspect-[210/297] w-28 shrink-0 overflow-hidden rounded-lg ring-1 ring-border sm:block">
+              <Image
+                alt=""
+                className="object-cover"
+                fill
+                quality={65}
+                sizes="240px"
+                src={`/templates/${template.id}.png`}
+              />
+            </div>
+          ) : null}
 
           <div className="flex min-w-0 flex-1 flex-col gap-4">
             <div className="flex flex-col gap-1 pr-8">
               <h2 className="text-lg font-bold" id="template-start-title">
-                {template.name}
+                {template ? template.name : t('startTitle')}
               </h2>
-              <p className="text-sm text-muted-foreground">{t('chooseBody')}</p>
+              <p className="text-sm text-muted-foreground">
+                {t(template ? 'chooseBody' : 'startBody')}
+              </p>
             </div>
 
             <div className="flex flex-col gap-2.5">
@@ -102,7 +107,7 @@ export function TemplateStartDialog({
                 type="button"
               >
                 <Plus aria-hidden="true" className="size-4" />
-                {t('startNew')}
+                {t(template ? 'startNew' : 'startPick')}
               </button>
               <ImportCvButton
                 label={tImport('buttonShort')}

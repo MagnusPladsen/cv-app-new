@@ -31,11 +31,24 @@ const lookOf = (template: Template) => ({
  * They are the only things these pages need them for, and a static import put
  * the store, immer and zod into the first JavaScript every visitor downloads.
  */
-export function useTemplateStart(): { choose: (templateId: string) => void; dialog: ReactNode } {
+export function useTemplateStart(): {
+  /** A template card was picked. */
+  choose: (templateId: string) => void
+  /** "Kom i gang", with no template picked yet. */
+  begin: () => void
+  dialog: ReactNode
+} {
   const router = useRouter()
-  const [chosen, setChosen] = useState<Template | null>(null)
+  // null: closed. 'any': open, with no template chosen yet.
+  const [chosen, setChosen] = useState<Template | 'any' | null>(null)
 
-  async function start(template: Template) {
+  async function start(template: Template | 'any') {
+    // Nothing picked yet, so the next step is picking: the gallery, not an
+    // editor in whichever template happened to be first.
+    if (template === 'any') {
+      router.push('/templates')
+      return
+    }
     const { useDocuments } = await import('@/lib/store/documents')
     const id = useDocuments.getState().createDocument(lookOf(template))
     router.push(`/cv/${id}`)
@@ -43,14 +56,15 @@ export function useTemplateStart(): { choose: (templateId: string) => void; dial
 
   // The same validated path the dashboard's import takes, with the look the
   // person just picked instead of the default one.
-  async function importInto(template: Template, parsed: ParsedCv, choice: ImportChoice) {
+  async function importInto(template: Template | 'any', parsed: ParsedCv, choice: ImportChoice) {
     const [{ useDocuments }, { documentFromParse }] = await Promise.all([
       import('@/lib/store/documents'),
       import('@/lib/import/to-document'),
     ])
-    const result = useDocuments
-      .getState()
-      .importDocument(documentFromParse(parsed, choice, lookOf(template)))
+    // With no template picked the default look is used, and the template
+    // strip in the editor is one click away.
+    const look = template === 'any' ? {} : lookOf(template)
+    const result = useDocuments.getState().importDocument(documentFromParse(parsed, choice, look))
     if (result.ok) router.push(`/cv/${result.id}`)
   }
 
@@ -59,9 +73,13 @@ export function useTemplateStart(): { choose: (templateId: string) => void; dial
       onClose={() => setChosen(null)}
       onImport={(parsed, choice) => void importInto(chosen, parsed, choice)}
       onStart={() => void start(chosen)}
-      template={chosen}
+      template={chosen === 'any' ? null : chosen}
     />
   ) : null
 
-  return { choose: (templateId) => setChosen(getTemplate(templateId)), dialog }
+  return {
+    choose: (templateId) => setChosen(getTemplate(templateId)),
+    begin: () => setChosen('any'),
+    dialog,
+  }
 }

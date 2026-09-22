@@ -184,7 +184,10 @@
     "allTemplates": "Alle maler",
     "startNew": "Start ny CV",
     "chooseBody": "Start med en tom CV, eller importer en du har fra før. Du kan bytte mal når som helst.",
-    "close": "Lukk"
+    "close": "Lukk",
+    "startTitle": "Kom i gang",
+    "startBody": "Start med blanke ark og velg mal, eller hent inn CV-en du har fra før.",
+    "startPick": "Velg mal og start"
   },
   "landing": {
     "lead": "Gratis. Alltid uten vannmerke.",
@@ -216,7 +219,8 @@
     "skip": "Ikke nå",
     "sent": "Takk! Det hjelper mer enn du tror.",
     "noDestination": "Tilbakemelding er ikke koblet til noe ennå.",
-    "close": "Lukk"
+    "close": "Lukk",
+    "bannerShort": "Lag og last ned så mange CV-er du vil, uten å betale. Senere en liten sum for server og database — det du har laget blir med videre."
   },
   "auth": {
     "signIn": "Logg inn",

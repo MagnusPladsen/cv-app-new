@@ -166,6 +166,11 @@
   }
   html {
     @apply font-sans;
+    /* The page keeps room for a scrollbar whether it needs one or not. A
+       classic scrollbar is about 15px wide, so without this every short page
+       - the dashboard, sign-in - sat 15px to the right of every long one, and
+       the header jumped sideways as you moved between them. */
+    scrollbar-gutter: stable;
   }
   /* Tailwind v4's Preflight follows the browser default here, which is
      `default` - so every button in the app looked unclickable. v3 set pointer

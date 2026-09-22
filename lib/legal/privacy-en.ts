@@ -34,7 +34,7 @@ export const PRIVACY_EN: LegalDocument = {
       heading: 'Legal basis',
       body: [
         'Storing and rendering your CV is performance of a contract, GDPR Article 6(1)(b). It is the service itself, so we do not ask for your consent to it.',
-        'We count page views with Vercel Web Analytics, to see which parts of the service get used. The basis is legitimate interests, Article 6(1)(f): nothing is stored in your browser, no profile of you is built, and nothing you type into a CV is included.',
+        'We count page views with Vercel Web Analytics, and measure how fast pages loaded with Vercel Speed Insights, to see which parts of the service get used and where it is slow. The basis is legitimate interests, Article 6(1)(f): nothing is stored in your browser, no profile of you is built, and nothing you type into a CV is included.',
         'Beyond that we ask for consent to nothing, because we do nothing more: no marketing, no profiling, no sharing with advertisers.',
       ],
     },
@@ -85,7 +85,7 @@ export const PRIVACY_EN: LegalDocument = {
       id: 'cookies',
       heading: 'Cookies and browser storage',
       body: [
-        'CVApp uses no cookies for analytics, tracking or marketing, and therefore has no consent banner. Our visitor statistics store nothing on your device: Vercel Web Analytics counts the page view, the page you came from, country, browser type and screen type, and sets neither a cookie nor any other storage. The consent requirement in the Norwegian Electronic Communications Act section 3-15 therefore does not apply.',
+        'CVApp uses no cookies for analytics, tracking or marketing, and therefore has no consent banner. Our visitor statistics store nothing on your device: Vercel Web Analytics counts the page view, the page you came from, country, browser type and screen type, and Speed Insights measures how long the page took to become ready. Neither sets a cookie nor any other storage. The consent requirement in the Norwegian Electronic Communications Act section 3-15 therefore does not apply.',
         'We store your CVs and a few preferences in your browser’s storage, and set a sign-in cookie if you sign in. Both are strictly necessary to deliver the service you asked for, and are exempt from the consent requirement under the Norwegian Electronic Communications Act section 3-15.',
       ],
     },

@@ -1,4 +1,5 @@
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import type { Metadata } from 'next'
 import { Geist } from 'next/font/google'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
@@ -102,6 +103,10 @@ export default async function LocaleLayout({
                 see the "cookies" section of the privacy policy, which says
                 what it does collect. */}
             <Analytics />
+            {/* Speed Insights: how fast the page was for real visitors -
+                Web Vitals and the route they were on, nothing about who they
+                are. Same origin, same absence of cookies and storage. */}
+            <SpeedInsights />
           </SessionProvider>
         </NextIntlClientProvider>
       </body>

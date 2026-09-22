@@ -37,7 +37,7 @@ export const PRIVACY_NO: LegalDocument = {
       heading: 'Rettslig grunnlag',
       body: [
         'Å lagre og vise CV-en din er oppfyllelse av avtale, personvernforordningen artikkel 6 nr. 1 bokstav b. Det er selve tjenesten, og vi ber deg derfor ikke om samtykke til det.',
-        'Vi teller sidevisninger med Vercel Web Analytics for å se hvilke deler av tjenesten som brukes. Grunnlaget er berettiget interesse, artikkel 6 nr. 1 bokstav f: vi lagrer ingenting i nettleseren din, får ingen profil av deg, og ingenting av det du skriver i CV-en inngår.',
+        'Vi teller sidevisninger med Vercel Web Analytics, og måler hvor raskt sidene lastet med Vercel Speed Insights, for å se hvilke deler av tjenesten som brukes og hvor det er tregt. Grunnlaget er berettiget interesse, artikkel 6 nr. 1 bokstav f: vi lagrer ingenting i nettleseren din, får ingen profil av deg, og ingenting av det du skriver i CV-en inngår.',
         'Ut over det ber vi ikke om samtykke til noe, fordi vi ikke gjør noe mer: ingen markedsføring, ingen profilering, ingen deling med annonsører.',
       ],
     },
@@ -88,7 +88,7 @@ export const PRIVACY_NO: LegalDocument = {
       id: 'cookies',
       heading: 'Informasjonskapsler og lagring i nettleseren',
       body: [
-        'CVApp bruker ingen informasjonskapsler til analyse, sporing eller markedsføring, og har derfor ingen samtykkebanner. Besøksstatistikken vår lagrer ingenting på enheten din: Vercel Web Analytics teller sidevisning, hvilken side du kom fra, land, nettlesertype og skjermtype, og setter verken informasjonskapsel eller annen lagring. Da gjelder ikke kravet om samtykke etter ekomloven § 3-15.',
+        'CVApp bruker ingen informasjonskapsler til analyse, sporing eller markedsføring, og har derfor ingen samtykkebanner. Besøksstatistikken vår lagrer ingenting på enheten din: Vercel Web Analytics teller sidevisning, hvilken side du kom fra, land, nettlesertype og skjermtype, og Speed Insights måler hvor lang tid siden brukte på å bli klar. Ingen av dem setter informasjonskapsel eller annen lagring. Da gjelder ikke kravet om samtykke etter ekomloven § 3-15.',
         'Vi lagrer CV-ene dine og noen få innstillinger i nettleserens lagring, og setter en informasjonskapsel for innlogging hvis du logger inn. Begge deler er strengt nødvendige for å levere tjenesten du har bedt om, og er unntatt kravet om samtykke etter ekomloven § 3-15.',
       ],
     },

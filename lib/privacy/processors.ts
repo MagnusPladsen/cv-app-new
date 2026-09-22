@@ -47,8 +47,8 @@ export const PROCESSORS: readonly Processor[] = [
   {
     name: 'Vercel',
     purpose: {
-      no: 'Drift og levering av nettstedet; tjenerlogger med IP-adresser; anonym besøksstatistikk (Vercel Web Analytics)',
-      en: 'Application hosting and delivery; server logs containing IP addresses; anonymous visitor statistics (Vercel Web Analytics)',
+      no: 'Drift og levering av nettstedet; tjenerlogger med IP-adresser; anonym besøksstatistikk og ytelsesmåling (Vercel Web Analytics og Speed Insights)',
+      en: 'Application hosting and delivery; server logs containing IP addresses; anonymous visitor statistics and performance measurement (Vercel Web Analytics and Speed Insights)',
     },
     // Was iad1 (Washington DC). Setting `regions: ["fra1"]` in vercel.json
     // moved it, and the Hobby plan honoured it - which the dashboard's

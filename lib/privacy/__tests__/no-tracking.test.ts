@@ -6,12 +6,13 @@ import packageJson from '../../../package.json'
 import { sourceFiles } from './source-files'
 
 /**
- * Deliberately here, and only this one: Vercel Web Analytics counts page
- * views without a cookie, without browser storage and without a profile, so
- * it needs no consent banner under ekomloven § 3-15. The policy says what it
- * collects - and the test below fails if it stops saying so.
+ * Deliberately here, and only these two: Vercel Web Analytics counts page
+ * views and Speed Insights measures how fast they loaded. Neither sets a
+ * cookie, writes to browser storage or builds a profile, so neither needs a
+ * consent banner under ekomloven § 3-15. The policy says what they collect -
+ * and the test below fails if it stops saying so.
  */
-const ALLOWED = ['@vercel/analytics']
+const ALLOWED = ['@vercel/analytics', '@vercel/speed-insights']
 
 const TRACKING_PACKAGES = [
   '@vercel/analytics',
@@ -56,9 +57,11 @@ describe('privacy posture', () => {
     if (!('@vercel/analytics' in installed)) return
 
     for (const file of ['lib/legal/privacy-no.ts', 'lib/legal/privacy-en.ts']) {
-      expect(readFileSync(file, 'utf8'), `${file} does not mention it`).toContain(
-        'Vercel Web Analytics',
-      )
+      const policy = readFileSync(file, 'utf8')
+      expect(policy, `${file} does not mention it`).toContain('Vercel Web Analytics')
+      if ('@vercel/speed-insights' in installed) {
+        expect(policy, `${file} does not mention Speed Insights`).toContain('Speed Insights')
+      }
     }
   })
 

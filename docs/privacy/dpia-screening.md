@@ -26,7 +26,7 @@ usually indicates a DPIA.
 |---|---|---|
 | 1. Evaluation or scoring | No | Nothing is scored or inferred |
 | 2. Automated decision-making with legal or similar effect | No | No decisions are made about anyone |
-| 3. Systematic monitoring | No | Page counts only (Vercel Web Analytics: no cookie, no storage, no profile, nothing from a CV). No behavioural tracking and no error tracker — test-enforced by `lib/privacy/__tests__/no-tracking.test.ts` |
+| 3. Systematic monitoring | No | Page counts and load times only (Vercel Web Analytics and Speed Insights: no cookie, no storage, no profile, nothing from a CV). No behavioural tracking and no error tracker — test-enforced by `lib/privacy/__tests__/no-tracking.test.ts` |
 | 4. Sensitive data or data of a highly personal nature | **Yes** | A CV is personal by nature, and free text can hold health, trade-union or religious information |
 | 5. Data processed on a large scale | No | See (b) above |
 | 6. Matching or combining datasets | No | Nothing is combined. There is one dataset and it is the user's own |

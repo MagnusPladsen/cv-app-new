@@ -53,28 +53,29 @@ export function TemplateCard({
       {/* The stack lives outside the button, which clips its own image to a
           rounded corner; sheets fanned behind it would be clipped away. */}
       <div
-        className="relative transition-transform duration-200 ease-out [transform-style:preserve-3d] motion-reduce:!transform-none"
+        className="relative transition-transform duration-200 ease-out [transform-style:preserve-3d] group-hover:scale-[1.04] group-focus-within:scale-[1.04] motion-reduce:!transform-none"
         onPointerLeave={() => setTilt({ x: 0, y: 0 })}
         onPointerMove={lean}
         ref={frame}
         style={{
           aspectRatio: `${PAGE_WIDTH} / ${PAGE_HEIGHT}`,
           transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          ['--card-scale' as string]: '1',
         }}
       >
         {/* Two more sheets, fanned out on hover: a template is a stack of
             pages, and the fan is what says so before anything is clicked. */}
         <span
           aria-hidden="true"
-          className="absolute inset-0 rounded-xl bg-white/70 ring-1 ring-border/70 transition duration-300 ease-out group-hover:translate-x-[5%] group-hover:-translate-y-[2.5%] group-hover:rotate-[2.5deg] group-focus-within:translate-x-[5%] group-focus-within:-translate-y-[2.5%] group-focus-within:rotate-[2.5deg] motion-reduce:!transform-none"
+          className="absolute inset-0 rounded-xl bg-white opacity-0 shadow-[0_14px_30px_-18px_rgb(0_0_0/0.45)] transition duration-300 ease-out group-hover:translate-x-[13%] group-hover:-translate-y-[6%] group-hover:rotate-[7deg] group-hover:opacity-90 group-focus-within:translate-x-[13%] group-focus-within:-translate-y-[6%] group-focus-within:rotate-[7deg] group-focus-within:opacity-90 motion-reduce:!transform-none motion-reduce:!opacity-0"
         />
         <span
           aria-hidden="true"
-          className="absolute inset-0 rounded-xl bg-white/85 ring-1 ring-border/70 transition duration-300 ease-out group-hover:translate-x-[2.5%] group-hover:-translate-y-[1.2%] group-hover:rotate-[1.2deg] group-focus-within:translate-x-[2.5%] group-focus-within:-translate-y-[1.2%] group-focus-within:rotate-[1.2deg] motion-reduce:!transform-none"
+          className="absolute inset-0 rounded-xl bg-white opacity-0 shadow-[0_12px_26px_-18px_rgb(0_0_0/0.4)] transition duration-300 ease-out group-hover:translate-x-[6.5%] group-hover:-translate-y-[3%] group-hover:rotate-[3.5deg] group-hover:opacity-95 group-focus-within:translate-x-[6.5%] group-focus-within:-translate-y-[3%] group-focus-within:rotate-[3.5deg] group-focus-within:opacity-95 motion-reduce:!transform-none motion-reduce:!opacity-0"
         />
       <button
         aria-label={template.name}
-        className="relative block h-full w-full overflow-hidden rounded-xl bg-white ring-1 ring-border transition duration-200 group-hover:shadow-[0_26px_50px_-22px_rgb(0_0_0/0.45)] group-hover:ring-brand focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+        className="relative block h-full w-full overflow-hidden rounded-xl bg-white shadow-[0_8px_18px_-14px_rgb(0_0_0/0.4)] transition duration-200 group-hover:shadow-[0_30px_54px_-22px_rgb(0_0_0/0.45)] focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
         // A handle that survives a rename: the card used to be found by the
         // CV markup it rendered, and its display name is branding ("oslo" is
         // called Klassisk), so neither is something to select on.
@@ -113,7 +114,7 @@ export function TemplateCard({
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100 motion-reduce:!opacity-0"
           style={{
-            background: `linear-gradient(${105 + tilt.y * 2}deg, transparent 38%, rgb(255 255 255 / 0.45) ${50 + tilt.y * 1.6}%, transparent 62%)`,
+            background: `linear-gradient(${105 + tilt.y * 2}deg, transparent 42%, rgb(255 255 255 / 0.16) ${50 + tilt.y * 1.6}%, transparent 58%)`,
           }}
         />
       </button>

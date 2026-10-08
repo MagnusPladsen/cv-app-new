@@ -67,8 +67,8 @@ describe('CV content never reaches a server', () => {
 
   it('gives the assistant no way to accept a whole document', () => {
     // The request schema is the boundary. A `document`, `sections` or
-    // `personalia` field in it would turn an opt-in sentence into a full
-    // upload, and nothing else in the code would look different.
+    // `personalia` field in it would turn an opt-in press into a full upload,
+    // and nothing else in the code would look different.
     const schema = readFileSync('lib/ai/request.ts', 'utf8')
 
     for (const forbidden of ['document', 'personalia', 'photo', 'firstName', 'email']) {
@@ -76,6 +76,29 @@ describe('CV content never reaches a server', () => {
         new RegExp(`\\b${forbidden}\\s*:`),
       )
     }
+  })
+
+  it('bounds the CV text a review may carry', () => {
+    // A review does send the CV's own text - it cannot say a bullet is weak
+    // without reading it. Bounded rather than unlimited: forty passages of
+    // four hundred characters is a long CV and a request that cannot become
+    // an upload of everything.
+    const schema = readFileSync('lib/ai/request.ts', 'utf8')
+
+    expect(schema).toMatch(/passages: z\.array\(passageSchema\)\.max\(40\)/)
+    expect(schema).toMatch(/text: z\.string\(\)\.max\(400\)/)
+  })
+
+  it('keeps the employers, dates and referees out of a review', () => {
+    // Those are the parts of a CV that identify the user, their past
+    // workplaces and - in the references - somebody who never agreed to any
+    // of this. lib/ai/context.ts decides what goes; this is the reminder of
+    // why the list is short.
+    const context = readFileSync('lib/ai/context.ts', 'utf8')
+
+    expect(context).toContain("if (section.type === 'references') continue")
+    expect(context, 'a review started sending employers').not.toMatch(/entry\.organisation/)
+    expect(context, 'a review started sending dates').not.toMatch(/entry\.from|entry\.to\b/)
   })
 
   it('strips identifiers in the browser, not on the server', () => {

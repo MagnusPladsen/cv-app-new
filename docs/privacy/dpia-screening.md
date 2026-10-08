@@ -54,9 +54,12 @@ this conclusion rests on the specifics rather than on the arithmetic:
 - **It is opt-in per press, one piece of text at a time.** Nothing is sent by
   opening the editor, by typing, or by having a CV. There is no background
   processing to be unaware of
-- **It cannot receive a document.** `lib/ai/request.ts` has no field for one;
-  what travels is one question, one passage, and three numbers the browser
-  measured. The photograph and the account are unreachable from that route
+- **It cannot receive a document.** `lib/ai/request.ts` has no field for one.
+  An ordinary question carries one passage and three numbers. A review - its
+  own press, labelled with what it sends - carries the CV's text in bounded
+  pieces: at most 40 passages of 400 characters, with employers, dates, the
+  references section, the photograph and every contact field left out. That is
+  still a review of the person's own words, not a profile of them
 - **The identifiers are removed before the request exists**, in the browser, by
   `lib/ai/redact.ts`, and a national identity number stops the request entirely
 - **Nothing is retained.** No conversation is stored by CVApp, and the request

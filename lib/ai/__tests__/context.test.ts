@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildFacts, chatTargets, prepareMessage } from '@/lib/ai/context'
+import {
+  buildFacts,
+  chatTargets,
+  collectPassages,
+  prepareMessage,
+  targetsFor,
+} from '@/lib/ai/context'
 import { factsSchema } from '@/lib/ai/tools'
 import { getCvLabels } from '@/lib/cv-labels'
 import { createDemoDocument } from '@/lib/schema/demo'
@@ -62,5 +68,99 @@ describe('what the browser works out before it asks', () => {
     expect(prepared.message).not.toContain(document.personalia.firstName)
     expect(prepared.message).toContain('[navn]')
     expect(prepared.message).toContain('[sted]')
+  })
+})
+
+describe('the CV text a review sends', () => {
+  const labels = getCvLabels('no')
+  const collect = (document = createDemoDocument()) =>
+    collectPassages(document, labels, 'Tittel', 'Søknad')
+
+  it('carries the text the assistant has to read to review anything', () => {
+    const result = collect()
+
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    const kinds = new Set(result.passages.map((passage) => passage.kind))
+    expect(kinds.has('summary')).toBe(true)
+    expect(kinds.has('bullet')).toBe(true)
+  })
+
+  it('sends no employer, no date, no contact detail and no referee', () => {
+    const document = createDemoDocument()
+    const result = collect(document)
+
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    const everything = result.passages.map((passage) => `${passage.label} ${passage.text}`).join('\n')
+
+    const references = document.sections.find((section) => section.type === 'references')
+    const referee = references && 'entries' in references ? references.entries[0] : undefined
+
+    for (const forbidden of [
+      document.personalia.email,
+      document.personalia.phone,
+      document.personalia.firstName,
+      ...document.sections
+        .flatMap((section) =>
+          'entries' in section && Array.isArray(section.entries)
+            ? (section.entries as Record<string, unknown>[])
+            : [],
+        )
+        .flatMap((entry) => [String(entry.organisation ?? ''), String(entry.from ?? '')]),
+      referee && 'name' in referee ? (referee.name as string) : '',
+    ].filter((value) => typeof value === 'string' && value.length > 2)) {
+      expect(everything, `a review sent ${forbidden}`).not.toContain(forbidden)
+    }
+  })
+
+  it('refuses the whole review when a national identity number is anywhere in the CV', () => {
+    const document = createDemoDocument()
+    const summary = document.sections.find((section) => section.type === 'summary')!
+    document.sections = document.sections.map((section) =>
+      section.id === summary.id ? { ...section, text: 'Fnr 010190 12345' } : section,
+    )
+
+    expect(collect(document)).toEqual({ ok: false, reason: 'nationalId' })
+  })
+
+  it('stays bounded however long the CV is', () => {
+    const result = collect()
+
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.passages.length).toBeLessThanOrEqual(40)
+    for (const passage of result.passages) expect(passage.text.length).toBeLessThanOrEqual(400)
+  })
+
+  it('lets a review suggest only into the passages it was given', () => {
+    const result = collect()
+    if (!result.ok) return
+    const targets = targetsFor(result.passages)
+
+    expect(targets.length).toBeGreaterThan(0)
+    expect(targets.length).toBeLessThanOrEqual(20)
+    for (const target of targets) {
+      if (target.kind !== 'bullet') continue
+      expect(
+        result.passages.some(
+          (passage) =>
+            passage.kind === 'bullet' &&
+            passage.sectionId === target.sectionId &&
+            passage.index === target.index,
+        ),
+      ).toBe(true)
+    }
+  })
+
+  it('says nothing to review when the CV is empty, rather than paying for silence', () => {
+    const document = createDemoDocument()
+    document.personalia = { ...document.personalia, title: '' }
+    document.sections = []
+    document.coverLetter = { ...document.coverLetter!, enabled: false }
+
+    const result = collect(document)
+
+    expect(result.ok && result.passages).toEqual([])
   })
 })

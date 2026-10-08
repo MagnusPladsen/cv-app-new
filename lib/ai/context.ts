@@ -1,9 +1,10 @@
 import { scrub } from '@/lib/ai/redact'
 import type { Facts } from '@/lib/ai/tools'
-import type { Target } from '@/lib/ai/request'
+import type { Passage, Target } from '@/lib/ai/request'
 import { checkDocument } from '@/lib/quality/checks'
 import type { CvLabels } from '@/lib/cv-labels'
-import type { CvDocument } from '@/lib/schema/cv'
+import { isImportPile } from '@/lib/import/pile'
+import type { CvDocument, TimelineEntry } from '@/lib/schema/cv'
 
 /**
  * Everything the browser works out before it is allowed to ask.
@@ -94,4 +95,114 @@ export function prepareMessage(text: string, document: CvDocument): Prepared {
   if (!scrubbed.ok) return { ok: false, reason: 'nationalId' }
 
   return { ok: true, message: scrubbed.text }
+}
+
+/**
+ * The CV's own text, for the one task that cannot work without it.
+ *
+ * A review has to read the bullets to say which are weak, so pressing "check
+ * my CV" sends more than a question does - and sends it once, on that press,
+ * with the same scrubbing as everything else.
+ *
+ * What is left out is the point of the function:
+ *
+ * - **employers and places.** A role, not where it was held
+ * - **references.** Somebody else's name and phone number, and the one part of
+ *   a CV that is not the user's own personal data to hand over
+ * - **dates.** The gap and ordering checks are arithmetic, and
+ *   `checkDocument` has already done them
+ * - **the photograph, and every contact detail.** There is no field for them
+ */
+export function collectPassages(
+  document: CvDocument,
+  labels: CvLabels,
+  titleLabel: string,
+  letterLabel: string,
+): { ok: true; passages: Passage[] } | { ok: false; reason: 'nationalId' } {
+  const passages: Passage[] = []
+  let refused = false
+
+  const add = (passage: Omit<Passage, 'text'>, raw: string | undefined) => {
+    const text = (raw ?? '').trim()
+    if (!text || refused) return
+    const scrubbed = scrub(text, document.personalia)
+    if (!scrubbed.ok) {
+      refused = true
+      return
+    }
+    passages.push({ ...passage, text: scrubbed.text.slice(0, 400) })
+  }
+
+  add({ kind: 'title', label: titleLabel }, document.personalia.title)
+
+  for (const section of document.sections) {
+    if (!section.enabled || isImportPile(section)) continue
+    const name = section.titleOverride?.trim() || labels.sections[section.type]
+
+    if (section.type === 'summary') add({ kind: 'summary', sectionId: section.id, label: name }, section.text)
+
+    if ('entries' in section && Array.isArray(section.entries)) {
+      // References are entries too, and the only section whose contents
+      // belong to somebody who never agreed to any of this.
+      if (section.type === 'references') continue
+
+      const entries = section.entries as TimelineEntry[]
+      entries.forEach((entry, entryIndex) => {
+        add(
+          { kind: 'role', sectionId: section.id, entryId: entry.id, label: `${name} ${entryIndex + 1}` },
+          entry.role,
+        )
+        ;(entry.description ?? '').split('\n').forEach((line, lineIndex) => {
+          add(
+            {
+              kind: 'bullet',
+              sectionId: section.id,
+              entryId: entry.id,
+              index: lineIndex,
+              label: `${name} ${entryIndex + 1}, punkt ${lineIndex + 1}`,
+            },
+            line,
+          )
+        })
+      })
+    }
+
+    // How many, and which: "thirty skills says nothing is important" needs
+    // both, and neither identifies anybody.
+    if (section.type === 'skills' || section.type === 'languages') {
+      add({ kind: 'items', sectionId: section.id, label: name }, section.items.map((item) => item.name).join(', '))
+    }
+    if (section.type === 'interests') {
+      add({ kind: 'items', sectionId: section.id, label: name }, section.items.join(', '))
+    }
+  }
+
+  if (document.coverLetter?.enabled) {
+    add({ kind: 'coverLetter', label: letterLabel }, document.coverLetter.body)
+  }
+
+  if (refused) return { ok: false, reason: 'nationalId' }
+  return { ok: true, passages: passages.slice(0, 40) }
+}
+
+/** Where a review's suggestions may land: the passages it was given. */
+export function targetsFor(passages: Passage[]): Target[] {
+  const targets: Target[] = []
+  for (const passage of passages) {
+    if (passage.kind === 'title') targets.push({ kind: 'field', label: passage.label })
+    if (passage.kind === 'summary' && passage.sectionId) {
+      targets.push({ kind: 'summary', sectionId: passage.sectionId, label: passage.label })
+    }
+    if (passage.kind === 'bullet' && passage.sectionId && passage.entryId) {
+      targets.push({
+        kind: 'bullet',
+        sectionId: passage.sectionId,
+        entryId: passage.entryId,
+        index: passage.index ?? 0,
+        label: passage.label,
+      })
+    }
+    if (passage.kind === 'coverLetter') targets.push({ kind: 'coverLetter', label: passage.label })
+  }
+  return targets.slice(0, 20)
 }

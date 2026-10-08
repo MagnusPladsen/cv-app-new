@@ -1,12 +1,19 @@
 'use client'
 
-import { ChevronDown, Info, Send, Sparkles } from 'lucide-react'
+import { ChevronDown, Info, ListChecks, Send, Sparkles } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useMemo, useRef, useState } from 'react'
 
 import { Link } from '@/i18n/navigation'
 import { applySuggestion, currentValue } from '@/lib/ai/apply'
-import { buildFacts, chatTargets, prepareMessage } from '@/lib/ai/context'
+import {
+  buildFacts,
+  chatTargets,
+  collectPassages,
+  prepareMessage,
+  targetsFor,
+} from '@/lib/ai/context'
+import type { Passage, Target } from '@/lib/ai/request'
 import type { Suggestion } from '@/lib/ai/suggestions'
 import { getCvLabels } from '@/lib/cv-labels'
 import type { DocumentEditorHandlers } from '@/lib/hooks/use-document-editor'
@@ -125,7 +132,10 @@ export function AssistantPanel({
     [document, labels, tLabels, tLetter],
   )
 
-  async function send(text: string) {
+  async function send(
+    text: string,
+    options: { task?: 'chat' | 'review'; passages?: Passage[]; targets?: Target[] } = {},
+  ) {
     setError(null)
     const prepared = prepareMessage(text, document)
     if (!prepared.ok) {
@@ -143,13 +153,16 @@ export function AssistantPanel({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          task: 'chat',
+          task: options.task ?? 'chat',
           locale,
           chatId: chatId.current,
           message: prepared.message,
           facts: buildFacts(document, pages),
-          targets,
-          history: history.slice(-12),
+          passages: options.passages ?? [],
+          targets: options.targets ?? targets,
+          // A review stands on its own: resending the chat with the CV
+          // attached would pay for the whole conversation twice.
+          history: options.task === 'review' ? [] : history.slice(-12),
         }),
       })
 
@@ -174,6 +187,30 @@ export function AssistantPanel({
     } finally {
       setPending(false)
     }
+  }
+
+  /**
+   * The one press that sends the CV's own text. Separate from the input, and
+   * labelled with what it sends, because it is a bigger thing to agree to
+   * than asking a question.
+   */
+  function review() {
+    setError(null)
+    const collected = collectPassages(document, labels, tLabels('professionalTitle'), tLetter('title'))
+    if (!collected.ok) {
+      setError('errorNationalId')
+      return
+    }
+    if (collected.passages.length === 0) {
+      setError('reviewEmpty')
+      return
+    }
+
+    void send(t('reviewQuestion'), {
+      task: 'review',
+      passages: collected.passages,
+      targets: targetsFor(collected.passages),
+    })
   }
 
   return (
@@ -212,6 +249,21 @@ export function AssistantPanel({
             >
               {t('privacyMore')}
             </Link>
+          </div>
+
+          {/* Its own control rather than a suggested question: this one
+              sends the CV's text, and what it sends is written next to it. */}
+          <div className="flex flex-col gap-1.5">
+            <button
+              className="inline-flex w-fit items-center gap-2 rounded-full border border-brand/40 bg-brand-soft/60 px-4 py-2 text-sm font-semibold text-brand-strong transition hover:border-brand disabled:opacity-60 focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+              disabled={pending}
+              onClick={review}
+              type="button"
+            >
+              <ListChecks aria-hidden="true" className="size-4" />
+              {t('review')}
+            </button>
+            <p className="text-xs text-muted-foreground">{t('reviewSends')}</p>
           </div>
 
           {turns.length === 0 ? (

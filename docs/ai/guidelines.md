@@ -84,6 +84,11 @@ type", and no whole-document upload.
 **Sent** — only what the question needs:
 
 - the text of the field being asked about, or the section being drafted
+- **on the review press only**, the CV's own text: title, summary, roles,
+  bullets, and the skills, languages and interests lists. Capped at 40
+  passages of 400 characters. Never employers, dates, the references section,
+  the photograph or a contact field — a review reads what the person wrote
+  about themselves, not who they worked for
 - the measured facts: page count, paper size, and the ids of the quality checks
   that fired — three values, not a document
 - the job advert, when the user pastes one
@@ -156,6 +161,7 @@ both models, same prompt and tools.
 |---|---|---|---|
 | bullet, summary, sortLeftovers | `gpt-6-luna` | low | writes one concrete line and asks for the number it is missing — exactly the shape an Apply button needs |
 | chat | `gpt-5-mini` | low | writes at length, offers alternatives, asks follow-ups. Wrong for a one-press suggestion, right for a conversation |
+| review | `gpt-5-mini` | low | reads every passage and says which three to five matter. Same model as the chat, more room to answer in |
 | coverLetter | `gpt-5-mini` | medium | `medium` produced a visibly better letter — greeting, bracketed placeholders, sign-off — at 527 output tokens against 349. On a bullet rewrite the same effort spent 112 reasoning tokens to produce the identical sentence, which is why nothing else uses it |
 
 Each is the other's fallback, in `lib/ai/models.ts`. Not `gpt-5-nano`. The

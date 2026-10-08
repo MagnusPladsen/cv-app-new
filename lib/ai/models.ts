@@ -18,7 +18,7 @@
  * except the letter.
  */
 
-export type AiTask = 'chat' | 'bullet' | 'summary' | 'coverLetter' | 'sortLeftovers'
+export type AiTask = 'chat' | 'review' | 'bullet' | 'summary' | 'coverLetter' | 'sortLeftovers'
 
 export type ModelChoice = {
   model: 'gpt-6-luna' | 'gpt-5-mini'
@@ -32,6 +32,10 @@ const CHOICES: Record<AiTask, ModelChoice> = {
   summary: { model: 'gpt-6-luna', effort: 'low', maxOutputTokens: 400 },
   sortLeftovers: { model: 'gpt-6-luna', effort: 'low', maxOutputTokens: 600 },
   chat: { model: 'gpt-5-mini', effort: 'low', maxOutputTokens: 700 },
+  // Reading several passages and saying which ones are weak is the longest
+  // thing the assistant does, and the one most worth getting right. Same
+  // model as the chat, more room to answer in.
+  review: { model: 'gpt-5-mini', effort: 'low', maxOutputTokens: 1100 },
   coverLetter: { model: 'gpt-5-mini', effort: 'medium', maxOutputTokens: 900 },
 }
 
@@ -54,4 +58,4 @@ export function fallbackFor(choice: ModelChoice): ModelChoice {
  * rather than per session. Bump it when the rules or the knowledge change -
  * a stale cache would otherwise serve yesterday's instructions.
  */
-export const PROMPT_CACHE_KEY = 'cvapp-assistant-v1'
+export const PROMPT_CACHE_KEY = 'cvapp-assistant-v2'

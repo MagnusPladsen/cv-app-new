@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import { takeFromBudget, visitorHash } from '@/lib/ai/budget'
 import { modelFor } from '@/lib/ai/models'
 import { ask } from '@/lib/ai/openai'
-import { askSchema, type Target } from '@/lib/ai/request'
+import { askSchema, type Passage, type Target } from '@/lib/ai/request'
 import { NATIONAL_ID } from '@/lib/quality/checks'
 import { callerKey, rateLimit } from '@/lib/security/rate-limit'
 
@@ -42,6 +42,27 @@ function describeTargets(targets: Target[]): string {
   return `\n\nForslag kan bare peke på ett av disse stedene, med feltene nøyaktig som oppgitt:\n${lines.join('\n')}`
 }
 
+/**
+ * The CV's own text, when the person pressed "check my CV".
+ *
+ * Last in the user turn, never in the instructions: the cached prefix has to
+ * stay identical for everybody, and this is the most per-user thing there is.
+ */
+function describePassages(passages: Passage[]): string {
+  if (passages.length === 0) return ''
+  const lines = passages.map((passage) => {
+    const where = [
+      passage.sectionId ? `sectionId=${passage.sectionId}` : '',
+      passage.entryId ? `entryId=${passage.entryId}` : '',
+      passage.index === undefined ? '' : `index=${passage.index}`,
+    ]
+      .filter(Boolean)
+      .join(' ')
+    return `- [${passage.kind}] ${passage.label}${where ? ` (${where})` : ''}: ${passage.text}`
+  })
+  return `\n\nCV-en, slik den står nå. Navn og kontaktopplysninger er allerede fjernet, og arbeidsgivere, datoer og referanser er ikke med:\n${lines.join('\n')}`
+}
+
 export async function POST(request: Request) {
   // First line, in memory, per instance: it does not stop a distributed flood,
   // it stops one tab in a loop before the database is even asked.
@@ -74,7 +95,11 @@ export async function POST(request: Request) {
   // The browser refuses this too, in lib/ai/redact.ts. Checked again here
   // because a fødselsnummer reaching OpenAI is the one mistake in this file
   // that cannot be taken back afterwards.
-  const everything = [askBody.message, ...askBody.history.map((turn) => turn.content)].join('\n')
+  const everything = [
+    askBody.message,
+    ...askBody.history.map((turn) => turn.content),
+    ...askBody.passages.map((passage) => passage.text),
+  ].join('\n')
   if (NATIONAL_ID.test(everything)) {
     return NextResponse.json({ error: 'nationalId' }, { status: 400 })
   }
@@ -89,7 +114,7 @@ export async function POST(request: Request) {
     ...askBody.history.map((turn) => ({ role: turn.role, content: turn.content })),
     {
       role: 'user' as const,
-      content: `${askBody.message}${describeTargets(askBody.targets)}`,
+      content: `${askBody.message}${describePassages(askBody.passages)}${describeTargets(askBody.targets)}`,
     },
   ]
 

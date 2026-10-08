@@ -10,7 +10,7 @@ Kept in the repository rather than a drawer, because it has to match the
 application. `lib/privacy/__tests__/records.test.ts` fails if a processor
 listed in the code is missing here.
 
-**Last reviewed:** 2026-10-08, for Activity 4 — the assistant. Review whenever
+**Last reviewed:** 2026-10-08, for Activity 4 — the assistant, including the review press. Review whenever
 a processing activity, a processor, or a retention rule changes.
 
 ## Controller
@@ -100,7 +100,8 @@ assistant.
 | Legal basis | **Art. 6(1)(a), consent**, given per press. Not Art. 6(1)(b): the service works fully without it, so it is not necessary for the contract. Not Art. 6(1)(f): a transfer of free text to the United States is not something a user would expect without being asked |
 | Special categories | Possible, in the same way as Activity 1: a user may ask for help with a sentence about their own health or union role. Basis: Art. 9(2)(a), the explicit consent given by pressing the button on that specific text. The button names what will be sent before it is sent |
 | Data subjects | Users who choose to use the assistant. Third parties only if the user pastes them into the text themselves |
-| Categories of data | The user's question; the single piece of text they asked for help with; and three measurements the browser made — page count, paper size, and the ids of the quality checks that fired. **Not** the document, **not** the photograph, **not** the account. Name, email address, phone number, place and link URLs are replaced client-side with `[navn]`, `[e-post]`, `[telefon]` and `[sted]` by `lib/ai/redact.ts` before the request is built |
+| Categories of data | The user's question; the piece of text they asked for help with; and three measurements the browser made — page count, paper size, and the ids of the quality checks that fired. Name, email address, phone number, place and link URLs are replaced client-side with `[navn]`, `[e-post]`, `[telefon]` and `[sted]` by `lib/ai/redact.ts` before the request is built. **Not** the document, **not** the photograph, **not** the account |
+| Categories of data — a review | A review is a second, separate press, and the only one that sends the CV's own text: the title, the summary, each entry's role, the bullets, and the skills, languages and interests lists — scrubbed the same way, capped at 40 passages of 400 characters by `lib/ai/request.ts`. It cannot say a bullet is weak without reading the bullet. Employers, locations, dates, the references section, the photograph and every contact field are left out by `lib/ai/context.ts`, and a test fails if they return. The references section is excluded because it is the one part of a CV that is somebody else's personal data |
 | National identity numbers | Refused outright. `NATIONAL_ID` in `lib/quality/checks.ts` is checked in the browser and again in the route; a match sends nothing and tells the user to remove it from their CV |
 | Recipients | **OpenAI**, as a processor, for the one request. Nobody else. The request is sent with `store: false` |
 | Transfers outside the EEA | **Yes — the United States.** Basis: Art. 49(1)(a), the data subject's explicit consent to this specific transfer, with OpenAI's Standard Contractual Clauses underneath. Stated in the `transfers` and `ai` sections of the policy |

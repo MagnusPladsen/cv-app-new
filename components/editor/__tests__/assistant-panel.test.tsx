@@ -103,6 +103,40 @@ describe('AssistantPanel', () => {
     expect(screen.getByText(messages.assistant.errorChatsPerDay)).toBeInTheDocument()
   })
 
+  it('says what a review sends, next to the button that sends it', async () => {
+    vi.stubGlobal('fetch', reply({}))
+    wrap(<AssistantPanel document={createDemoDocument()} handlers={handlers()} pages={2} />)
+
+    await userEvent.click(screen.getByRole('button', { name: messages.assistant.title }))
+
+    expect(screen.getByRole('button', { name: messages.assistant.review })).toBeInTheDocument()
+    expect(screen.getByText(messages.assistant.reviewSends)).toBeInTheDocument()
+  })
+
+  it('sends the CV text only on the review press, and never an employer', async () => {
+    const document = createDemoDocument()
+    const fetchSpy = reply({ answer: 'Tre ting.', suggestions: [] })
+    vi.stubGlobal('fetch', fetchSpy)
+    wrap(<AssistantPanel document={document} handlers={handlers()} pages={2} />)
+
+    await userEvent.click(screen.getByRole('button', { name: messages.assistant.title }))
+    await userEvent.click(screen.getByRole('button', { name: messages.assistant.example1 }))
+
+    // An ordinary question carries no passages at all.
+    expect(JSON.parse(fetchSpy.mock.calls[0]![1].body as string).passages).toEqual([])
+
+    await userEvent.click(screen.getByRole('button', { name: messages.assistant.review }))
+
+    const body = JSON.parse(fetchSpy.mock.calls[1]![1].body as string)
+    expect(body.task).toBe('review')
+    expect(body.passages.length).toBeGreaterThan(0)
+    expect(body).not.toHaveProperty('document')
+
+    const sent = body.passages.map((passage: { text: string }) => passage.text).join('\n')
+    expect(sent).not.toContain(document.personalia.email)
+    expect(sent).not.toContain(document.personalia.firstName)
+  })
+
   it('shows a suggestion as a diff and writes it only when pressed', async () => {
     const document = createDemoDocument()
     const summary = document.sections.find((section) => section.type === 'summary')!

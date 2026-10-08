@@ -473,6 +473,10 @@
     "errorVisitorDay": "Du har brukt dagens spørsmål. Prøv igjen i morgen.",
     "errorGlobal": "Assistenten har nådd dagens tak for alle til sammen. Prøv igjen i morgen.",
     "errorUnconfigured": "Assistenten er ikke slått på.",
-    "errorUpstream": "Assistenten svarte ikke. Prøv igjen."
+    "errorUpstream": "Assistenten svarte ikke. Prøv igjen.",
+    "review": "Sjekk CV-en min",
+    "reviewQuestion": "Gå gjennom CV-en min og si hva jeg bør fikse.",
+    "reviewSends": "Dette sender teksten i CV-en din: tittel, Om meg, punkter og lister. Arbeidsgivere, datoer, referanser, bilde og kontaktopplysninger sendes ikke.",
+    "reviewEmpty": "Det er ikke noe tekst å gå gjennom ennå. Fyll inn litt først."
   }
 }

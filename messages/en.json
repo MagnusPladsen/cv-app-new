@@ -473,6 +473,10 @@
     "errorVisitorDay": "You have used today's questions. Try again tomorrow.",
     "errorGlobal": "The assistant has reached today's cap for everyone together. Try again tomorrow.",
     "errorUnconfigured": "The assistant is not switched on.",
-    "errorUpstream": "The assistant did not answer. Try again."
+    "errorUpstream": "The assistant did not answer. Try again.",
+    "review": "Check my CV",
+    "reviewQuestion": "Go through my CV and tell me what to fix.",
+    "reviewSends": "This sends the text of your CV: title, profile, bullets and lists. Employers, dates, references, your photo and your contact details are not sent.",
+    "reviewEmpty": "There is no text to go through yet. Fill something in first."
   }
 }

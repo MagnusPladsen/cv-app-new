@@ -16,8 +16,13 @@ needed, and not reaching anything else is itself a useful guard.
 
 ## 2. The budget secret, in Postgres
 
-Invent a long random string — `openssl rand -hex 32` — then, in the Supabase
-SQL editor, after running `supabase/migrations/20261008000001_ai_budget.sql`:
+Run `supabase/migrations/20261008000001_ai_budget.sql` first. It creates
+`private.job_secret` itself if the retention migration never ran — which on
+this project it had not, hence `relation "private.job_secret" does not exist`
+the first time round.
+
+Then invent a long random string — `openssl rand -hex 32` — and, in the
+Supabase SQL editor:
 
 ```sql
 insert into private.job_secret (name, secret_hash)

@@ -13,6 +13,20 @@
 create schema if not exists private;
 revoke all on schema private from public, anon, authenticated;
 
+-- Both of these belong to the retention migration, repeated here because this
+-- one must not assume it ran. It had not: applying this file against a project
+-- without 20260914000003_retention.sql failed with
+-- `relation "private.job_secret" does not exist`, and a migration that only
+-- works in the right order is a migration with a trap in it.
+create extension if not exists pgcrypto with schema extensions;
+
+create table if not exists private.job_secret (
+  name text primary key,
+  secret_hash text not null
+);
+
+revoke all on table private.job_secret from public, anon, authenticated;
+
 create table if not exists private.ai_usage (
   day date not null,
   -- A daily-rotating hash of IP and user agent, salted with the job secret.

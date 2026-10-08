@@ -206,3 +206,28 @@ export function targetsFor(passages: Passage[]): Target[] {
   }
   return targets.slice(0, 20)
 }
+
+/**
+ * The same scrubbing as a review, for the one field somebody pressed on.
+ *
+ * Takes passages with their raw text and gives them back ready to send, or
+ * refuses the lot. Refusing all of them rather than the offending one is
+ * deliberate: a national identity number in bullet two is still in the CV
+ * whether or not bullet one was the one asked about.
+ */
+export function scrubPassages(
+  drafts: Passage[],
+  document: CvDocument,
+): { ok: true; passages: Passage[] } | { ok: false; reason: 'nationalId' } {
+  const passages: Passage[] = []
+
+  for (const draft of drafts) {
+    const text = draft.text.trim()
+    if (!text) continue
+    const scrubbed = scrub(text, document.personalia)
+    if (!scrubbed.ok) return { ok: false, reason: 'nationalId' }
+    passages.push({ ...draft, text: scrubbed.text.slice(0, 400) })
+  }
+
+  return { ok: true, passages: passages.slice(0, 40) }
+}

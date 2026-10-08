@@ -19,8 +19,10 @@ import { CSS } from '@dnd-kit/utilities'
 import { ChevronDown, ChevronUp, GripVertical, Plus, Trash2 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
+import { AskAi } from '@/components/editor/AskAi'
 import { MonthField } from '@/components/editor/MonthField'
 import { TextAreaField, TextField } from '@/components/editor/fields'
+import type { Passage, Target } from '@/lib/ai/request'
 import type { TimelineEntry } from '@/lib/schema/cv'
 
 type TimelineFormProps = {
@@ -54,6 +56,8 @@ function EntryCard({
   onMoveEntry: TimelineFormProps['onMoveEntry']
 }) {
   const t = useTranslations('timeline')
+  // Each line is a bullet, which is what the suggestion schema addresses.
+  const lines = (entry.description ?? '').split('\n')
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: entry.id,
   })
@@ -160,6 +164,33 @@ function EntryCard({
           label={t('description')}
           onChange={(description) => update({ description })}
           value={entry.description ?? ''}
+        />
+
+        {/* One of the three fields that get this. Bullets are where people
+            write duties instead of results, and where a rewrite is worth
+            paying for. */}
+        <AskAi
+          drafts={lines.map(
+            (line, lineIndex): Passage => ({
+              kind: 'bullet',
+              sectionId,
+              entryId: entry.id,
+              index: lineIndex,
+              label: `${t('description')} ${lineIndex + 1}`,
+              text: line,
+            }),
+          )}
+          label={t('askBullets')}
+          targets={lines.map(
+            (_, lineIndex): Target => ({
+              kind: 'bullet',
+              sectionId,
+              entryId: entry.id,
+              index: lineIndex,
+              label: `${t('description')} ${lineIndex + 1}`,
+            }),
+          )}
+          task="bullet"
         />
       </div>
 

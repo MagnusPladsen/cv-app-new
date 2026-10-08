@@ -105,7 +105,8 @@
   },
   "forms": {
     "onePerLine": "One per line.",
-    "summaryHint": "Two to four sentences on who you are and what you are good at."
+    "summaryHint": "Two to four sentences on who you are and what you are good at.",
+    "askSummary": "Rewrite my profile so it is more concrete."
   },
   "timeline": {
     "title": "Work Experience",
@@ -123,7 +124,8 @@
     "modeProse": "Prose",
     "moveUp": "Move up",
     "moveDown": "Move down",
-    "reorder": "Reorder"
+    "reorder": "Reorder",
+    "askBullets": "Rewrite my bullets so they show results rather than duties."
   },
   "items": {
     "add": "Add",
@@ -402,7 +404,8 @@
     "bodyHint": "Three or four paragraphs on one page. Blank lines are kept where you put them.",
     "closing": "Closing",
     "previewCv": "CV",
-    "previewLetter": "Letter"
+    "previewLetter": "Letter",
+    "askBody": "Rewrite my application letter so it reads better."
   },
   "import": {
     "button": "Import a CV from PDF or Word",
@@ -477,6 +480,8 @@
     "review": "Check my CV",
     "reviewQuestion": "Go through my CV and tell me what to fix.",
     "reviewSends": "This sends the text of your CV: title, profile, bullets and lists. Employers, dates, references, your photo and your contact details are not sent.",
-    "reviewEmpty": "There is no text to go through yet. Fill something in first."
+    "reviewEmpty": "There is no text to go through yet. Fill something in first.",
+    "askField": "Ask AI for help",
+    "askNothing": "The assistant had no concrete suggestion here."
   }
 }

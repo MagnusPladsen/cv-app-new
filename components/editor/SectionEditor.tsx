@@ -66,6 +66,7 @@ export function SectionEditor({
         <SummaryForm
           label={title}
           onChange={(text) => handlers.onSummaryChange(section.id, text)}
+          sectionId={section.id}
           text={section.text}
         />
       )

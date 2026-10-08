@@ -161,7 +161,7 @@ both models, same prompt and tools.
 |---|---|---|---|
 | bullet, summary, sortLeftovers | `gpt-6-luna` | low | writes one concrete line and asks for the number it is missing — exactly the shape an Apply button needs |
 | chat | `gpt-5-mini` | low | writes at length, offers alternatives, asks follow-ups. Wrong for a one-press suggestion, right for a conversation |
-| review | `gpt-5-mini` | low | reads every passage and says which three to five matter. Same model as the chat, more room to answer in |
+| review | `gpt-5-mini` | low | reads every passage and says which three to five matter. Same model as the chat, more room to answer in (1800 output tokens — at 1100 it ran out mid-JSON) |
 | coverLetter | `gpt-5-mini` | medium | `medium` produced a visibly better letter — greeting, bracketed placeholders, sign-off — at 527 output tokens against 349. On a bullet rewrite the same effort spent 112 reasoning tokens to produce the identical sentence, which is why nothing else uses it |
 
 Each is the other's fallback, in `lib/ai/models.ts`. Not `gpt-5-nano`. The
@@ -174,6 +174,18 @@ project key reaches these two and nothing else, which is itself a useful guard.
 - A question about law, salary or the job market → one sentence saying it does
   not know, and where to ask.
 - A question with nothing to do with CVs → a short redirect, no lecture.
+
+## Where the buttons are
+
+Three, and only three. `components/editor/AskAi.tsx` appears under the entry
+description, under Om meg, and under the søknad body - the fields people
+actually get stuck on. Everywhere else keeps the question mark and its plain
+explanation, which works with no model, no network and no money.
+
+A field with nothing in it gets no button: there is nothing to improve and the
+press would be billed anyway. A form rendered outside the editor gets no
+button either, because the document, the page count and the handlers come from
+`components/editor/assistant-context.tsx` rather than from six layers of props.
 
 ## Where the route sits
 

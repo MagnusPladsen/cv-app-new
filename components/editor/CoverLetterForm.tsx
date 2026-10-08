@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from 'next-intl'
 
+import { AskAi } from '@/components/editor/AskAi'
 import { TextAreaField, TextField } from '@/components/editor/fields'
 import { SectionHelp } from '@/components/editor/SectionHelp'
 import type { CoverLetter } from '@/lib/schema/cv'
@@ -99,6 +100,15 @@ export function CoverLetterForm({
             onChange={(body) => onChange({ body })}
             rows={12}
             value={letter?.body ?? ''}
+          />
+
+          {/* Third and last. A søknad is written from nothing, for one
+              employer, and is where people freeze. */}
+          <AskAi
+            drafts={[{ kind: 'coverLetter', label: t('body'), text: letter?.body ?? '' }]}
+            label={t('askBody')}
+            targets={[{ kind: 'coverLetter', label: t('body') }]}
+            task="coverLetter"
           />
 
           <TextField

@@ -24,6 +24,7 @@ import { SaveState } from './SaveState'
 import { sectionFormId } from './section-form-id'
 import { SectionEditor } from './SectionEditor'
 import { AssistantPanel } from './AssistantPanel'
+import { AssistantProvider } from './assistant-context'
 import { CoverLetterForm } from './CoverLetterForm'
 import { QualityPanel } from './QualityPanel'
 import { SectionHelp } from './SectionHelp'
@@ -130,6 +131,11 @@ export function EditorSplit({
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      {/* The per-field "Ask AI" buttons read the document, the measured page
+          count and the handlers from here rather than from six layers of
+          props. A context provider renders no DOM, so the grid is unaffected
+          and the preview column stays a sibling. */}
+      <AssistantProvider document={document} handlers={handlers} pages={pages}>
       {/* min-w-0: a grid item defaults to min-width:auto, so the scrollable
           template strip would otherwise stretch the whole column past the screen. */}
       <div className="flex min-w-0 flex-col gap-8">
@@ -273,6 +279,7 @@ export function EditorSplit({
 
 
       </div>
+      </AssistantProvider>
 
       {/* Exactly one preview is mounted at a time - the export path clones
           the first .cv-doc it finds, so a second copy anywhere, hidden or

@@ -105,7 +105,8 @@
   },
   "forms": {
     "onePerLine": "Én per linje.",
-    "summaryHint": "To til fire setninger om hvem du er og hva du er god til."
+    "summaryHint": "To til fire setninger om hvem du er og hva du er god til.",
+    "askSummary": "Skriv om Om meg-teksten min så den blir mer konkret."
   },
   "timeline": {
     "title": "Arbeidserfaring",
@@ -123,7 +124,8 @@
     "modeProse": "Løpende tekst",
     "moveUp": "Flytt opp",
     "moveDown": "Flytt ned",
-    "reorder": "Endre rekkefølge"
+    "reorder": "Endre rekkefølge",
+    "askBullets": "Skriv om punktene mine så de viser resultater i stedet for oppgaver."
   },
   "items": {
     "add": "Legg til",
@@ -402,7 +404,8 @@
     "bodyHint": "Tre til fire avsnitt på én side. Blanke linjer beholdes slik du skriver dem.",
     "closing": "Avslutning",
     "previewCv": "CV",
-    "previewLetter": "Søknad"
+    "previewLetter": "Søknad",
+    "askBody": "Skriv om søknadsteksten min så den blir bedre."
   },
   "import": {
     "button": "Importer CV fra PDF eller Word",
@@ -477,6 +480,8 @@
     "review": "Sjekk CV-en min",
     "reviewQuestion": "Gå gjennom CV-en min og si hva jeg bør fikse.",
     "reviewSends": "Dette sender teksten i CV-en din: tittel, Om meg, punkter og lister. Arbeidsgivere, datoer, referanser, bilde og kontaktopplysninger sendes ikke.",
-    "reviewEmpty": "Det er ikke noe tekst å gå gjennom ennå. Fyll inn litt først."
+    "reviewEmpty": "Det er ikke noe tekst å gå gjennom ennå. Fyll inn litt først.",
+    "askField": "Spør AI om hjelp",
+    "askNothing": "Assistenten hadde ingen konkrete forslag her."
   }
 }

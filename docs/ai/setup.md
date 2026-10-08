@@ -59,6 +59,19 @@ curl -s -X POST https://<host>/api/ai -H 'content-type: application/json' \
 - `200` with `usage.cached` well above zero on the second call — prompt
   caching is working, which is most of what makes this affordable
 
+## Confirmed working
+
+2026-10-08, against `cv.pladsen.dev`:
+
+| Call | Input | Cached | Output |
+|---|---|---|---|
+| A question, using `page_count` | 6 024 | 2 944 | 421 |
+| A question, warm prefix | 3 114 | 2 560 | 463 |
+| A six-passage review | 3 435 | 3 072 | 638–1 174 |
+
+Both models reachable, the tool loop closes, the budget counts in Postgres, and
+a suggestion applies into the form and the undo history.
+
 ## What it costs to leave on
 
 Per message: one cached prefix of roughly 2 600 tokens, plus the question,

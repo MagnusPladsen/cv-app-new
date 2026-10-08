@@ -63,8 +63,10 @@ export async function takeFromBudget(visitor: string, chat: string): Promise<Bud
     cache: 'no-store',
     body: JSON.stringify({
       candidate: secret,
-      visitor,
-      chat,
+      // Named for the column they are compared against, not for the concept:
+      // `visitor` collided with private.ai_usage.visitor inside the function.
+      visitor_hash: visitor,
+      chat_id: chat,
       max_chats_per_day: LIMITS.chatsPerVisitorPerDay,
       max_messages_per_chat: LIMITS.messagesPerChat,
       max_messages_per_day: LIMITS.messagesPerVisitorPerDay,

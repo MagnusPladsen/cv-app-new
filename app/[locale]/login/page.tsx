@@ -3,6 +3,9 @@ import { getTranslations } from 'next-intl/server'
 import { EmailAuthForm } from '@/components/auth/EmailAuthForm'
 import { SignInButtons } from '@/components/auth/SignInButtons'
 import { isSupabaseConfigured } from '@/lib/supabase/env'
+import { APP_PAGE } from '@/lib/seo'
+
+export const metadata = APP_PAGE
 
 export default async function LoginPage({
   params,

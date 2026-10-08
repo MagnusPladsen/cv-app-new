@@ -1,12 +1,30 @@
+import type { Metadata } from 'next'
 import { BadgeCheck, FileText, Infinity, Laptop, LayoutGrid } from 'lucide-react'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 import { TEMPLATES } from '@/components/cv/templates'
 import { LandingTemplates } from '@/components/gallery/LandingTemplates'
+import { StructuredData } from '@/components/landing/StructuredData'
 import { GetStartedButton } from '@/components/landing/GetStartedButton'
 import { ImportBanner } from '@/components/landing/ImportBanner'
 import { HeroTemplates } from '@/components/landing/HeroTemplates'
 import { Link } from '@/i18n/navigation'
+import { pageMeta } from '@/lib/seo'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'meta' })
+  return pageMeta({
+    locale,
+    path: '',
+    title: t('title'),
+    description: t('description'),
+  })
+}
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   // Pins the locale so this page prerenders instead of being rendered per
@@ -18,6 +36,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <main className="mx-auto flex max-w-7xl flex-col gap-16 px-4 py-12 sm:px-6 sm:py-20">
+      <StructuredData
+        description={t('meta.description')}
+        locale={locale}
+        title={t('meta.title')}
+      />
       {/* Copy and fan side by side from lg, stacked below it. The fan is
           decorative, so it comes second in the DOM: a screen reader and a
           phone both get the headline and the call to action first. */}

@@ -332,7 +332,13 @@
   },
   "meta": {
     "title": "CVApp — lag en CV du er stolt av",
-    "description": "Gratis CV-bygger med ekte PDF og aldri vannmerke. Fungerer uten konto."
+    "description": "Gratis CV-bygger med ekte PDF og aldri vannmerke. Fungerer uten konto.",
+    "templatesTitle": "CV-maler — 18 gratis maler du kan redigere",
+    "templatesDescription": "Atten gratis CV-maler, fra stramt og tradisjonelt til moderne. Velg én, fyll inn, last ned som ekte PDF uten vannmerke.",
+    "privacyTitle": "Personvern — CVApp",
+    "privacyDescription": "Hva CVApp behandler, hvorfor, hvor lenge, og hva du kan kreve. CV-ene ligger i nettleseren din.",
+    "termsTitle": "Vilkår for bruk — CVApp",
+    "termsDescription": "Vilkårene for å bruke CVApp. Gratis, uten konto, og uten at vi eier det du skriver."
   },
   "quality": {
     "title": "Sjekk av CV-en",

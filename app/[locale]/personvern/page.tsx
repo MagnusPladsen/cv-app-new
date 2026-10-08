@@ -5,9 +5,21 @@ import { notFound } from 'next/navigation'
 import { LegalDocumentView } from '@/components/legal/LegalDocumentView'
 import { PRIVACY_POLICY } from '@/lib/legal'
 import { routing } from '@/i18n/routing'
+import { pageMeta } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Personvern — CVApp',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'meta' })
+  return pageMeta({
+    locale,
+    path: '/personvern',
+    title: t('privacyTitle'),
+    description: t('privacyDescription'),
+  })
 }
 
 export function generateStaticParams() {

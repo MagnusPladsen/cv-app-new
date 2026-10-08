@@ -3,6 +3,9 @@ import { getTranslations } from 'next-intl/server'
 import { AccountPanel } from '@/components/auth/AccountPanel'
 import { SignInButtons } from '@/components/auth/SignInButtons'
 import { getSessionUser } from '@/lib/auth/dal'
+import { APP_PAGE } from '@/lib/seo'
+
+export const metadata = APP_PAGE
 
 export default async function AccountPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params

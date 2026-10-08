@@ -2,6 +2,9 @@ import { getTranslations } from 'next-intl/server'
 
 import { ResetRequestForm } from '@/components/auth/ResetRequestForm'
 import { Link } from '@/i18n/navigation'
+import { APP_PAGE } from '@/lib/seo'
+
+export const metadata = APP_PAGE
 
 export default async function ForgotPasswordPage({
   params,

@@ -5,9 +5,21 @@ import { notFound } from 'next/navigation'
 import { LegalDocumentView } from '@/components/legal/LegalDocumentView'
 import { TERMS } from '@/lib/legal'
 import { routing } from '@/i18n/routing'
+import { pageMeta } from '@/lib/seo'
 
-export const metadata: Metadata = {
-  title: 'Vilkår — CVApp',
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'meta' })
+  return pageMeta({
+    locale,
+    path: '/vilkar',
+    title: t('termsTitle'),
+    description: t('termsDescription'),
+  })
 }
 
 export function generateStaticParams() {

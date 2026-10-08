@@ -332,7 +332,13 @@
   },
   "meta": {
     "title": "CVApp — build a CV you are proud of",
-    "description": "A free CV builder with a real PDF and never a watermark. Works without an account."
+    "description": "A free CV builder with a real PDF and never a watermark. Works without an account.",
+    "templatesTitle": "CV templates — 18 free templates you can edit",
+    "templatesDescription": "Eighteen free CV templates, from plain and traditional to modern. Pick one, fill it in, download a real PDF with no watermark.",
+    "privacyTitle": "Privacy — CVApp",
+    "privacyDescription": "What CVApp processes, why, for how long, and what you can demand. Your CVs live in your browser.",
+    "termsTitle": "Terms of use — CVApp",
+    "termsDescription": "The terms for using CVApp. Free, no account needed, and we do not own what you write."
   },
   "quality": {
     "title": "CV check",

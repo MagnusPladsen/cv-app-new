@@ -23,9 +23,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
       // Each page exists in both languages; telling crawlers so stops them
       // treating the pair as duplicate content.
       alternates: {
-        languages: Object.fromEntries(
-          routing.locales.map((other) => [other, `${base}/${other}${path}`]),
-        ),
+        languages: {
+          ...Object.fromEntries(
+            routing.locales.map((other) => [other, `${base}/${other}${path}`]),
+          ),
+          // For readers whose language matches neither: the locale-less URL,
+          // which redirects on their own Accept-Language.
+          'x-default': `${base}${path}`,
+        },
       },
     })),
   )

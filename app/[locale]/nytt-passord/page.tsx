@@ -1,6 +1,9 @@
 import { getTranslations } from 'next-intl/server'
 
 import { NewPasswordForm } from '@/components/auth/NewPasswordForm'
+import { APP_PAGE } from '@/lib/seo'
+
+export const metadata = APP_PAGE
 
 export default async function NewPasswordPage({
   params,

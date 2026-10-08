@@ -30,6 +30,10 @@ describe('the processor list', () => {
       // The same for Word documents: the namespaces the .docx reader matches
       // elements against, read from a file already on the user's machine.
       'schemas.openxmlformats.org',
+      // And the same for JSON-LD: `@context` names a vocabulary, it does not
+      // fetch one. Listed rather than pattern-matched, so a real request to
+      // schema.org would still have to be justified.
+      'schema.org',
     ]
 
     // Sample CV content, not network calls: the demo document contains a

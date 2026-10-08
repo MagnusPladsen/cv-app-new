@@ -35,7 +35,10 @@ const CHOICES: Record<AiTask, ModelChoice> = {
   // Reading several passages and saying which ones are weak is the longest
   // thing the assistant does, and the one most worth getting right. Same
   // model as the chat, more room to answer in.
-  review: { model: 'gpt-5-mini', effort: 'low', maxOutputTokens: 1100 },
+  // Measured, not guessed: at 1100 a review of six passages ran out of room
+  // mid-JSON, the parse failed and the fallback showed the raw object. The
+  // prose is capped by the prompt; this is the ceiling the suggestions need.
+  review: { model: 'gpt-5-mini', effort: 'low', maxOutputTokens: 1800 },
   coverLetter: { model: 'gpt-5-mini', effort: 'medium', maxOutputTokens: 900 },
 }
 
@@ -58,4 +61,4 @@ export function fallbackFor(choice: ModelChoice): ModelChoice {
  * rather than per session. Bump it when the rules or the knowledge change -
  * a stale cache would otherwise serve yesterday's instructions.
  */
-export const PROMPT_CACHE_KEY = 'cvapp-assistant-v2'
+export const PROMPT_CACHE_KEY = 'cvapp-assistant-v3'

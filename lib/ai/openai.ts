@@ -39,6 +39,25 @@ function textOf(output: OutputItem[]): string {
     .trim()
 }
 
+/**
+ * Reading an answer out of JSON that stopped halfway.
+ *
+ * Hitting the output ceiling mid-object leaves valid prose inside an invalid
+ * document, and showing somebody `{"answer":"Her er de viktigste...` is worse
+ * than showing them nothing. Falls back to the raw text when there is no
+ * `answer` field to find, which is the prose case.
+ */
+function salvage(text: string): string {
+  if (!text.startsWith('{')) return text
+  const match = /"answer"\s*:\s*"((?:[^"\\]|\\.)*)/.exec(text)
+  if (!match) return text
+  try {
+    return JSON.parse(`"${match[1]}"`) as string
+  } catch {
+    return text
+  }
+}
+
 async function post(body: unknown, key: string) {
   const response = await fetch(ENDPOINT, {
     method: 'POST',
@@ -106,7 +125,7 @@ async function run(choice: ModelChoice, turns: unknown[], context: ToolContext):
       try {
         answer = answerSchema.parse(JSON.parse(text))
       } catch {
-        answer = { answer: text, suggestions: [] }
+        answer = { answer: salvage(text), suggestions: [] }
       }
       return { ok: true, answer, model: choice.model, usage }
     }

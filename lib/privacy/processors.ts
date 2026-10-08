@@ -93,4 +93,24 @@ export const PROCESSORS: readonly Processor[] = [
       },
     },
   },
+  {
+    name: 'OpenAI',
+    purpose: {
+      no: 'Assistenten: svarer på spørsmål om CV og søknad, og foreslår tekst. Behandler bare teksten brukeren selv trykker på knappen for å sende, uten navn og kontaktopplysninger',
+      en: 'The assistant: answers questions about CVs and applications, and suggests text. Processes only the text the user presses a button to send, with names and contact details removed',
+    },
+    // Not an EEA processor, and not pretending to be one. The transfer is
+    // covered by the user's explicit consent per press (Art. 49(1)(a)) with
+    // OpenAI's Standard Contractual Clauses underneath, and the request is
+    // sent with `store: false`. See docs/privacy/ropa.md.
+    country: { no: 'USA', en: 'United States' },
+    hosts: ['api.openai.com'],
+    dpa: {
+      covered: true,
+      note: {
+        no: 'Ja — OpenAIs databehandleravtale gjelder for API-bruk, med standard personvernbestemmelser (SCC) for overføringen.',
+        en: "Yes — OpenAI's data processing addendum applies to API use, with Standard Contractual Clauses for the transfer.",
+      },
+    },
+  },
 ] as const

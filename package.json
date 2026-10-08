@@ -13,7 +13,9 @@
     "test:e2e": "playwright test",
     "test:e2e:update": "playwright test --update-snapshots",
     "thumbnails": "bun scripts/generate-template-thumbnails.mjs",
-    "ocr-assets": "node scripts/fetch-ocr-assets.mjs"
+    "ocr-assets": "node scripts/fetch-ocr-assets.mjs",
+    "ai-knowledge": "node scripts/sync-ai-knowledge.mjs",
+    "ai-bakeoff": "node scripts/ai-bakeoff.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

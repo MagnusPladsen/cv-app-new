@@ -50,14 +50,44 @@ describe('CV content never reaches a server', () => {
     expect(offenders, `server modules importing the CV store: ${offenders.join(', ')}`).toEqual([])
   })
 
-  it('has no route handler that reads a request body', () => {
-    // Every route handler today is a redirect or a health check. One that
-    // parsed JSON could accept a CV, and the policy would be wrong.
+  it('has exactly one route handler that reads a request body', () => {
+    // There used to be none, and the policy said CV content never reached a
+    // server at all. The assistant changed that on purpose: /api/ai takes the
+    // text a person pressed a button to send. Every other handler is still a
+    // redirect or a health check, and a second one appearing here is a
+    // privacy decision that needs the policy read again, not a merge.
     const offenders = sourceFiles('app')
       .filter((file) => /route\.ts$/.test(file))
       .filter((file) => /request\.json\(\)/.test(readFileSync(file, 'utf8')))
 
-    expect(offenders, `route handlers parsing a body: ${offenders.join(', ')}`).toEqual([])
+    expect(offenders, `route handlers parsing a body: ${offenders.join(', ')}`).toEqual([
+      'app/api/ai/route.ts',
+    ])
+  })
+
+  it('gives the assistant no way to accept a whole document', () => {
+    // The request schema is the boundary. A `document`, `sections` or
+    // `personalia` field in it would turn an opt-in sentence into a full
+    // upload, and nothing else in the code would look different.
+    const schema = readFileSync('lib/ai/request.ts', 'utf8')
+
+    for (const forbidden of ['document', 'personalia', 'photo', 'firstName', 'email']) {
+      expect(schema, `lib/ai/request.ts accepts a ${forbidden} field`).not.toMatch(
+        new RegExp(`\\b${forbidden}\\s*:`),
+      )
+    }
+  })
+
+  it('strips identifiers in the browser, not on the server', () => {
+    // scrub() runs client-side so the identifiers are gone before the request
+    // exists. A 'server-only' import in it would mean they travel first and
+    // are removed on arrival, which is a different promise entirely.
+    const redact = readFileSync('lib/ai/redact.ts', 'utf8')
+
+    expect(redact).not.toContain('server-only')
+    expect(redact, 'the national id refusal is the one that cannot be undone').toContain(
+      'NATIONAL_ID',
+    )
   })
 
   it('renders a CV on the server only from the built-in demo document', () => {

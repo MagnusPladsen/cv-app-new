@@ -12,7 +12,7 @@ than useless.
 | Privacy policy published and linked | done | `/[locale]/personvern`, linked site-wide from `components/chrome/AppFooter.tsx`; reachability tested in `e2e/legal.spec.ts` |
 | Terms of use, as a separate document | done | `/[locale]/vilkar`. A test asserts the terms do not restate the policy - the spec requires two documents, not one with a privacy section |
 | DPAs accepted and archived | **BLOCKED** | Supabase: covered. Vercel: **its DPA applies to Enterprise and Pro plans only**, and CVApp is on Hobby, so there is no Art. 28 agreement with the host. Now the only remaining transfer-related gap, since the functions moved to Frankfurt. See `docs/privacy/processors.md` |
-| Hosting and database in an EU/EEA region | done | Database: AWS `eu-central-1`, Frankfurt. Functions: `fra1`, Frankfurt, after setting `regions` in `vercel.json`. No personal data leaves the EEA |
+| Hosting and database in an EU/EEA region | done | Database: AWS `eu-central-1`, Frankfurt. Functions: `fra1`, Frankfurt, after setting `regions` in `vercel.json`. Nothing CVApp stores leaves the EEA. The one transfer out of it is the assistant, per press, on Art. 49(1)(a) consent — see Activity 4 in `ropa.md` |
 | Account deletion that genuinely deletes, with a test | done | `supabase/tests/delete_own_account.sql`; run it and record the result |
 | Data export (JSON) working | done | `lib/privacy/export.ts`, on the account page. Art. 15 (everything held) and Art. 20 (portable CVs) are separate buttons |
 | Ownership checks on every CV/file endpoint, with tests | done | Row Level Security on `cv_documents`; verified live that an anonymous insert is refused with `42501` |
@@ -22,6 +22,11 @@ than useless.
 | Passwords hashed; rate limiting on auth | done | Sign-in is email and password. Supabase GoTrue stores a bcrypt hash and CVApp never sees the plaintext — it goes straight to `signInWithPassword`. Minimum length enforced in `lib/auth/errors.ts`; rate limiting in `lib/security/rate-limit.ts` |
 | Signed, expiring URLs for uploaded files | n/a | No file storage. Photos are inline data URIs inside the document |
 | EXIF stripping on image uploads | done | A side effect of the Canvas re-encode in `lib/image/compress.ts`, asserted in its test so an optimisation cannot undo it |
+| Assistant: API key never in the browser | done | `OPENAI_API_KEY` is read only by `app/api/ai/route.ts`, which imports `server-only` transitively through `lib/ai/openai.ts`. No `NEXT_PUBLIC_` variant exists |
+| Assistant: consent per press, and the policy says what is sent | done | The `ai` section of the policy lists the three things sent and the five identifiers removed. Art. 6(1)(a) and Art. 49(1)(a), recorded as Activity 4 in `ropa.md` |
+| Assistant: identifiers removed before the request exists | done | `lib/ai/redact.ts`, client-side, test-enforced by `lib/privacy/__tests__/no-server-cv.test.ts` |
+| Assistant: spend bounded | done | $5 monthly roof on the OpenAI project, plus per-visitor, per-chat and global daily counters in `lib/ai/budget.ts` enforced in one SQL statement. An unreachable counter refuses rather than spends |
+| Assistant: OpenAI DPA accepted and archived | **operator action** | The DPA applies to API use and the SCCs cover the transfer, but the accepted copy has to be archived in `legal/` like the other two. `lib/privacy/processors.ts` already records it as covered — confirm that before launch, not after |
 
 ## From the legal review, 2026-09-10
 
@@ -36,9 +41,9 @@ itself was positive; these are the corrections it raised.
 | "We hold nothing about you" contradicts the server-log section | Reworded: no CV content is stored, but the host holds IP addresses in server logs |
 | "Immediately and permanently" overstates deletion, given backups | Reworded: immediate from the live systems, backups rotate on the provider's schedule, deleted data is never restored into production |
 | Tombstone rows described as holding "only id and timestamps" | They also carry `user_id`. The policy now says so, and says the row is personal data deleted with the account — which `supabase/tests/delete_own_account.sql` proves |
-| Art. 13(1)(f) requires saying how to obtain the SCCs | Moot: no data leaves the EEA any more, so the policy relies on no transfer mechanism and the `transfers` section says exactly that |
+| Art. 13(1)(f) requires saying how to obtain the SCCs | Live again since 2026-10-08. The assistant transfers to the United States on Art. 49(1)(a) consent, with OpenAI's SCCs underneath; the `transfers` section names both. Whether the policy must also say how to obtain a copy of those clauses is one for the legal review |
 | The claim that CV content is not processed in the US needed verifying | Verified and now test-enforced by `lib/privacy/__tests__/no-server-cv.test.ts`: no Server Actions, no server module imports the CV store, no route handler parses a body, and the only server-rendered CV is the fictional demo document. Sync goes browser → Frankfurt directly |
-| The "nothing is sent to any third party" claim was absolute | Scoped to CV content, which is what CVApp controls |
+| The "nothing is sent to any third party" claim was absolute | Scoped to CV content, which is what CVApp controls. Superseded 2026-10-08: the assistant sends the text a user presses a button on, and the policy now says so in its own section rather than qualifying a denial |
 
 ### Still outstanding, and why
 
@@ -62,7 +67,12 @@ itself was positive; these are the corrections it raised.
    unauthenticated callers.
 3. **Have the privacy policy reviewed** by someone qualified in Norwegian
    privacy law before charging money. The spec puts this outside what a coding
-   agent should settle.
+   agent should settle. The assistant makes this larger, not smaller: there is
+   now a consent-based transfer to the United States to review, and the
+   re-screened DPIA conclusion in `docs/privacy/dpia-screening.md` to confirm.
+4. **Archive the OpenAI DPA** in `legal/`, and set the project's monthly
+   budget roof to $5 in the OpenAI dashboard. The in-app counters assume the
+   roof exists; they are the plan, it is the backstop.
 
 Done: both DPAs archived in `legal/`; the erasure proof run against the live
 database (2026-09-09, no exception raised).
@@ -71,7 +81,12 @@ database (2026-09-09, no exception raised).
 
 - **`script-src 'unsafe-inline'`** in the CSP. See `docs/privacy/README.md`.
 - **Rate limiting is per-instance**, so it is a speed bump rather than a
-  guarantee.
+  guarantee. The assistant's budget is not: it counts in the database, in one
+  statement, because a per-instance counter multiplied by the number of
+  serverless instances is not a budget.
+- **The assistant's text reaches the United States** when a user presses the
+  button. Accepted, consented to per press, and the identifiers are stripped
+  first — but it is the one place where text a person typed leaves the EEA.
 - ~~**Function execution in the US.**~~ Resolved: `regions` in `vercel.json`
   moved the functions to Frankfurt on the free plan.
 

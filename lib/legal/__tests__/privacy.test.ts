@@ -64,11 +64,31 @@ describe('the privacy policy', () => {
     expect(text).not.toContain('2-7b')
   })
 
-  it.each(locales)('claims no AI processing only while there is none in %s', (locale) => {
-    // If an LLM is ever called, this assertion is the reminder that the
-    // policy is now wrong - which is the point of asserting it.
-    const text = PRIVACY_POLICY[locale].sections.flatMap((s) => s.body).join(' ')
+  it.each(locales)('describes the assistant rather than denying it in %s', (locale) => {
+    // The policy used to say CVApp used no AI. It does now - app/api/ai -
+    // so the assertion is inverted: the old sentence must not come back, and
+    // the reader must be told who processes the text and what is removed.
+    const policy = PRIVACY_POLICY[locale]
+    const text = policy.sections.flatMap((s) => s.body).join(' ')
+
+    expect(policy.sections.map((s) => s.id)).toContain('ai')
     expect(text).toMatch(/kunstig intelligens|artificial intelligence/i)
+    expect(text).toContain('OpenAI')
+    expect(text, 'the policy claimed no AI while /api/ai exists').not.toMatch(
+      /bruker ikke kunstig intelligens|uses no artificial intelligence/i,
+    )
+  })
+
+  it.each(locales)('no longer claims zero transfers out of the EEA in %s', (locale) => {
+    // The assistant sends text to the United States. A policy still saying
+    // nothing leaves the EEA would be the lie, not the feature.
+    const transfers = PRIVACY_POLICY[locale].sections.find((s) => s.id === 'transfers')
+    const text = transfers?.body.join(' ') ?? ''
+
+    expect(text).not.toMatch(
+      /overfører ingen personopplysninger ut av EØS|transfer no personal data outside the EEA/i,
+    )
+    expect(text).toMatch(/49/)
   })
 
   it('lists every processor the app actually uses', () => {

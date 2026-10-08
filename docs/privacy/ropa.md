@@ -10,8 +10,8 @@ Kept in the repository rather than a drawer, because it has to match the
 application. `lib/privacy/__tests__/records.test.ts` fails if a processor
 listed in the code is missing here.
 
-**Last reviewed:** 2026-09-11. Review whenever a processing activity, a
-processor, or a retention rule changes.
+**Last reviewed:** 2026-10-08, for Activity 4 — the assistant. Review whenever
+a processing activity, a processor, or a retention rule changes.
 
 ## Controller
 
@@ -33,7 +33,7 @@ processor, or a retention rule changes.
 | Special categories | Possible in free text — trade-union membership, health, religion, political opinion. Basis: Art. 9(2)(a), explicit consent, given by typing it into a field whose purpose is to appear on the CV. Withdrawable by editing or deleting the CV. See the `free-text` section of the policy |
 | Data subjects | Users of CVApp. Also **third parties named by the user** — referees, and colleagues named in an entry |
 | Categories of data | Name, contact details, photograph, employment history, education, skills, languages, certifications, interests, driving licences, references, and anything typed into a free-text field |
-| Recipients | Supabase, for signed-in users only. No one else. CV content never reaches a CVApp server: there are no Server Actions, no route handler reads a body, and `lib/privacy/__tests__/no-server-cv.test.ts` fails if that changes |
+| Recipients | Supabase, for signed-in users only. CV content reaches no CVApp server as part of this activity: there are no Server Actions, and the only route handler that reads a body is the assistant's — Activity 4, which the user triggers per press. `lib/privacy/__tests__/no-server-cv.test.ts` fails if a second one appears |
 | Transfers outside the EEA | None. AWS `eu-central-1`, Frankfurt |
 | Retention | Browser: until the user deletes the CV, clears browser data, or signs out. Account: until the user deletes the CV or the account. A deleted CV leaves a tombstone row carrying id, timestamps and `user_id`, so other devices learn of the deletion; that row is deleted with the account |
 | Security | Row Level Security keyed on `auth.uid()`; TLS in transit; encryption at rest by the provider; no CV content in logs |
@@ -87,6 +87,35 @@ CV, which is the thing the policy says never happens.
 | Retention | **One hour.** Vercel retains runtime logs for 1 hour on Hobby; Pro is 1 day, Pro with Observability Plus 30 days. Re-check on any plan change |
 | Security | Managed by the host. No CV content is logged, because none reaches the server |
 
+## Activity 4 — The assistant
+
+Added 2026-10-08. This is the first and only activity in which text a user
+typed leaves the browser for a third country, and it exists because the
+alternative — an assistant that guesses instead of reading — is worse than no
+assistant.
+
+| | |
+|---|---|
+| Purpose | Answering a user's questions about CVs and applications, and suggesting wording for text they are writing |
+| Legal basis | **Art. 6(1)(a), consent**, given per press. Not Art. 6(1)(b): the service works fully without it, so it is not necessary for the contract. Not Art. 6(1)(f): a transfer of free text to the United States is not something a user would expect without being asked |
+| Special categories | Possible, in the same way as Activity 1: a user may ask for help with a sentence about their own health or union role. Basis: Art. 9(2)(a), the explicit consent given by pressing the button on that specific text. The button names what will be sent before it is sent |
+| Data subjects | Users who choose to use the assistant. Third parties only if the user pastes them into the text themselves |
+| Categories of data | The user's question; the single piece of text they asked for help with; and three measurements the browser made — page count, paper size, and the ids of the quality checks that fired. **Not** the document, **not** the photograph, **not** the account. Name, email address, phone number, place and link URLs are replaced client-side with `[navn]`, `[e-post]`, `[telefon]` and `[sted]` by `lib/ai/redact.ts` before the request is built |
+| National identity numbers | Refused outright. `NATIONAL_ID` in `lib/quality/checks.ts` is checked in the browser and again in the route; a match sends nothing and tells the user to remove it from their CV |
+| Recipients | **OpenAI**, as a processor, for the one request. Nobody else. The request is sent with `store: false` |
+| Transfers outside the EEA | **Yes — the United States.** Basis: Art. 49(1)(a), the data subject's explicit consent to this specific transfer, with OpenAI's Standard Contractual Clauses underneath. Stated in the `transfers` and `ai` sections of the policy |
+| Retention | None at CVApp: no conversation, no question and no answer is written to any store, and the chat lives in the browser tab. At OpenAI: the request is not stored, and the shared instruction prefix may sit in a prompt cache for up to 24 hours (`prompt_cache_retention: '24h'`). The budget counter keeps a daily-rotating hash of IP and user agent, and nothing else, for at most 30 days |
+| Automated decision-making | None within Art. 22. The assistant produces text; a suggestion becomes a change only when the user presses it, and `docs/ai/guidelines.md` forbids it from grading the person or predicting an outcome |
+| Security | The API key exists only in the Vercel environment and is read only by `app/api/ai/route.ts`; it never reaches the browser. Spending is bounded twice: a $5 monthly roof on the OpenAI project, and the per-visitor, per-chat and global daily counters in `lib/ai/budget.ts`, enforced in one statement by `public.ai_budget_take` |
+
+### The visitor hash is not an identifier
+
+The daily limits need to tell one visitor from another, and nothing more. The
+counter row holds `sha256(date : job secret : IP : user agent)` truncated to 32
+characters — it cannot be reversed into either input, it changes at midnight,
+and rows older than 30 days are deleted by the function itself. No IP address
+is stored.
+
 ## What is deliberately not processed
 
 Listing these matters: a record that only says what is collected invites the
@@ -100,7 +129,11 @@ assumption that everything else is too.
   fails if the policy stops describing what is collected
 - **No error tracker.** Same test
 - **No marketing email.** No newsletter, no list
-- **No profiling and no automated decision-making** within Art. 22
+- **No profiling and no automated decision-making** within Art. 22. The
+  assistant writes text; it does not score, rank or assess anybody
+- **No CV ever sent whole to a language model.** `lib/ai/request.ts` has no
+  field for a document, and `lib/privacy/__tests__/no-server-cv.test.ts` fails
+  if one is added
 - **No payment data.** No provider is integrated
 - **No file storage.** A photograph is a data URI inside the document, not an
   uploaded object, and its EXIF is stripped by the Canvas re-encode in

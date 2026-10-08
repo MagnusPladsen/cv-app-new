@@ -30,7 +30,7 @@ const filled = (value: string | undefined) => text(value).length > 0
  * Deliberately not matching a plain eight-digit phone number, which is the
  * other long run of digits a CV legitimately contains.
  */
-const NATIONAL_ID = /\b\d{6}[\s-]?\d{5}\b/
+export const NATIONAL_ID = /\b\d{6}[\s-]?\d{5}\b/
 
 /** Every string a person can type into a CV, for the scans that search prose. */
 function freeText(document: CvDocument): { sectionId?: string; value: string }[] {

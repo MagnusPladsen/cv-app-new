@@ -5,7 +5,7 @@ import type { LegalDocument } from './types'
  *  policies, and only one of them can be the one you are relying on. */
 export const PRIVACY_EN: LegalDocument = {
   title: 'Privacy policy',
-  lastUpdated: '2026-09-11',
+  lastUpdated: '2026-10-08',
   intro: [
     'CVApp is a tool for building your own CV. This policy explains what we process, why, for how long, and what you can require of us.',
     'In short: you can use CVApp without an account. Your CVs then live only in your browser and we store none of their content. Our hosting provider still holds your IP address in its server logs, as any website’s does. If you sign in, your CVs are also saved to your account so they follow you between devices.',
@@ -66,9 +66,10 @@ export const PRIVACY_EN: LegalDocument = {
       id: 'transfers',
       heading: 'Transfers outside the EEA',
       body: [
-        'We transfer no personal data outside the EEA.',
-        'Your CVs and account details are stored in Frankfurt, Germany. The site is hosted by Vercel, and your requests are processed in Frankfurt too.',
-        'Your CV content never passes through one of our servers in any case: it lives in your browser and syncs directly to the database.',
+        'Everything we store is stored in the EEA. Your CVs and account details are in Frankfurt, Germany, and the site is served from Frankfurt.',
+        'There is one transfer outside the EEA, and only one: if you use the assistant, the text you ask for help with is sent to OpenAI in the United States. You press a button each time, and your name, email address, phone number and place are removed before the request is built. The section on the assistant says exactly what is sent.',
+        'The basis for the transfer is the explicit consent you give by pressing, GDPR Article 49(1)(a). OpenAI additionally offers Standard Contractual Clauses.',
+        'Beyond that, your CV content never passes through one of our servers: it lives in your browser and syncs directly to the database in Frankfurt.',
       ],
     },
     {
@@ -111,10 +112,23 @@ export const PRIVACY_EN: LegalDocument = {
     },
     {
       id: 'automated',
-      heading: 'Automated decisions and artificial intelligence',
+      heading: 'Automated decisions',
       body: [
-        'CVApp makes no automated decisions about you and does no profiling.',
-        'CVApp uses no artificial intelligence. Nothing you write in your CV is sent to a language model, and we do not send CV content to any third party for processing.',
+        'CVApp makes no automated decisions about you in the legal sense, and does no profiling. Nothing in the app decides anything about you, ranks you, or assesses you as a candidate.',
+        'CVApp uses artificial intelligence in one place: the assistant. It suggests text and answers questions, and it changes nothing by itself. What is sent, and where, is in the section below.',
+      ],
+    },
+    {
+      id: 'ai',
+      heading: 'The assistant (artificial intelligence)',
+      body: [
+        'CVApp has an assistant that answers questions about CVs and applications, and suggests better wording. It is voluntary, and you press a button each time. Nothing is sent until you do.',
+        'When you press, three things are sent: your question, the text you asked for help with, and the measurements the app made itself — how many pages your CV runs to, which paper size you use, and which items the quality check found. Nothing else.',
+        'Your name, email address, phone number, place and links are removed in your browser before the request is built, and replaced with [navn], [e-post], [telefon] and [sted]. If the text contains a Norwegian national identity number, nothing is sent at all, and you are told to take it out of your CV.',
+        'Your photo is never sent. Your whole CV is never sent. Your account details are never sent. No conversation is stored, by us or by the provider.',
+        'The text is processed by OpenAI in the United States. The request is sent with instructions not to store it, and it is not used to train models. The part of the request that is the same for everybody — our own instructions — may sit in a cache at OpenAI for up to 24 hours, which is what makes the service cheap enough to run.',
+        'The assistant suggests; it changes nothing. A suggestion becomes a change only when you press it, and you see what changes before you do.',
+        'The basis is the explicit consent you give by pressing, GDPR Article 6(1)(a), and Article 49(1)(a) for the transfer to the United States. You withdraw it by not using the assistant. There is nothing to delete afterwards, because nothing was stored.',
       ],
     },
     {

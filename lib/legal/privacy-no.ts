@@ -8,7 +8,7 @@ import type { LegalDocument } from './types'
  */
 export const PRIVACY_NO: LegalDocument = {
   title: 'Personvernerklæring',
-  lastUpdated: '2026-09-11',
+  lastUpdated: '2026-10-08',
   intro: [
     'CVApp er et verktøy for å lage din egen CV. Denne erklæringen forklarer hvilke opplysninger vi behandler, hvorfor, hvor lenge, og hva du kan kreve.',
     'Kort fortalt: du kan bruke CVApp uten konto. Da ligger CV-ene dine bare i nettleseren din, og vi lagrer ikke noe av innholdet. Driftsleverandøren vår har likevel IP-adressen din i tjenerloggene, slik enhver nettside har. Logger du inn, lagres CV-ene også på kontoen din slik at de følger deg mellom enheter.',
@@ -69,9 +69,10 @@ export const PRIVACY_NO: LegalDocument = {
       id: 'transfers',
       heading: 'Overføring ut av EØS',
       body: [
-        'Vi overfører ingen personopplysninger ut av EØS.',
-        'CV-ene og kontoopplysningene dine lagres i Frankfurt i Tyskland. Nettstedet driftes av Vercel, og forespørslene dine behandles også i Frankfurt.',
-        'CV-innholdet ditt går uansett aldri gjennom en av våre servere: det ligger i nettleseren din og synkroniseres direkte til databasen.',
+        'Alt vi lagrer, lagres i EØS. CV-ene og kontoopplysningene dine ligger i Frankfurt i Tyskland, og nettstedet driftes fra Frankfurt.',
+        'Det finnes én overføring ut av EØS, og bare én: bruker du assistenten, sendes teksten du ber om hjelp med til OpenAI i USA. Du trykker på en knapp hver gang, og navn, e-postadresse, telefonnummer og sted er fjernet før forespørselen lages. Se avsnittet om assistenten for hva som faktisk sendes.',
+        'Grunnlaget for overføringen er det uttrykkelige samtykket du gir ved å trykke, personvernforordningen artikkel 49 nr. 1 bokstav a. OpenAI tilbyr i tillegg standard personvernbestemmelser (SCC).',
+        'Ut over dette går CV-innholdet ditt aldri gjennom en av våre servere: det ligger i nettleseren din og synkroniseres direkte til databasen i Frankfurt.',
       ],
     },
     {
@@ -114,10 +115,23 @@ export const PRIVACY_NO: LegalDocument = {
     },
     {
       id: 'automated',
-      heading: 'Automatiserte avgjørelser og kunstig intelligens',
+      heading: 'Automatiserte avgjørelser',
       body: [
-        'CVApp tar ingen automatiserte avgjørelser om deg, og driver ingen profilering.',
-        'CVApp bruker ikke kunstig intelligens. Ingenting av det du skriver i CV-en sendes til en språkmodell, og vi sender ikke CV-innhold til noen tredjepart for behandling.',
+        'CVApp tar ingen automatiserte avgjørelser om deg i lovens forstand, og driver ingen profilering. Ingenting i appen avgjør noe om deg, rangerer deg eller vurderer deg som kandidat.',
+        'CVApp bruker kunstig intelligens på ett sted: assistenten. Den foreslår tekst og svarer på spørsmål, og den endrer ingenting av seg selv. Hva som sendes, og hvor, står i avsnittet under.',
+      ],
+    },
+    {
+      id: 'ai',
+      heading: 'Assistenten (kunstig intelligens)',
+      body: [
+        'CVApp har en assistent som kan svare på spørsmål om CV og søknad, og foreslå bedre formuleringer. Den er frivillig, og du trykker på en knapp hver gang. Ingenting sendes før du gjør det.',
+        'Når du trykker, sendes tre ting: spørsmålet ditt, den teksten du ber om hjelp med, og de målingene appen selv har gjort — hvor mange sider CV-en er på, hvilket papirformat du bruker, og hvilke punkter kvalitetssjekken har funnet. Ingenting annet.',
+        'Navn, e-postadresse, telefonnummer, sted og lenker fjernes i nettleseren din før forespørselen lages, og erstattes med [navn], [e-post], [telefon] og [sted]. Står det et fødselsnummer i teksten, sendes ingenting i det hele tatt, og du får beskjed om å ta det ut av CV-en.',
+        'Portrettbildet ditt sendes aldri. Hele CV-en sendes aldri. Kontoopplysningene dine sendes aldri. Vi lagrer ingen samtale, verken hos oss eller hos leverandøren.',
+        'Teksten behandles av OpenAI i USA. Forespørselen sendes med beskjed om ikke å lagres, og den brukes ikke til å trene modeller. Den delen av forespørselen som er lik for alle — instruksjonene våre — kan ligge i et hurtiglager hos OpenAI i opptil ett døgn, for å gjøre tjenesten billigere å drive.',
+        'Assistenten foreslår, den endrer ingenting. Et forslag blir en endring først når du trykker på det, og du ser hva som endres før du gjør det.',
+        'Grunnlaget er det uttrykkelige samtykket du gir ved å trykke, personvernforordningen artikkel 6 nr. 1 bokstav a, og artikkel 49 nr. 1 bokstav a for overføringen til USA. Du trekker samtykket tilbake ved å slutte å bruke assistenten. Det er ingenting å slette etterpå, fordi ingenting er lagret.',
       ],
     },
     {

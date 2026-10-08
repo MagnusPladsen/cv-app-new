@@ -9,6 +9,12 @@ export default defineConfig({
       // next-intl's client navigation imports the extensionless specifier,
       // which Vite cannot resolve against Next's ESM build.
       { find: /^next\/navigation$/, replacement: 'next/navigation.js' },
+      // `server-only` throws on import unless the bundler resolves the
+      // react-server condition, which Vite does not. The package ships
+      // empty.js for exactly that condition; pointing at it lets a server
+      // module be unit-tested without dropping the marker that keeps it off
+      // the client.
+      { find: /^server-only$/, replacement: './node_modules/server-only/empty.js' },
     ],
   },
   test: {

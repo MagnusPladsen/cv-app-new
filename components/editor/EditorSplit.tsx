@@ -23,6 +23,7 @@ import { PreviewSheet } from './PreviewSheet'
 import { SaveState } from './SaveState'
 import { sectionFormId } from './section-form-id'
 import { SectionEditor } from './SectionEditor'
+import { AssistantPanel } from './AssistantPanel'
 import { CoverLetterForm } from './CoverLetterForm'
 import { QualityPanel } from './QualityPanel'
 import { SectionHelp } from './SectionHelp'
@@ -263,6 +264,12 @@ export function EditorSplit({
           onSelectSection={onSelectSection}
           pages={pages}
         />
+
+        {/* Under the check panel, because most of what people want to ask is
+            about something the check just told them. Shut until pressed: the
+            assistant costs money per question and sends text out of the
+            browser, so it does not open itself. */}
+        <AssistantPanel document={document} handlers={handlers} pages={pages} />
 
 
       </div>

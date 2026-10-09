@@ -8,7 +8,8 @@
     "myCvs": "My CVs",
     "templates": "Templates",
     "home": "Home",
-    "switchLocale": "Change language"
+    "switchLocale": "Change language",
+    "guide": "Guide"
   },
   "dashboard": {
     "title": "My CVs",
@@ -322,7 +323,8 @@
   "footer": {
     "tagline": "CVApp — a free CV builder, in beta.",
     "privacy": "Privacy",
-    "terms": "Terms"
+    "terms": "Terms",
+    "guide": "CV guide"
   },
   "notFound": {
     "title": "Page not found",
@@ -338,7 +340,9 @@
     "privacyTitle": "Privacy — CVApp",
     "privacyDescription": "What CVApp processes, why, for how long, and what you can demand. Your CVs live in your browser.",
     "termsTitle": "Terms of use — CVApp",
-    "termsDescription": "The terms for using CVApp. Free, no account needed, and we do not own what you write."
+    "termsDescription": "The terms for using CVApp. Free, no account needed, and we do not own what you write.",
+    "guideTitle": "CV guide — how to write a CV that gets read",
+    "guideDescription": "Length, order, what belongs at the top and what to leave out. Written for hiring in Norway, with short answers to the usual questions."
   },
   "quality": {
     "title": "CV check",
@@ -489,5 +493,12 @@
     "reviewEmpty": "There is no text to go through yet. Fill something in first.",
     "askField": "Ask AI for help",
     "askNothing": "The assistant had no concrete suggestion here."
+  },
+  "guide": {
+    "nav": "CV guide",
+    "ctaTitle": "Ready to write it?",
+    "ctaBody": "CVApp is free, needs no account, and gives you a real PDF with no watermark.",
+    "ctaStart": "Build a CV",
+    "ctaTemplates": "See the templates"
   }
 }

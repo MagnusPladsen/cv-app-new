@@ -17,6 +17,12 @@ export async function AppFooter() {
         <nav className="flex flex-wrap gap-4">
           <Link
             className="rounded transition hover:text-brand-strong hover:underline focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
+            href="/guide"
+          >
+            {t('guide')}
+          </Link>
+          <Link
+            className="rounded transition hover:text-brand-strong hover:underline focus-visible:ring-2 focus-visible:ring-brand focus-visible:outline-none"
             href="/personvern"
           >
             {t('privacy')}

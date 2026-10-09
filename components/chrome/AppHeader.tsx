@@ -49,6 +49,15 @@ export function AppHeader() {
           >
             {t('templates')}
           </Link>
+          {/* Desktop only, for the same reason as Maler. It is also the one
+              link on every page pointing at the guide, which is what makes the
+              guide findable at all. */}
+          <Link
+            className="hidden rounded-full px-3 py-1.5 font-medium whitespace-nowrap transition hover:bg-brand-soft hover:text-brand-strong sm:inline-flex"
+            href="/guide"
+          >
+            {t('guide')}
+          </Link>
           <Link
             className="rounded-full px-2 py-1.5 font-medium whitespace-nowrap transition hover:bg-brand-soft hover:text-brand-strong sm:px-3"
             href="/cv"

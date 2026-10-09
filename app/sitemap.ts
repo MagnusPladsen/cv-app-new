@@ -7,6 +7,7 @@ import { siteUrl } from '@/lib/site'
 const PATHS = [
   { path: '', priority: 1 },
   { path: '/templates', priority: 0.9 },
+  { path: '/guide', priority: 0.8 },
   { path: '/personvern', priority: 0.3 },
   { path: '/vilkar', priority: 0.3 },
 ] as const

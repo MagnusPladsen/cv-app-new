@@ -8,7 +8,8 @@
     "myCvs": "Mine CV-er",
     "templates": "Maler",
     "home": "Hjem",
-    "switchLocale": "Bytt språk"
+    "switchLocale": "Bytt språk",
+    "guide": "Guide"
   },
   "dashboard": {
     "title": "Mine CV-er",
@@ -322,7 +323,8 @@
   "footer": {
     "tagline": "CVApp — gratis CV-bygger i beta.",
     "privacy": "Personvern",
-    "terms": "Vilkår"
+    "terms": "Vilkår",
+    "guide": "CV-guide"
   },
   "notFound": {
     "title": "Fant ikke siden",
@@ -338,7 +340,9 @@
     "privacyTitle": "Personvern — CVApp",
     "privacyDescription": "Hva CVApp behandler, hvorfor, hvor lenge, og hva du kan kreve. CV-ene ligger i nettleseren din.",
     "termsTitle": "Vilkår for bruk — CVApp",
-    "termsDescription": "Vilkårene for å bruke CVApp. Gratis, uten konto, og uten at vi eier det du skriver."
+    "termsDescription": "Vilkårene for å bruke CVApp. Gratis, uten konto, og uten at vi eier det du skriver.",
+    "guideTitle": "CV-guide — slik skriver du en CV som blir lest",
+    "guideDescription": "Lengde, rekkefølge, hva som skal stå øverst og hva du kan droppe. Skrevet for norsk arbeidsliv, med korte svar på de vanligste spørsmålene."
   },
   "quality": {
     "title": "Sjekk av CV-en",
@@ -489,5 +493,12 @@
     "reviewEmpty": "Det er ikke noe tekst å gå gjennom ennå. Fyll inn litt først.",
     "askField": "Spør AI om hjelp",
     "askNothing": "Assistenten hadde ingen konkrete forslag her."
+  },
+  "guide": {
+    "nav": "CV-guide",
+    "ctaTitle": "Klar til å skrive den?",
+    "ctaBody": "CVApp er gratis, krever ingen konto, og gir deg en ekte PDF uten vannmerke.",
+    "ctaStart": "Lag CV",
+    "ctaTemplates": "Se malene"
   }
 }
